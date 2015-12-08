@@ -1,0 +1,18 @@
+package: Shotgun Toolkit for RV
+author: stewartb
+organization: Tweak Software
+version: 0.0.1
+requires: ''
+rv: 6.2
+optional: false
+hidden: false
+
+modes:
+  - file: shotgun_toolkit_mode.py
+    load: immediate
+
+description: |
+    <p>
+    Loads the Shotgun tk-rv engine.
+    The tk-rv engine will create a menu as a starting point for hosted apps.
+    </p>

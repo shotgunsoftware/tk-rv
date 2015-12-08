@@ -1,0 +1,23 @@
+# expected fields in the configuration file for this engine
+configuration:
+    debug_logging:
+        type: bool
+        default_value: false
+        description: Controls whether debug messages should be emitted to the logger
+
+
+# the Shotgun fields that this engine needs in order to operate correctly
+requires_shotgun_fields:
+
+
+# More verbose description of this item
+display_name: "Shotgun RV Toolkit Engine"
+
+# Required minimum versions for this item to run
+requires_shotgun_version:
+requires_core_version: "v0.14.28"
+
+# List of frameworks which are needed to run the app (optional)
+frameworks:
+    - {"name": "tk-framework-shotgunutils", "version": "v4.x.x"}
+    - {"name": "tk-framework-qtwidgets", "version": "v2.x.x"}
