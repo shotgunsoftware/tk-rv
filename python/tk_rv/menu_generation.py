@@ -126,20 +126,32 @@ class MenuGenerator(object):
                 self.dock_thing.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
                 self._engine._get_top_toolbar().addAction(self.dock_thing.toggleViewAction())
 
-                shotgun_model = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_model")
                 # note_input = tank.platform.import_framework("tk-framework-qtwidgets", "note_input_widget")
                 # self._note_pad = note_input.NoteInputWidget(self.dock_thing)
-                activity_stream = tank.platform.import_framework("tk-framework-qtwidgets", "activity_stream")
-                self._activity_stream = activity_stream.ActivityStreamWidget(self.dock_thing)
+                # shotgun_model = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_model")
+                # activity_stream = tank.platform.import_framework("tk-framework-qtwidgets", "activity_stream")
+                # self._activity_stream = activity_stream.ActivityStreamWidget(self.dock_thing)
                 
-                task_manager = tank.platform.import_framework("tk-framework-shotgunutils", "task_manager")
-                self._task_manager = task_manager.BackgroundTaskManager(parent=self._activity_stream,
-                                                                        start_processing=True,
-                                                                        max_threads=2)
-                self._model_activity = shotgun_model.SimpleShotgunModel(parent=self._activity_stream,
-                                                                bg_task_manager=self._task_manager)
+                # task_manager = tank.platform.import_framework("tk-framework-shotgunutils", "task_manager")
+                # self._task_manager = task_manager.BackgroundTaskManager(parent=self._activity_stream,
+                #                                                         start_processing=True,
+                #                                                         max_threads=2)
+                # shotgun_globals = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_globals")
+                # shotgun_globals.register_bg_task_manager(self._task_manager)
+                # self._activity_stream.set_bg_task_manager(self._task_manager)
+                # # self._model_activity = shotgun_model.SimpleShotgunModel(parent=self._activity_stream,
+                #                                                 bg_task_manager=self._task_manager)
 
+                # self._activity_stream.load_data( { "type": "Version", "id": 41})
+                #from . import RvActivityMode
+                tk_rv = self._engine.import_module("tk_rv")
+
+                self.rv_activity_stream = tk_rv.RvActivityMode()
+                self.rv_activity_stream.init_ui(self.dock_thing)
+                #self.dock_thing.setMinimumSize(320,500)
+                # self.dock_thing.resize(600,600)
                 parent_widget.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock_thing)
+                self._env_info(event)
 
 
 
@@ -150,6 +162,8 @@ class MenuGenerator(object):
                 self._engine.log_info('QtGui: %r' % QtGui)
                 from PySide import QtCore
                 self._engine.log_info('QtCore: %r' % QtCore)
+                self.rv_activity_stream.load_data( { "type": "Version", "id": 41})
+                # self.rv_activity_stream.load_data( { "type": "Shot", "id": 861})
 
 
         def _cutz(self, event):

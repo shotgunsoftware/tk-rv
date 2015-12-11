@@ -57,6 +57,7 @@ class ShotgunToolkit(rvtypes.MinorMode):
             import tank_vendor.shotgun_authentication
 
             sa = tank_vendor.shotgun_authentication.ShotgunAuthenticator()
+            # sa.get_user_from_prompt()
             user = sa.get_user()
             sgtk.set_authenticated_user(user)
             sg_conn = user.create_sg_connection()

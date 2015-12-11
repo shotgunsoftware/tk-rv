@@ -28,4 +28,5 @@ the python dir is for the actual tk-rv classes, in the style of tk-maya.
 
 the engine stands alone and looks down for its groovy.
 
+/shotgunlocal/config/config/core/shotgun.yml - your server settings....
 

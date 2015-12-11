@@ -37,7 +37,7 @@ class RVEngine(Engine):
                         self.log_debug("WARNING: No TANK_CONTEXT. USING big_buck_bunny again. Hey Rob where's my global context?")
                         self.context = self.context_from_path('/shotgunlocal/big_buck_bunny')
 
-                self.log_debug("INFO: TANK_CONTEXT is now '%r'" % self.context)
+                # self.log_debug("INFO: TANK_CONTEXT is now '%r'" % self.context)
 
                 self.toolkit_rv_mode_name = os.environ["TK_RV_MODE_NAME"]
 
@@ -59,7 +59,7 @@ class RVEngine(Engine):
                         self._ui_enabled = False
 
                 self._init_pyside()
-
+                self._initialize_dark_look_and_feel()
                 # unicode characters returned by the shotgun api need to be converted
                 # to display correctly in all of the app windows
                 from tank.platform.qt import QtCore
@@ -189,6 +189,12 @@ class RVEngine(Engine):
                 print >> sys.stderr, msg
 
         def post_app_init(self):
+                # task_manager = tank.platform.import_framework("tk-framework-shotgunutils", "task_manager")
+                # self._task_manager = task_manager.BackgroundTaskManager(parent=self._activity_stream,
+                #                                                         start_processing=True,
+                #                                                         max_threads=2)
+                # shotgun_globals = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_globals")
+
                 self.setup_menu()
 
         def setup_menu(self):
