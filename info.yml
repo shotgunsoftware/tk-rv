@@ -2,7 +2,7 @@
 configuration:
     debug_logging:
         type: bool
-        default_value: false
+        default_value: true
         description: Controls whether debug messages should be emitted to the logger
 
 

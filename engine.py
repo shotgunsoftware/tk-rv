@@ -59,7 +59,7 @@ class RVEngine(Engine):
                         self._ui_enabled = False
 
                 self._init_pyside()
-                self._initialize_dark_look_and_feel()
+                # self._initialize_dark_look_and_feel()
                 # unicode characters returned by the shotgun api need to be converted
                 # to display correctly in all of the app windows
                 from tank.platform.qt import QtCore
@@ -170,11 +170,9 @@ class RVEngine(Engine):
                 return rv.qtutils.sessionBottomToolBar()
 
         def log_debug(self, msg):
-                if self.get_setting("debug_logging", False):
+                if self.get_setting("debug_logging", True):
                         msg = "DEBUG: tk-rv - %s" % msg
                         print >> sys.stderr, msg
-                else:
-                        print >> sys.stderr, 'WTF? this doest work at all!!!'
 
         def log_info(self, msg):
                 msg = "INFO: tk-rv - %s" % msg
@@ -202,5 +200,6 @@ class RVEngine(Engine):
                         tk_rv = self.import_module("tk_rv")
                         self._menu_generator = tk_rv.MenuGenerator(self, self._menu_name)
                         self._menu_generator.create_menu()
+                        self._menu_generator._note_pad("")
 
 

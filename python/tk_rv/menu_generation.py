@@ -45,6 +45,7 @@ class MenuGenerator(object):
                 # for AppCommand
                 # is this the preferred way?
                 tk_rv = self._engine.import_module("tk_rv")
+                self._engine.log_debug("INFO: create_menu tk_rv imported.")
 
                 for (cmd_name, cmd_details) in self._engine.commands.items():
                         menu_items.append(tk_rv.AppCommand(cmd_name, cmd_details))
@@ -63,6 +64,7 @@ class MenuGenerator(object):
 
                 # add separator
                 self._menu_handle.append(separator_item)
+                self._engine.log_debug("INFO: create_menu seperator")
 
                 # separate menu items out into various sections
                 commands_by_app = {}
@@ -86,6 +88,8 @@ class MenuGenerator(object):
                 # update sgtk menu
                 sgtk_menu = [(self._menu_name, self._menu_handle)]
                 rv.commands.defineModeMenu(self._engine.toolkit_rv_mode_name, sgtk_menu)
+                self._engine.log_debug("INFO: create_menu done.")
+
 
         def destroy_menu(self):
                 #self._rv_pyside_test.deactivate()
@@ -122,7 +126,12 @@ class MenuGenerator(object):
         def _note_pad(self, event):
                 from PySide import QtGui
                 parent_widget = self._engine._get_dialog_parent()
-                self.dock_thing = QtGui.QDockWidget("tk-rv", parent_widget)
+                self.dock_thing = QtGui.QDockWidget("CutZ", parent_widget)
+                
+                parent_widget.setStyleSheet("QWidget { font-family: Proxima Nova; background: rgb(36,38,41); color: rgb(126,127,129); border-color: rgb(36,38,41);}")
+                self.dock_thing.setStyleSheet("QWidget { font-family: Proxima Nova; background: rgb(36,38,41); color: rgb(126,127,129);} \
+                        QDockWidget::title { background: rgb(36,38,41); color: rgb(126,127,129); padding: 8px; border: 0px;}")
+                
                 self.dock_thing.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
                 self._engine._get_top_toolbar().addAction(self.dock_thing.toggleViewAction())
 
@@ -144,10 +153,12 @@ class MenuGenerator(object):
 
                 # self._activity_stream.load_data( { "type": "Version", "id": 41})
                 #from . import RvActivityMode
+                
                 tk_rv = self._engine.import_module("tk_rv")
 
                 self.rv_activity_stream = tk_rv.RvActivityMode()
                 self.rv_activity_stream.init_ui(self.dock_thing)
+                rv.commands.activateMode("RvActivityMode")
                 #self.dock_thing.setMinimumSize(320,500)
                 # self.dock_thing.resize(600,600)
                 parent_widget.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock_thing)

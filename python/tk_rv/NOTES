@@ -1,0 +1,223 @@
+
+flipping to another server
+    this wasnt easy. 
+    how do i de-auth from one server? 
+    can i be simultaneously authed to multiple servers? i dont want to re-auth to the first one.
+    are their files i have to touch in the config to aim at aonther? or if i authed another way would this auto-fix?
+    is this my fault with my dorked config?
+
+global context
+    this is want yesterday
+    there are things like pipline_configuration.yml that store project ids.
+
+
+
+
+Tank integration with RV
+Global context
+Authentication
+Multiple host configs
+Licenses
+Installation ick
+
+
+
+Toolkit activity widget not as pretty or functional as web one. See screenshot.
+Cache problem, thumbnail out of sync. Do we care? How do I flush the cache?
+Add nice bits or punt?
+Webfonts
+Tweak obvious bits and misdirect?
+Tabbed interface and version list needed
+
+
+Tank integration with RV
+    Global context - when, how? most things seem to require a project id.
+    project ids in pipeline_configuration.yml and friends 
+Authentication
+    Multiple host configs
+    Licenses
+Installation ick
+    how do we deploy as RV only?
+tk-framework-widgets
+    whats the story here?
+
+
+
+# ok this shouldnt be here but you know,....
+try:
+  import asyncio
+except ImportError:
+  ## Trollius >= 0.3 was renamed
+  print "Trollius"
+  import trollius as asyncio 
+
+
+               # # now try just loading RV Pyside example widget
+                # # tk_rv = self._engine.import_module("tk_rv")
+                # from .sg_test import PySideDockTest
+                # self._rv_pyside_test = PySideDockTest()
+
+                # # Import the shotgun_model module from the shotgun utils framework
+                # shotgun_model = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_model")
+                # shotgun_view = tank.platform.import_framework("tk-framework-qtwidgets", "shotgun_view")
+
+                # parent_widget = self._rv_pyside_test.dialog
+
+                # self._engine.log_debug(parent_widget)
+                # # Create a standard QT Tree View
+                # from PySide import QtGui
+                # self._engine.log_debug('Loading QtGui in cutz %r' % QtGui)
+                # self._sg_tk_test = QtGui.QListView(parent_widget)
+                # self._sg_delegate  = ExampleDelegate(self._sg_tk_test)
+
+
+                # # Set up our data backend
+                # self.model = shotgun_model.SimpleShotgunModel(parent_widget)
+
+                # # Tell the view to pull data from the model
+                # self._sg_tk_test.setModel(self.model)
+                # self._sg_tk_test.setItemDelegate(self._sg_delegate)
+                # self.model.load_data(entity_type="Asset")
+                # self._sg_tk_test.show()
+                # parent_widget.show()
+
+
+        # def _stop_ws(self, event):
+        #     # this REALLY DIDNT WORK big time
+        #     rvs = rv.qtutils.sessionWindow()
+        #     # rvs = rv.commands.mainWindowWidget()
+        #     rvs.hide()
+
+        #     # if self.server_thread:
+        #     #     self._engine.log_debug("Stopping WS Server")
+        #     #     # asyncio.get_event_loop().stop()
+        #     #     # self.server_thread.loop.stop()
+        #     #     # self.server_thread.loop.call_soon_threadsafe(self.server_thread.loop.stop)
+        #     #     self.server_thread.shutdown()
+        #     #     self.server_thread.quit()
+        #     #     self.server_thread= None
+
+        # def _jump_to_sg(self, event):
+        #     from tank.platform.qt import QtCore, QtGui
+        #     url = self._engine.context.shotgun_url
+        #     QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
+
+
+        # is this how we want to do things? 
+        # does a toolkit centric way exist better than os.system?
+        # should we use subprocess?
+        # def _jump_to_fs(self, event):
+        #     # launch one window for each location on disk
+        #     paths = self._engine.context.filesystem_locations
+        #     for disk_location in paths:
+
+        #         # get the setting
+        #         system = sys.platform
+
+        #         # run the app
+        #         if system == "linux2":
+        #             cmd = 'xdg-open "%s"' % disk_location
+        #         elif system == "darwin":
+        #             cmd = 'open "%s"' % disk_location
+        #         elif system == "win32":
+        #             cmd = 'cmd.exe /C start "Folder" "%s"' % disk_location
+        #         else:
+        #             raise Exception("Platform '%s' is not supported." % system)
+
+        #         exit_code = os.system(cmd)
+        #         if exit_code != 0:
+        #             self._engine.log_error("Failed to launch '%s'!" % cmd)
+
+
+        # @asyncio.coroutine
+        # def server_co_worker(self):
+        #     yield asyncio.sleep(1)
+
+        # def server_worker(self, loop):
+        #     from autobahn.asyncio.websocket import WebSocketServerProtocol, \
+        #                                            WebSocketServerFactory
+        #     # try:
+        #     #   import asyncio
+        #     # except ImportError:
+        #     #   ## Trollius >= 0.3 was renamed
+        #     #   print "Trollius"
+        #     #   import trollius as asyncio
+
+        #     self._engine.log_debug("server worker loop %s" % loop)
+        #     print self
+
+        #     # self.factory = WebSocketServerFactory("ws://localhost:9000", debug = True)
+        #     # self.factory.protocol = tk_rv.MyServerProtocol
+
+        #     # self.loop = asyncio.get_event_loop()
+        #     # self.coro = self.loop.create_server(self.factory, '127.0.0.1', 9000)
+        #     # self.server = self.loop.run_until_complete(self.coro)
+        #     asyncio.set_event_loop(loop)
+        #     loop.run_until_complete(server_co_worker)
+        #     return
+
+
+                # the name says it all, doesnt it? this is me making it happen...
+        def _try_it(self, event):
+
+                self._engine.log_debug("TANK_CONTEXT")
+                self._engine.log_debug(os.environ.get("TANK_CONTEXT"))
+
+                # now try just loading RV Pyside example widget
+                #tk_rv = self._engine.import_module("tk_rv")
+                import PySideDockTest
+                self._rv_pyside_test = PySideDockTest()
+
+                # Import the shotgun_model module from the shotgun utils framework
+                shotgun_model = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_model")
+                shotgun_view = tank.platform.import_framework("tk-framework-qtwidgets", "shotgun_view")
+                # Set up alias
+                # ShotgunModel = shotgun_model.ShotgunModel
+                # parent_widget = self._engine._get_dialog_parent()
+                
+                parent_widget = self.rvSessionQObject
+                if not parent_widget:
+                         raise Exception("parent parent_widget is none.")
+                self._engine.log_debug("LOADING RV PYSIDE EXAMPLE")
+
+                parent_widget = self._rv_pyside_test.dialog
+
+                # self._engine.log_debug(parent_widget)
+                # Create a standard QT Tree View
+                self._sg_tk_test = QtGui.QListView(parent_widget)
+                # self._sg_tk_test = shotgun_view.ListWidget(parent_widget)
+                self._sg_delegate  = ExampleDelegate(self._sg_tk_test)
+
+
+                # Set up our data backend
+                self.model = shotgun_model.SimpleShotgunModel(parent_widget)
+
+                # Tell the view to pull data from the model
+                self._sg_tk_test.setModel(self.model)
+                self._sg_tk_test.setItemDelegate(self._sg_delegate)
+                # load all assets from Shotgun
+                # self._sg_tk_test.resize(500,400)
+                self.model.load_data(entity_type="Asset")
+                self._sg_tk_test.show()
+
+                # ok this is some zany i was lighting off here. 
+                # we can move this elsewhere....
+                from autobahn.asyncio.websocket import WebSocketServerProtocol, \
+                                                                                                WebSocketServerFactory
+                try:
+                  import asyncio
+                except ImportError:
+                  ## Trollius >= 0.3 was renamed
+                  print "WARNING: Loading Trollius as asyncio"
+                  import trollius as asyncio
+                self.server_thread = tk_rv.RvWsServerThread()
+                self.server_thread.factory = WebSocketServerFactory("ws://localhost:9000", debug = True)
+                self.server_thread.factory.protocol = tk_rv.RvWebsocketProtocol
+
+                loop = asyncio.get_event_loop()
+                self.server_thread.setLoop(loop)
+                self.server_thread.coro = loop.create_server(self.server_thread.factory, '127.0.0.1', 9000)
+                #self.server_thread.coro = loop.create_server(self.server_thread.factory, '0.0.0.0', 9000)
+                self.server_thread.server = loop.run_until_complete(self.server_thread.coro)
+
+                self.server_thread.start()

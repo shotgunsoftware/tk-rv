@@ -33,7 +33,7 @@ class ShotgunToolkit(rvtypes.MinorMode):
 
     def start_engine(self):
         engine = None
-        print("INFO: PYTHONPATH is %s" % os.environ.get("PYTHONPATH"))
+        print("INFO: tk-rv-mode: PYTHONPATH is %s" % os.environ.get("PYTHONPATH"))
         try:
             import tank
         except Exception, e:
