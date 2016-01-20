@@ -11,7 +11,7 @@ requires_shotgun_fields:
 
 
 # More verbose description of this item
-display_name: "Shotgun RV Toolkit Engine"
+display_name: "Shotgun Engine for RV"
 
 # Required minimum versions for this item to run
 requires_shotgun_version:
