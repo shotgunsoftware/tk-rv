@@ -24,6 +24,7 @@ from tank import TankError
 
 # from rv import commands
 import rv.qtutils
+from PySide import QtCore
 
 class RVEngine(Engine):
 
@@ -139,25 +140,8 @@ class RVEngine(Engine):
 
 
         def _get_dialog_parent(self):
-                # Find a parent for the dialog - this should be the RV mainWindow()
-                # from tank.platform.qt import QtGui
-                # import shiboken
-
-                # ptr = None
-                # for w in QtGui.qApp.topLevelWidgets():
-                #         self.log_debug(w.objectName())
-                #         if w.inherits("QMainWindow"):
-                #                 ptr = shiboken.getCppPointer(w)
-                #     #if w.objectName() == "rv-session000":
-                #     #    ptr = shiboken.getCppPointer(w)
-                #         #return shiboken.wrapInstance(long(ptr[0]), QtGui.QMainWindow)         
-                # if ptr:
-                #         self.log_debug("GET DIALOG PARENT")
-                #         return shiboken.wrapInstance(long(ptr[0]), QtGui.QMainWindow)
-                # self.log_error("CRAP dialog parent is none.")
-                # return None
-                # rv.qtutils wraps the shoboken stuff for you
-                self.log_debug('INFO: get_dialog_parent from rv.qtutils.sessionWindow') 
+                # self.log_debug('INFO: get_dialog_parent from QCoreApplication %r' % QtCore.QCoreApplication.instance())
+                # self.log_debug('INFO: get_dialog_parent from QApplication %r' % QtGui.QApplication.instance() )
                 return rv.qtutils.sessionWindow()
 
         def _get_gl_parent(self):
@@ -200,6 +184,6 @@ class RVEngine(Engine):
                         tk_rv = self.import_module("tk_rv")
                         self._menu_generator = tk_rv.MenuGenerator(self, self._menu_name)
                         self._menu_generator.create_menu()
-                        self._menu_generator._note_pad("")
+                        # self._menu_generator._note_pad("")
 
 

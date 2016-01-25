@@ -25,7 +25,6 @@ class MenuGenerator(object):
                 self.rvSessionQObject = rv.qtutils.sessionWindow()
                 # self.server_thread = None
 
- 
         # does this get called more than once?
         def create_menu(self, *args):
                 self._engine.log_debug("INFO: create_menu.")
@@ -45,7 +44,7 @@ class MenuGenerator(object):
                 # for AppCommand
                 # is this the preferred way?
                 tk_rv = self._engine.import_module("tk_rv")
-                self._engine.log_debug("INFO: create_menu tk_rv imported.")
+                self._engine.log_debug("create_menu tk_rv imported.")
 
                 for (cmd_name, cmd_details) in self._engine.commands.items():
                         menu_items.append(tk_rv.AppCommand(cmd_name, cmd_details))
@@ -64,14 +63,15 @@ class MenuGenerator(object):
 
                 # add separator
                 self._menu_handle.append(separator_item)
-                self._engine.log_debug("INFO: create_menu seperator")
+                self._engine.log_debug("create_menu seperator")
 
                 # separate menu items out into various sections
                 commands_by_app = {}
                 for cmd in menu_items:
                         if cmd.get_type() == "context_menu":
-                                menu_item = cmd.define_menu_item()
-                                self._context_menu[1].append(menu_item)
+                                #menu_item = cmd.define_menu_item()
+                                #self._context_menu[1].append(menu_item)
+                                pass
                         else:
                                 app_name = cmd.get_app_name()
                                 if app_name is None:
@@ -88,14 +88,14 @@ class MenuGenerator(object):
                 # update sgtk menu
                 sgtk_menu = [(self._menu_name, self._menu_handle)]
                 rv.commands.defineModeMenu(self._engine.toolkit_rv_mode_name, sgtk_menu)
-                self._engine.log_debug("INFO: create_menu done.")
+                self._engine.log_debug("create_menu done.")
 
 
         def destroy_menu(self):
                 #self._rv_pyside_test.deactivate()
                 #self._rv_pyside_test.close()
 
-                self._engine.log_debug("INFO: destroy_menu: %r." % self)
+                self._engine.log_debug("destroy_menu: %r." % self)
 
                 #self._engine._on_dialog_closed(self._sg_tk_test)
                 self._engine.__qt_widget_trash.append(self._sg_tk_test)
@@ -112,7 +112,7 @@ class MenuGenerator(object):
                 ctx = self._engine.context
                 ctx_name = str(ctx)
                 # cutz_item = ("Cutz", self._cutz, None, None)
-                env_item = ("Env Info", self._env_info, None, None)
+                # env_item = ("Env Info", self._env_info, None, None)
                 note_item = ("Note Info", self._note_pad, None, None)
  
                 # jump_shotgun_item = ("Jump To Shotgun", self._jump_to_sg, None, None)
@@ -120,12 +120,13 @@ class MenuGenerator(object):
  
                 separator_item = ("_", None, None, None)
  
-                ctx_menu = (ctx_name, [env_item, note_item, separator_item])
+                ctx_menu = (ctx_name, [note_item, separator_item])
                 return ctx_menu
 
         def _note_pad(self, event):
+
                 from PySide import QtGui
-                parent_widget = self._engine._get_dialog_parent()
+                parent_widget = rv.qtutils.sessionWindow() #self._engine._get_dialog_parent()
                 self.dock_thing = QtGui.QDockWidget("CutZ", parent_widget)
                 
                 parent_widget.setStyleSheet("QWidget { font-family: Proxima Nova; background: rgb(36,38,41); color: rgb(126,127,129); border-color: rgb(36,38,41);}")
@@ -134,29 +135,11 @@ class MenuGenerator(object):
                 
                 self.dock_thing.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
                 self._engine._get_top_toolbar().addAction(self.dock_thing.toggleViewAction())
-
-                # note_input = tank.platform.import_framework("tk-framework-qtwidgets", "note_input_widget")
-                # self._note_pad = note_input.NoteInputWidget(self.dock_thing)
-                # shotgun_model = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_model")
-                # activity_stream = tank.platform.import_framework("tk-framework-qtwidgets", "activity_stream")
-                # self._activity_stream = activity_stream.ActivityStreamWidget(self.dock_thing)
-                
-                # task_manager = tank.platform.import_framework("tk-framework-shotgunutils", "task_manager")
-                # self._task_manager = task_manager.BackgroundTaskManager(parent=self._activity_stream,
-                #                                                         start_processing=True,
-                #                                                         max_threads=2)
-                # shotgun_globals = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_globals")
-                # shotgun_globals.register_bg_task_manager(self._task_manager)
-                # self._activity_stream.set_bg_task_manager(self._task_manager)
-                # # self._model_activity = shotgun_model.SimpleShotgunModel(parent=self._activity_stream,
-                #                                                 bg_task_manager=self._task_manager)
-
-                # self._activity_stream.load_data( { "type": "Version", "id": 41})
-                #from . import RvActivityMode
                 
                 tk_rv = self._engine.import_module("tk_rv")
+                tk_rv_cuts = self._engine.import_module("tk_rv_cuts")
 
-                self.rv_activity_stream = tk_rv.RvActivityMode()
+                self.rv_activity_stream = tk_rv_cuts.RvActivityMode()
                 self.rv_activity_stream.init_ui(self.dock_thing)
                 rv.commands.activateMode("RvActivityMode")
                 #self.dock_thing.setMinimumSize(320,500)

@@ -4,6 +4,7 @@ import sys
 import traceback
 
 from rv import rvtypes
+from PySide import QtGui
 
 # Define the integration mode name we'll be useing.
 TK_RV_MODE_NAME = "tk_rv_mode"
@@ -16,6 +17,7 @@ os.environ["TK_RV_MODE_NAME"] = TK_RV_MODE_NAME
 class ShotgunToolkit(rvtypes.MinorMode):
 
     def __init__(self):
+
         super(ShotgunToolkit, self).__init__()
 
         # INITIALIZE mode
@@ -33,11 +35,11 @@ class ShotgunToolkit(rvtypes.MinorMode):
 
     def start_engine(self):
         engine = None
-        print("INFO: tk-rv-mode: PYTHONPATH is %s" % os.environ.get("PYTHONPATH"))
+
         try:
             import tank
         except Exception, e:
-            print("ERROR: Failed to import tank.")
+            sys.stderr.write("ERROR: Failed to import tank.")
             return engine
 
         # Defaults to tk-rv if no other engine name found in environment.
@@ -49,7 +51,7 @@ class ShotgunToolkit(rvtypes.MinorMode):
                 context = tank.context.deserialize(os.environ.get("TANK_CONTEXT"))
             except Exception, e:
                 err = traceback.format_exc()
-                print("WARNING: Could not create context! "
+                sys.stderr.write("WARNING: Could not create context! "
                       "Tank will be disabled: {0}".format(traceback.format_exc()))
                 return engine
         else:
@@ -57,20 +59,24 @@ class ShotgunToolkit(rvtypes.MinorMode):
             import tank_vendor.shotgun_authentication
 
             sa = tank_vendor.shotgun_authentication.ShotgunAuthenticator()
-            # sa.get_user_from_prompt()
-            user = sa.get_user()
-            sgtk.set_authenticated_user(user)
-            sg_conn = user.create_sg_connection()
             
+            # if you want to force a login, here's how.
+            # sa.get_user_from_prompt()
+            
+            user = sa.get_user()
+            sg_conn = user.create_sg_connection()
+            sgtk.set_authenticated_user(user)
             project = sg_conn.find("Project", [["name", "is", "Big Buck Bunny"]])
+
             tk = sgtk.sgtk_from_entity(project[0]["type"], project[0]["id"])
 
             context = tk.context_from_entity_dictionary(project[0])
 
         try:
+            sys.stderr.write("INFO: Starting TK-RV Engine") 
             engine = tank.platform.start_engine(engine_name, context.tank, context)
         except Exception, e:
-            print("WARNING: Could not start engine: "
+            sys.stderr.write("WARNING: Could not start engine: "
                   "{0}".format(traceback.format_exc()))
             return engine
 
