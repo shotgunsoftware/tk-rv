@@ -179,12 +179,16 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                                         self.load_data(entity)
                                         self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
 
+                                        s = self._tracking_info['shot']
+                                        (s_id, s_name, s_type) = s.split('|')
+                                        (n, shot_id) = s_id.split('_')
+
                                         version_filters = [ ['project','is', {'type':'Project','id':65}],
-                                            ['entity','is',{'type':'Shot','id':entity["id"]}] ]
+                                            ['entity','is',{'type':'Shot','id': int(shot_id) }] ]
                                         print "******************GRAPH STATE CHANGE WITH NEW FILTER!!!!!!! %r" % version_filters
 
                                         self.version_model.load_data(entity_type="Version", filters=version_filters)
-                                        
+
                                         
                         except Exception as e:
                                 print "TRACKING ERROR: %r" % e
@@ -224,10 +228,15 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                         entity["type"] = "Version"
                         entity["id"] = int(self._tracking_info['id'])
                         print entity
+
+                        s = self._tracking_info['shot']
+                        (s_id, s_name, s_type) = s.split('|')
+                        (n, shot_id) = s_id.split('_')
+
                         self.load_data(entity)
                         self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
                         version_filters = [ ['project','is', {'type':'Project','id':65}],
-                            ['entity','is',{'type':'Shot','id': entity["id"]}] ]
+                            ['entity','is',{'type':'Shot','id': shot_id}] ]
                         self.version_model.load_data(entity_type="Version", filters=version_filters)
 
                 except Exception as e:

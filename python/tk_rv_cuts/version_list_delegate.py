@@ -44,7 +44,6 @@ class RvVersionListDelegate(shotgun_view.WidgetDelegate):
                     
                     # get the shotgun query data for this model item     
                     sg_item = shotgun_model.get_sg_data(model_index)   
-                    print "SG ITEM HERE: %r" % sg_item
                     # fill the content of the widget with the data of the loaded Shotgun
                     code_str = sg_item.get("code")
                     type_str = sg_item.get("type")
