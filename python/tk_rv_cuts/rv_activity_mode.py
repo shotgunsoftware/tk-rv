@@ -14,6 +14,7 @@ shotgun_view = tank.platform.import_framework("tk-framework-qtwidgets", "views")
 shotgun_model = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_model")
 
 from .list_widget import ListWidget
+from .version_list_delegate import RvVersionListDelegate
 
 def groupMemberOfType(node, memberType):
     for n in rv.commands.nodesInGroup(node):
@@ -174,9 +175,16 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                                         entity = {}
                                         entity["type"] = "Version"
                                         entity["id"] = int(self._tracking_info['id'])
-                                        print entity
+                                        print "LOADING DATA WITH %r\n" % entity
                                         self.load_data(entity)
                                         self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
+
+                                        version_filters = [ ['project','is', {'type':'Project','id':65}],
+                                            ['entity','is',{'type':'Shot','id':entity["id"]}] ]
+                                        print "******************GRAPH STATE CHANGE WITH NEW FILTER!!!!!!! %r" % version_filters
+
+                                        self.version_model.load_data(entity_type="Version", filters=version_filters)
+                                        
                                         
                         except Exception as e:
                                 print "TRACKING ERROR: %r" % e
@@ -218,6 +226,9 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                         print entity
                         self.load_data(entity)
                         self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
+                        version_filters = [ ['project','is', {'type':'Project','id':65}],
+                            ['entity','is',{'type':'Shot','id': entity["id"]}] ]
+                        self.version_model.load_data(entity_type="Version", filters=version_filters)
 
                 except Exception as e:
                         print "OH NO %r" % e
@@ -236,7 +247,7 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                                 # ("source-group-complete", self.sourceSetup, ""),
                                 ("after-graph-view-change", self.viewChange, ""),
                                 ("frame-changed", self.frameChanged, ""),
-                                ("graph-node-inputs-changed", self.inputsChanged, ""),
+                                # ("graph-node-inputs-changed", self.inputsChanged, ""),
                                 ("incoming-source-path", self.sourcePath, ""),
                                 ("source-group-complete", self.sourceGroupComplete, ""),
                                 ("graph-state-change", self.graphStateChange, "")
@@ -291,20 +302,17 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 self.verticalLayout_3.setObjectName("verticalLayout_3")
                 
                 self.entity_version_view = QtGui.QListView(self.entity_version_tab)
-                # self._sg_tk_test = shotgun_view.ListWidget(parent_widget)
-                self.version_delegate  = RvVersionListDelegate(self.entity_version_view)
-                # Set up our data backend
-                self.version_model = shotgun_model.SimpleShotgunModel(self.entity_version_tab)
-
                 self.entity_version_view.setVerticalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
                 self.entity_version_view.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
                 self.entity_version_view.setUniformItemSizes(True)
                 self.entity_version_view.setObjectName("entity_version_view")
 
+                self.version_delegate  = RvVersionListDelegate(self.entity_version_view)
+                self.version_model = shotgun_model.SimpleShotgunModel(self.entity_version_tab)
+
                 # Tell the view to pull data from the model
                 self.entity_version_view.setModel(self.version_model)
                 self.entity_version_view.setItemDelegate(self.version_delegate)
- 
 
                 # load all assets from Shotgun 
                 # REMOVE THIS LATER 
@@ -331,74 +339,11 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 # self.tab_widget.setTabIcon(1, note_icon)
                 self.parent.setWidget(self.tab_widget)
 
-
-
-
         def activate(self):
                 rv.rvtypes.MinorMode.activate(self)
-                #self.dialog.show()
 
         def deactivate(self):
                 rv.rvtypes.MinorMode.deactivate(self)
-                #self.dialog.hide()
 
-class RvVersionListDelegate(shotgun_view.WidgetDelegate):
-
-    def __init__(self, view):
-        #from tank.platform.qt import QtCore, QtGui
-        #ListItemWidget.resize(366, 109)
-        shotgun_view.WidgetDelegate.__init__(self, view)
-
-    def _create_widget(self, parent):
-        """
-        Returns the widget to be used when creating items
-        """
-        return ListWidget(parent)
-        #return QtGui.QListView(parent)
-
-    def _on_before_paint(self, widget, model_index, style_options):
-        """
-        Called when a cell is being painted.
-        """   
-        
-        # extract the standard icon associated with the item
-        icon = model_index.data(QtCore.Qt.DecorationRole)
-        thumb = icon.pixmap(100)
-
-        #widget.thumbnail.setMaximumSize(QtCore.QSize(750, 750))
-        widget.set_thumbnail(thumb)
-        # widget.ui.thumbnail.setScaledContents(False)
-        
-        # get the shotgun query data for this model item     
-        sg_item = shotgun_model.get_sg_data(model_index)   
-
-        # fill the content of the widget with the data of the loaded Shotgun
-        # item
-        # print "NEARG"
-        # print(str(sg_item))
-        # print "WID: %r" % widget
-
-        code_str = sg_item.get("code")
-        type_str = sg_item.get("type")
-        id_str = sg_item.get("id")
-        header_str = "<br><b>%s</b>" % (code_str)
-        body_str = "<b>%s</b> &mdash; %s" % (type_str, id_str)
-        # print header_str
-        widget.set_text(header_str, body_str)
-
-    def _on_before_selection(self, widget, model_index, style_options):
-        """
-        Called when a cell is being selected.
-        """
-        # do std drawing first
-        self._on_before_paint(widget, model_index, style_options)        
-        widget.set_selected(True)        
-
-    def sizeHint(self, style_options, model_index):
-        """
-        Base the size on the icon size property of the view
-        """
-        #return shotgun_view.ListWidget.calculate_size()
-        return QtCore.QSize(150,100)
 
 

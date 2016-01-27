@@ -1,4 +1,10 @@
 
+modified env/includes/common_apps.yml for tk-framework-qtwidgets
+  tk-framework-qtwidgets_v2.x.x:
+    location: {name: tk-framework-qtwidgets, type: dev, path: "/Users/stewartb/git/tk-framework-qtwidgets"}
+
+
+
 flipping to another server
     this wasnt easy. 
     how do i de-auth from one server? 

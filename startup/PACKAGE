@@ -1,7 +1,7 @@
 package: Shotgun Toolkit for RV
 author: stewartb
 organization: Tweak Software
-version: 0.0.1
+version: 1.0
 requires: ''
 rv: 6.2
 optional: false

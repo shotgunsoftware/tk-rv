@@ -19,12 +19,6 @@ class MenuGenerator(object):
                 self._engine = engine
                 self._menu_name = menu_name
 
-                # kinda bogus stuff i made
-                # self._rv_pyside_test = None
-                # self._sg_tk_test = None
-                self.rvSessionQObject = rv.qtutils.sessionWindow()
-                # self.server_thread = None
-
         # does this get called more than once?
         def create_menu(self, *args):
                 self._engine.log_debug("INFO: create_menu.")
@@ -113,7 +107,7 @@ class MenuGenerator(object):
                 ctx_name = str(ctx)
                 # cutz_item = ("Cutz", self._cutz, None, None)
                 # env_item = ("Env Info", self._env_info, None, None)
-                note_item = ("Note Info", self._note_pad, None, None)
+                note_item = ("CutZ", self._cutz, None, None)
  
                 # jump_shotgun_item = ("Jump To Shotgun", self._jump_to_sg, None, None)
                 # jump_file_sys_item = ("Jump To File System", self._jump_to_fs, None, None)
@@ -161,60 +155,61 @@ class MenuGenerator(object):
 
 
         def _cutz(self, event):
-                pass
+                self._note_pad(event)
+                
 
 
                 
-shotgun_model = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_model")
-shotgun_view = tank.platform.import_framework("tk-framework-qtwidgets", "views")
+# shotgun_model = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_model")
+# shotgun_view = tank.platform.import_framework("tk-framework-qtwidgets", "views")
 
 
-class ExampleDelegate(shotgun_view.WidgetDelegate):
-        """
-        Shows an example how to use a shotgun_view.ListWidget in a std view.
-        """
+# class ExampleDelegate(shotgun_view.WidgetDelegate):
+#         """
+#         Shows an example how to use a shotgun_view.ListWidget in a std view.
+#         """
 
-        def __init__(self, view):
-                #from tank.platform.qt import QtCore, QtGui
-                #ListItemWidget.resize(366, 109)
-                shotgun_view.WidgetDelegate.__init__(self, view)
+#         def __init__(self, view):
+#                 #from tank.platform.qt import QtCore, QtGui
+#                 #ListItemWidget.resize(366, 109)
+#                 shotgun_view.WidgetDelegate.__init__(self, view)
 
-        def _create_widget(self, parent):
-                # return shotgun_view.ListWidget(parent)
-                return shotgun_view.ListWidget(parent)
+#         def _create_widget(self, parent):
+#                 # return shotgun_view.ListWidget(parent)
+#                 return shotgun_view.ListWidget(parent)
 
-        def _on_before_paint(self, widget, model_index, style_options):
-                # extract the standard icon associated with the item
-                icon = model_index.data(QtCore.Qt.DecorationRole)
-                thumb = icon.pixmap(100)
+#         def _on_before_paint(self, widget, model_index, style_options):
+#                 # extract the standard icon associated with the item
+#                 icon = model_index.data(QtCore.Qt.DecorationRole)
+#                 thumb = icon.pixmap(100)
 
-                #widget.thumbnail.setMaximumSize(QtCore.QSize(750, 750))
-                widget.set_thumbnail(thumb)
-                widget.ui.thumbnail.setScaledContents(False)
+#                 #widget.thumbnail.setMaximumSize(QtCore.QSize(750, 750))
+#                 widget.set_thumbnail(thumb)
+#                 widget.ui.thumbnail.setScaledContents(False)
                 
-                # get the shotgun query data for this model item     
-                sg_item = shotgun_model.get_sg_data(model_index)   
+#                 # get the shotgun query data for this model item     
+#                 sg_item = shotgun_model.get_sg_data(model_index)   
 
-                # fill the content of the widget with the data of the loaded Shotgun
-                # item
-                # print(str(sg_item))
+#                 # fill the content of the widget with the data of the loaded Shotgun
+#                 # item
+#                 # print(str(sg_item))
 
-                code_str = sg_item.get("code")
-                type_str = sg_item.get("type")
-                id_str = sg_item.get("id")
-                header_str = "<br><b>%s</b>" % (code_str)
-                body_str = "<b>%s</b> &mdash; %s" % (type_str, id_str)
-                widget.set_text(header_str, body_str)
+#                 code_str = sg_item.get("code")
+#                 type_str = sg_item.get("type")
+#                 id_str = sg_item.get("id")
+#                 header_str = "<br><b>%s</b>" % (code_str)
+#                 body_str = "<b>%s</b> &mdash; %s" % (type_str, id_str)
+#                 widget.set_text(header_str, body_str)
 
-        def _on_before_selection(self, widget, model_index, style_options):
-                # do std drawing first
-                self._on_before_paint(widget, model_index, style_options)        
-                widget.set_selected(True)        
+#         def _on_before_selection(self, widget, model_index, style_options):
+#                 # do std drawing first
+#                 self._on_before_paint(widget, model_index, style_options)        
+#                 widget.set_selected(True)        
 
-        def sizeHint(self, style_options, model_index):
-                """
-                Base the size on the icon size property of the view
-                """
-                #return shotgun_view.ListWidget.calculate_size()
+#         def sizeHint(self, style_options, model_index):
+#                 """
+#                 Base the size on the icon size property of the view
+#                 """
+#                 #return shotgun_view.ListWidget.calculate_size()
 
-                return QtCore.QSize(150,100)
+#                 return QtCore.QSize(150,100)

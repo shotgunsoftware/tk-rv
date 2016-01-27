@@ -9,6 +9,7 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 from .ui_list_widget import Ui_ListWidget
+
 import tank
 
 from tank.platform.qt import QtCore, QtGui
