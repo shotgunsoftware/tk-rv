@@ -13,8 +13,11 @@ import tank
 shotgun_view = tank.platform.import_framework("tk-framework-qtwidgets", "views")
 shotgun_model = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_model")
 
-from .list_widget import ListWidget
+#from .list_widget import ListWidget
 from .version_list_delegate import RvVersionListDelegate
+#from .shot_info_widget import ShotInfoWidget
+from .shot_info_delegate import RvShotInfoDelegate
+
 
 def groupMemberOfType(node, memberType):
     for n in rv.commands.nodesInGroup(node):
@@ -95,25 +98,21 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 event.reject()
                 try:
                         fileSource   = rv.commands.nodesOfType("#RVSource")
-                        print fileSource
                         self.propName =  "%s.%s" % (fileSource[0], "tracking.info")
                         tl = rv.commands.getStringProperty(self.propName)
-                        print tl
-
+ 
                         self._tracking_info= {}
                         
                         for i in range(0,len(tl)-1, 2):
                                 self._tracking_info[tl[i]] = tl[i+1]
-                        print self._tracking_info
-
+ 
                         # make an entity
                         entity = {}
                         entity["type"] = "Version"
                         entity["id"] = int(self._tracking_info['id'])
-                        print entity
                         if event.contents() == "viewGroup":
                                 self.load_data(entity)
-                                self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
+                                #self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
 
                 except Exception as e:
                         print "OH NO %r" % e
@@ -130,7 +129,6 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 event.reject()
                 try:
                         tl = rv.commands.getStringProperty(self.propName)
-                        print tl
 
                         self._tracking_info= {}
                         
@@ -142,9 +140,9 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                         entity = {}
                         entity["type"] = "Version"
                         entity["id"] = int(self._tracking_info['id'])
-                        print entity
                         self.load_data(entity)
-                        self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
+                        
+                        #self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
 
                 except Exception as e:
                         print "OH NO %r" % e
@@ -163,30 +161,30 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 if "tracking.info" in event.contents():
                         try:
                                 tl = rv.commands.getStringProperty(event.contents())
-                                print tl
                                 if "infoStatus" not in event.contents():
                                         self._tracking_info= {}
                                         
                                         for i in range(0,len(tl)-1, 2):
                                                 self._tracking_info[tl[i]] = tl[i+1]
-                                        print self._tracking_info
-
+                                        
                                         # make an entity
                                         entity = {}
                                         entity["type"] = "Version"
                                         entity["id"] = int(self._tracking_info['id'])
-                                        print "LOADING DATA WITH %r\n" % entity
+                                        
                                         self.load_data(entity)
-                                        self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
+                                        # self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
 
                                         s = self._tracking_info['shot']
                                         (s_id, s_name, s_type) = s.split('|')
                                         (n, shot_id) = s_id.split('_')
+                
+                                        shot_filters = [ ['id','is', int(shot_id)] ]
+                                        self.shot_info_model.load_data(entity_type="Shot", filters=shot_filters)
 
                                         version_filters = [ ['project','is', {'type':'Project','id':65}],
                                             ['entity','is',{'type':'Shot','id': int(shot_id) }] ]
-                                        print "******************GRAPH STATE CHANGE WITH NEW FILTER!!!!!!! %r" % version_filters
-
+                                        
                                         self.version_model.load_data(entity_type="Version", filters=version_filters)
 
                                         
@@ -207,36 +205,35 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 fileName     = fileNames[0]
                 ext          = fileName.split('.')[-1].upper()
                 mInfo        = rv.commands.sourceMediaInfo(source, None)
-                print "group: %s fileSource: %s fileName: %s" % (group, fileSource, fileName)
+                # print "group: %s fileSource: %s fileName: %s" % (group, fileSource, fileName)
                 propName = "%s.%s" % (fileSource, "tracking.info")
                 
                 self.propName = propName
                 self.group = group
                 try:
                         tl = rv.commands.getStringProperty(propName)
-                        print tl
-                        #import ast
-                        #tl = ast.literal_eval(tracking_str)
                         self._tracking_info= {}
                         
                         for i in range(0,len(tl)-1, 2):
                                 self._tracking_info[tl[i]] = tl[i+1]
-                        print self._tracking_info
-
+                        
                         # make an entity
                         entity = {}
                         entity["type"] = "Version"
                         entity["id"] = int(self._tracking_info['id'])
-                        print entity
-
+                        
                         s = self._tracking_info['shot']
                         (s_id, s_name, s_type) = s.split('|')
                         (n, shot_id) = s_id.split('_')
 
                         self.load_data(entity)
-                        self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
+                        
+                        shot_filters = [ ['id','is', int(shot_id)] ]
+                        self.shot_info_model.load_data(entity_type="Shot", filters=shot_filters)
+
+                        #self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
                         version_filters = [ ['project','is', {'type':'Project','id':65}],
-                            ['entity','is',{'type':'Shot','id': shot_id}] ]
+                            ['entity','is',{'type':'Shot','id': int(shot_id)}] ]
                         self.version_model.load_data(entity_type="Version", filters=version_filters)
 
                 except Exception as e:
@@ -244,7 +241,8 @@ class RvActivityMode(rv.rvtypes.MinorMode):
 
         def __init__(self):
                 rv.rvtypes.MinorMode.__init__(self)
-                self.parent = None
+                self.note_dock = None
+                self.tray_dock = None
                 self.tab_widget = None
 
                 self._tracking_info= {}
@@ -272,8 +270,12 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                print "ACTIVITY NODE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
                self.version_activity_stream.load_data(entity)
  
-        def init_ui(self, parent):
-                self.parent = parent
+        # parent is note_dock here...
+        def init_ui(self, note_dock, tray_dock):
+                self.note_dock = note_dock
+                self.tray_dock = tray_dock
+ 
+                # setup Tab widget with notes and versions, then setup tray 
                 self.tab_widget = QtGui.QTabWidget()
 
                 self.tab_widget.setFocusPolicy(QtCore.Qt.NoFocus)
@@ -281,9 +283,44 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 
                 activity_stream = tank.platform.import_framework("tk-framework-qtwidgets", "activity_stream")
 
-                self.activity_tab_frame = QtGui.QWidget(self.parent)
-                self.version_activity_stream = activity_stream.ActivityStreamWidget(self.activity_tab_frame)
+                self.activity_tab_frame = QtGui.QWidget(self.note_dock)
                 
+                self.notes_container_frame = QtGui.QFrame(self.activity_tab_frame)
+                self.cf_verticalLayout = QtGui.QVBoxLayout()
+                self.cf_verticalLayout.setObjectName("cf_verticalLayout")
+                self.notes_container_frame.setLayout(self.cf_verticalLayout)
+
+                self.shot_info = QtGui.QListView()
+                self.cf_verticalLayout.addWidget(self.shot_info)
+                # self.version_activity_stream.ui.verticalLayout.addWidget(self.shot_info)
+                
+                self.shot_info_model = shotgun_model.SimpleShotgunModel(self.activity_tab_frame)
+                self.shot_info.setModel(self.shot_info_model)
+
+                self.shot_info_delegate = RvShotInfoDelegate(self.shot_info)
+                self.shot_info.setItemDelegate(self.shot_info_delegate)
+
+                self.shot_info.setVerticalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
+                self.shot_info.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+                self.shot_info.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+                self.shot_info.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
+                self.shot_info.setUniformItemSizes(True)
+                self.shot_info.setObjectName("shot_info")
+
+
+
+                from .shot_info_widget import ShotInfoWidget
+                self.shot_info.setMinimumSize(ShotInfoWidget.calculate_size())
+                si_size = ShotInfoWidget.calculate_size()
+                self.shot_info.setMaximumSize(QtCore.QSize(si_size.width() + 10, si_size.height() + 10))
+                
+                shot_filters = [ ['id','is', 865] ]
+                self.shot_info_model.load_data(entity_type="Shot", filters=shot_filters)
+
+
+
+                self.version_activity_stream = activity_stream.ActivityStreamWidget(self.notes_container_frame)
+                self.cf_verticalLayout.addWidget(self.version_activity_stream)
 
                 self.tab_widget.setStyleSheet("QWidget { font-family: Proxima Nova; font-size: 16px; background: rgb(36,38,41); color: rgb(126,127,129); border-color: rgb(36,38,41);}\
                     QTabWidget::tab-bar { alignment: center; border: 2px solid rgb(236,38,41); } \
@@ -336,17 +373,17 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 
                 self.version_activity_stream.setObjectName("version_activity_stream")
                 
-                # self.tools_tab = QtGui.QWidget()
-                # self.tools_tab.setObjectName("tools_tab")
-                
-                self.tab_widget.addTab(self.version_activity_stream, "NOTES")                
-                self.tab_widget.addTab(self.entity_version_tab, "VERSIONS")
-                # self.tab_widget.addTab(self.tools_tab, "TOOLS")
+                self.tools_tab = QtGui.QWidget()
+                self.tools_tab.setObjectName("tools_tab")
 
-                # note_icon = QtGui.QIcon(':/resources/review_app_notes@2x.png')
-                # print "NOTE %r" % note_icon
-                # self.tab_widget.setTabIcon(1, note_icon)
-                self.parent.setWidget(self.tab_widget)
+                self.tab_widget.addTab(self.notes_container_frame, "NOTES")                
+                self.tab_widget.addTab(self.entity_version_tab, "VERSIONS")
+                self.tab_widget.addTab(self.tools_tab, "TOOLS")
+
+                self.note_dock.setWidget(self.tab_widget)
+
+                # setup lower tray
+                self.tray_list = QtGui.QListView(self.tray_dock)
 
         def activate(self):
                 rv.rvtypes.MinorMode.activate(self)

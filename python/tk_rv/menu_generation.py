@@ -117,28 +117,41 @@ class MenuGenerator(object):
                 ctx_menu = (ctx_name, [note_item, separator_item])
                 return ctx_menu
 
-        def _note_pad(self, event):
+        
+        # this needs to get pushed to cutz somehow
+        def _generate_cutz(self, event):
 
                 from PySide import QtGui
+
+                # ive been avoiding letting toolkit manage widget creation and letting rv do it instead.
                 parent_widget = rv.qtutils.sessionWindow() #self._engine._get_dialog_parent()
-                self.dock_thing = QtGui.QDockWidget("CutZ", parent_widget)
-                
+                self.notes_dock = QtGui.QDockWidget("CutZ", parent_widget)
+                self.tray_dock = QtGui.QDockWidget("Tray", parent_widget)
+
                 parent_widget.setStyleSheet("QWidget { font-family: Proxima Nova; background: rgb(36,38,41); color: rgb(126,127,129); border-color: rgb(36,38,41);}")
-                self.dock_thing.setStyleSheet("QWidget { font-family: Proxima Nova; background: rgb(36,38,41); color: rgb(126,127,129);} \
+                self.notes_dock.setStyleSheet("QWidget { font-family: Proxima Nova; background: rgb(36,38,41); color: rgb(126,127,129);} \
+                        QDockWidget::title { background: rgb(36,38,41); color: rgb(126,127,129); padding: 8px; border: 0px;}")
+                self.tray_dock.setStyleSheet("QWidget { font-family: Proxima Nova; background: rgb(36,38,41); color: rgb(126,127,129);} \
                         QDockWidget::title { background: rgb(36,38,41); color: rgb(126,127,129); padding: 8px; border: 0px;}")
                 
-                self.dock_thing.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
-                self._engine._get_top_toolbar().addAction(self.dock_thing.toggleViewAction())
+                
+                self.notes_dock.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
+                self.tray_dock.setAllowedAreas(QtCore.Qt.BottomDockWidgetArea)
+
+                self._engine._get_top_toolbar().addAction(self.notes_dock.toggleViewAction())
                 
                 tk_rv = self._engine.import_module("tk_rv")
                 tk_rv_cuts = self._engine.import_module("tk_rv_cuts")
 
                 self.rv_activity_stream = tk_rv_cuts.RvActivityMode()
-                self.rv_activity_stream.init_ui(self.dock_thing)
+                self.rv_activity_stream.init_ui(self.notes_dock, self.tray_dock)
+                
                 rv.commands.activateMode("RvActivityMode")
-                #self.dock_thing.setMinimumSize(320,500)
-                # self.dock_thing.resize(600,600)
-                parent_widget.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.dock_thing)
+                
+                parent_widget.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.notes_dock)
+                parent_widget.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.tray_dock)
+
+                # debug info and triggers a load_data for activity stream REMOVE LATER
                 self._env_info(event)
 
 
@@ -155,7 +168,7 @@ class MenuGenerator(object):
 
 
         def _cutz(self, event):
-                self._note_pad(event)
+                self._generate_cutz(event)
                 
 
 

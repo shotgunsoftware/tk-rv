@@ -60,16 +60,15 @@ class RVEngine(Engine):
                         self._ui_enabled = False
 
                 self._init_pyside()
-                # self._initialize_dark_look_and_feel()
+                self._initialize_dark_look_and_feel()
+ 
                 # unicode characters returned by the shotgun api need to be converted
                 # to display correctly in all of the app windows
                 from tank.platform.qt import QtCore
-                self.log_debug("INFO: importing QtCore %r" % QtCore)
                 # tell QT to interpret C strings as utf-8
                 utf8 = QtCore.QTextCodec.codecForName("utf-8")
                 QtCore.QTextCodec.setCodecForCStrings(utf8)
-                self.log_debug("set utf-8 codec for widget text")
-
+ 
         def destroy_engine(self):
                 self.log_debug("%r: Destroying tk-rv engine." % self)
                 if self._ui_enabled:
@@ -184,6 +183,6 @@ class RVEngine(Engine):
                         tk_rv = self.import_module("tk_rv")
                         self._menu_generator = tk_rv.MenuGenerator(self, self._menu_name)
                         self._menu_generator.create_menu()
-                        # self._menu_generator._note_pad("")
+                        # self._menu_generator._generate_cutz("")
 
 

@@ -14,7 +14,7 @@ import tank
 
 from tank.platform.qt import QtCore, QtGui
 
-class ListWidget(QtGui.QWidget):
+class VersionListWidget(QtGui.QWidget):
     """
     Simple list *item* widget which hosts a square thumbnail, header text
     and body text. It has a fixed size. Multiple of these items are typically

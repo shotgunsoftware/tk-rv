@@ -1,3 +1,25 @@
+                # # Create a standard QT Tree View
+                # view = QtGui.QTreeView(self.tools_tab)
+
+                # # Set up our data backend
+                # model = shotgun_model.SimpleShotgunModel(self.tools_tab)
+
+                # # Tell the view to pull data from the model
+                # view.setModel(model)
+
+                # # load all assets from Shotgun
+                # model.load_data(entity_type="Shot")
+
+
+
+
+
+
+
+                # note_icon = QtGui.QIcon(':/resources/review_app_notes@2x.png')
+                # self.tab_widget.setTabIcon(1, note_icon)
+
+
 
 modified env/includes/common_apps.yml for tk-framework-qtwidgets
   tk-framework-qtwidgets_v2.x.x:

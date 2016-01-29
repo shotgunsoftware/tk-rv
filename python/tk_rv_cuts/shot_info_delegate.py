@@ -7,7 +7,7 @@ import rv
 import rv.qtutils
 import tank
 
-from .version_list_widget import VersionListWidget
+from .shot_info_widget import ShotInfoWidget
 
 
 shotgun_view = tank.platform.import_framework("tk-framework-qtwidgets", "views")
@@ -15,7 +15,7 @@ shotgun_model = tank.platform.import_framework("tk-framework-shotgunutils", "sho
 
 
 
-class RvVersionListDelegate(shotgun_view.WidgetDelegate):
+class RvShotInfoDelegate(shotgun_view.WidgetDelegate):
 
         def __init__(self, view):
                     #from tank.platform.qt import QtCore, QtGui
@@ -26,14 +26,16 @@ class RvVersionListDelegate(shotgun_view.WidgetDelegate):
                     """
                     Returns the widget to be used when creating items
                     """
-                    return VersionListWidget(parent)
+                    #return ListWidget(parent)
+                    print "RvShotInfoDelegate _create_widget"
                     #return QtGui.QListView(parent)
+                    return ShotInfoWidget(parent)
 
         def _on_before_paint(self, widget, model_index, style_options):
                     """
                     Called when a cell is being painted.
                     """   
-                    
+                    # print "RvShotInfoDelegate %r %r %r" % ( widget, model_index, style_options)
                     # extract the standard icon associated with the item
                     icon = model_index.data(QtCore.Qt.DecorationRole)
                     thumb = icon.pixmap(100)
@@ -44,12 +46,14 @@ class RvVersionListDelegate(shotgun_view.WidgetDelegate):
                     
                     # get the shotgun query data for this model item     
                     sg_item = shotgun_model.get_sg_data(model_index)   
+                    
                     # fill the content of the widget with the data of the loaded Shotgun
                     code_str = sg_item.get("code")
                     type_str = sg_item.get("type")
                     id_str = sg_item.get("id")
-                    header_str = "<br>%s" % (code_str)
-                    body_str = " %s &mdash; %s" % (type_str, id_str)
+
+                    header_str = "%s" % (code_str)
+                    body_str = "%s %s" % (type_str, id_str)
                     widget.set_text(header_str, body_str)
 
         def _on_before_selection(self, widget, model_index, style_options):
@@ -64,7 +68,7 @@ class RvVersionListDelegate(shotgun_view.WidgetDelegate):
                     """
                     Base the size on the icon size property of the view
                     """
-                    #return shotgun_view.ListWidget.calculate_size()
-                    return QtCore.QSize(150,100)
+                    return ShotInfoWidget.calculate_size()
+                    #return QtCore.QSize(150,100)
 
 
