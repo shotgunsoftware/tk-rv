@@ -39,7 +39,7 @@ class ShotgunToolkit(rvtypes.MinorMode):
         try:
             import tank
         except Exception, e:
-            sys.stderr.write("ERROR: Failed to import tank.")
+            sys.stderr.write("ERROR: Failed to import tank.\n")
             return engine
 
         # Defaults to tk-rv if no other engine name found in environment.
@@ -66,7 +66,14 @@ class ShotgunToolkit(rvtypes.MinorMode):
             user = sa.get_user()
             sg_conn = user.create_sg_connection()
             sgtk.set_authenticated_user(user)
-            project = sg_conn.find("Project", [["name", "is", "Big Buck Bunny"]])
+            projectName = 'Big Buck Bunny'
+            if os.environ.get('TANK_PROJECT_NAME'):
+                projectName = os.environ.get('TANK_PROJECT_NAME')
+
+            sys.stderr.write("DEBUG: find project '%s'.\n" % projectName)
+            project = sg_conn.find("Project", [["name", "is", projectName]])
+            sys.stderr.write("DEBUG:     find result '%s'.\n" % str(project))
+
 
             tk = sgtk.sgtk_from_entity(project[0]["type"], project[0]["id"])
 

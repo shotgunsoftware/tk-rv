@@ -35,8 +35,13 @@ class RVEngine(Engine):
                 if self.context:
                         self.log_debug("TANK_CONTEXT is '%r'" % self.context)
                 else:
-                        self.log_debug("WARNING: No TANK_CONTEXT. USING big_buck_bunny again. Hey Rob where's my global context?")
-                        self.context = self.context_from_path('/shotgunlocal/big_buck_bunny')
+                        location = '/shotgunlocal/big_buck_bunny'
+                        if os.environ.get('TANK_CONTEXT_LOCATION'):
+                            location = os.environ.get('TANK_CONTEXT_LOCATION')
+
+                        self.log_debug("WARNING: No TANK_CONTEXT. USING %s again. Hey Rob where's my global context?" % location)
+                        self.context = self.context_from_path(location)
+                        self.log_debug("TANK_CONTEXT is '%r'" % self.context)
 
                 # self.log_debug("INFO: TANK_CONTEXT is now '%r'" % self.context)
 
