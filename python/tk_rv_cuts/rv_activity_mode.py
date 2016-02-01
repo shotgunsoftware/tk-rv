@@ -1,7 +1,5 @@
 from PySide.QtCore import QFile
 from PySide import QtGui, QtCore
-# from PySide.QtGui import QDoubleSpinBox, QDial, QCheckBox
-# from PySide.QtUiTools import QUiLoader
 
 import types
 import os
@@ -13,11 +11,9 @@ import tank
 shotgun_view = tank.platform.import_framework("tk-framework-qtwidgets", "views")
 shotgun_model = tank.platform.import_framework("tk-framework-shotgunutils", "shotgun_model")
 
-#from .list_widget import ListWidget
 from .version_list_delegate import RvVersionListDelegate
-#from .shot_info_widget import ShotInfoWidget
 from .shot_info_delegate import RvShotInfoDelegate
-
+from .tray_delegate import RvTrayDelegate
 
 def groupMemberOfType(node, memberType):
     for n in rv.commands.nodesInGroup(node):
@@ -26,8 +22,6 @@ def groupMemberOfType(node, memberType):
     return None
 
 class RvActivityMode(rv.rvtypes.MinorMode):
-
-
 
         # def sourceSetup (self, event):
         #         print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& sourceSetup"
@@ -307,8 +301,6 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 self.shot_info.setUniformItemSizes(True)
                 self.shot_info.setObjectName("shot_info")
 
-
-
                 from .shot_info_widget import ShotInfoWidget
                 self.shot_info.setMinimumSize(ShotInfoWidget.calculate_size())
                 si_size = ShotInfoWidget.calculate_size()
@@ -362,8 +354,10 @@ class RvActivityMode(rv.rvtypes.MinorMode):
 
                 # load all assets from Shotgun 
                 # REMOVE THIS LATER 
-                version_filters = [ ['project','is', {'type':'Project','id':65}],
-                                ['entity','is',{'type':'Shot','id': 861}] ]
+                version_filters = [ 
+                                    ['project','is', {'type':'Project','id':65}],
+                                    ['entity','is',{'type':'Shot','id': 861}] 
+                                ]
                 self.version_model.load_data(entity_type="Version", filters=version_filters)
                 
                 self.verticalLayout_3.addWidget(self.entity_version_view)
@@ -384,6 +378,46 @@ class RvActivityMode(rv.rvtypes.MinorMode):
 
                 # setup lower tray
                 self.tray_list = QtGui.QListView(self.tray_dock)
+                
+                # self.tray_model = shotgun_model.SimpleShotgunModel(self.tray_list)
+                from .tray_model import TrayModel
+                self.tray_model = TrayModel(self.tray_list)
+
+                self.tray_list.setModel(self.tray_model)
+
+
+
+                self.tray_delegate = RvTrayDelegate(self.tray_list)
+                self.tray_list.setItemDelegate(self.tray_delegate)
+
+                self.tray_list.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+                # self.tray_list.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+                self.tray_list.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
+                # self.tray_list.setUniformItemSizes(True)
+                self.tray_list.setObjectName("tray_list")
+
+                from .tray_widget import TrayWidget
+                self.tray_list.setMinimumSize(TrayWidget.calculate_size())
+                si_size = TrayWidget.calculate_size()
+                self.tray_list.setMaximumSize(QtCore.QSize(si_size.width() + 10, si_size.height() + 10))
+                
+                # tray_filters = [ ['entity','is',{'type':'Playlist','id': 4}] ]
+                # self.version_model.load_data(entity_type="Version", filters=version_filters)
+ 
+
+                tray_filters = [ ['id','is', 4] ]
+                hierarchy = None
+                self.tray_model.load_data(entity_type="Playlist", filters=tray_filters, fields=["code", "versions"], hierarchy=hierarchy)
+
+                #filters = [['id', 'is', 4]]
+                #fields = ['code', 'sg_sort_order', 'versions.Version.code', 'versions.Version.user', 'versions.Version.entity']
+                #order=[{'column':'sg_sort_order','direction':'asc'}]
+                
+                #self.tray_model.load_data(entity_type="Playlist", filters=filters, fields=fields)
+
+                # result = sg.find('PlaylistVersionConnection', filters, fields, order)
+                # self.tray_model.load_data(entity_type="Playlist", filters=tray_filters)
+
 
         def activate(self):
                 rv.rvtypes.MinorMode.activate(self)

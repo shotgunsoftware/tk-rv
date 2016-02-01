@@ -1,17 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'list_widget.ui'
-#
-#      by: pyside-uic 0.2.13 running on PySide 1.1.0
-#
-# WARNING! All changes made in this file will be lost!
-
 from tank.platform.qt import QtCore, QtGui
 
 class Ui_ListWidget(object):
     def setupUi(self, ListWidget):
-        # self.font = QtGui.QFontDatabase.addApplicationFont('/Users/stewartb/git/tk-rv/python/tk_rv/fonts/ProximaNova-Reg.otf')
-        # ListWidget.setFont(QtGui.QFont('Proxima Nova Regular', 30))
         ListWidget.setObjectName("ListWidget")
         ListWidget.resize(394, 93)
         self.horizontalLayout_3 = QtGui.QHBoxLayout(ListWidget)

@@ -107,7 +107,7 @@ class MenuGenerator(object):
                 ctx_name = str(ctx)
                 # cutz_item = ("Cutz", self._cutz, None, None)
                 # env_item = ("Env Info", self._env_info, None, None)
-                note_item = ("CutZ", self._cutz, None, None)
+                note_item = ("CutZ", self._cutz, "k",None)
  
                 # jump_shotgun_item = ("Jump To Shotgun", self._jump_to_sg, None, None)
                 # jump_file_sys_item = ("Jump To File System", self._jump_to_fs, None, None)
