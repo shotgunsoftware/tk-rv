@@ -173,11 +173,13 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                                         (s_id, s_name, s_type) = s.split('|')
                                         (n, shot_id) = s_id.split('_')
                 
-                                        shot_filters = [ ['id','is', int(shot_id)] ]
-                                        self.shot_info_model.load_data(entity_type="Shot", filters=shot_filters)
+                                        # display VERSION info not parent shot info
+                                        shot_filters = [ ['id','is', entity['id']] ]
+                                        self.shot_info_model.load_data(entity_type="Version", filters=shot_filters)
 
-                                        version_filters = [ ['project','is', {'type':'Project','id':65}],
-                                            ['entity','is',{'type':'Shot','id': int(shot_id) }] ]
+                                        # version_filters = [ ['project','is', {'type':'Project','id':71}],
+                                        #     ['entity','is',{'type':'Shot','id': int(shot_id) }] ]
+                                        version_filters = [ ['entity','is',{'type':'Shot','id': int(shot_id) }] ]
                                         
                                         self.version_model.load_data(entity_type="Version", filters=version_filters)
 
@@ -226,7 +228,7 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                         self.shot_info_model.load_data(entity_type="Shot", filters=shot_filters)
 
                         #self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
-                        version_filters = [ ['project','is', {'type':'Project','id':65}],
+                        version_filters = [ ['project','is', {'type':'Project','id':71}],
                             ['entity','is',{'type':'Shot','id': int(shot_id)}] ]
                         self.version_model.load_data(entity_type="Version", filters=version_filters)
 
@@ -306,8 +308,8 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 si_size = ShotInfoWidget.calculate_size()
                 self.shot_info.setMaximumSize(QtCore.QSize(si_size.width() + 10, si_size.height() + 10))
                 
-                shot_filters = [ ['id','is', 865] ]
-                self.shot_info_model.load_data(entity_type="Shot", filters=shot_filters)
+                shot_filters = [ ['id','is', 1161] ]
+                self.shot_info_model.load_data(entity_type="Shot", filters=shot_filters, fields=["code", "link"])
 
 
 
@@ -354,11 +356,11 @@ class RvActivityMode(rv.rvtypes.MinorMode):
 
                 # load all assets from Shotgun 
                 # REMOVE THIS LATER 
-                version_filters = [ 
-                                    ['project','is', {'type':'Project','id':65}],
-                                    ['entity','is',{'type':'Shot','id': 861}] 
-                                ]
-                self.version_model.load_data(entity_type="Version", filters=version_filters)
+                # version_filters = [ 
+                #                     ['project','is', {'type':'Project','id':65}],
+                #                     ['entity','is',{'type':'Shot','id': 861}] 
+                #                 ]
+                # self.version_model.load_data(entity_type="Version", filters=version_filters)
                 
                 self.verticalLayout_3.addWidget(self.entity_version_view)
 
@@ -405,9 +407,9 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 # self.version_model.load_data(entity_type="Version", filters=version_filters)
  
 
-                tray_filters = [ ['id','is', 4] ]
-                hierarchy = None
-                self.tray_model.load_data(entity_type="Playlist", filters=tray_filters, fields=["code", "versions"], hierarchy=hierarchy)
+                # tray_filters = [ ['id','is', 4] ]
+                # hierarchy = None
+                # self.tray_model.load_data(entity_type="Playlist", filters=tray_filters, fields=["code", "versions"], hierarchy=hierarchy)
 
                 #filters = [['id', 'is', 4]]
                 #fields = ['code', 'sg_sort_order', 'versions.Version.code', 'versions.Version.user', 'versions.Version.entity']

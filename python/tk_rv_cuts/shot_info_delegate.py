@@ -35,6 +35,9 @@ class RvShotInfoDelegate(shotgun_view.WidgetDelegate):
                     """
                     Called when a cell is being painted.
                     """   
+                    # get the shotgun query data for this model item     
+                    sg_item = shotgun_model.get_sg_data(model_index)   
+                    print sg_item
                     # print "RvShotInfoDelegate %r %r %r" % ( widget, model_index, style_options)
                     # extract the standard icon associated with the item
                     icon = model_index.data(QtCore.Qt.DecorationRole)
@@ -44,8 +47,6 @@ class RvShotInfoDelegate(shotgun_view.WidgetDelegate):
                     widget.set_thumbnail(thumb)
                     # widget.ui.thumbnail.setScaledContents(False)
                     
-                    # get the shotgun query data for this model item     
-                    sg_item = shotgun_model.get_sg_data(model_index)   
                     
                     # fill the content of the widget with the data of the loaded Shotgun
                     code_str = sg_item.get("code")
