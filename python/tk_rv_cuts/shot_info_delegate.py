@@ -37,7 +37,7 @@ class RvShotInfoDelegate(shotgun_view.WidgetDelegate):
                     """   
                     # get the shotgun query data for this model item     
                     sg_item = shotgun_model.get_sg_data(model_index)   
-                    print sg_item
+                    # print sg_item
                     # print "RvShotInfoDelegate %r %r %r" % ( widget, model_index, style_options)
                     # extract the standard icon associated with the item
                     icon = model_index.data(QtCore.Qt.DecorationRole)

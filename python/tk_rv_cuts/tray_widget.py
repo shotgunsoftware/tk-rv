@@ -87,13 +87,13 @@ class TrayWidget(QtGui.QWidget):
         Populate the lines of text in the widget
         """
         self.setToolTip("%s\n%s" % (header, body))        
-        self.ui.header_label.setText(header)
-        self.ui.body_label.setText(body)
+        # self.ui.header_label.setText(header)
+        # self.ui.body_label.setText(body)
 
     @staticmethod
     def calculate_size():
         """
         Calculates and returns a suitable size for this widget.
         """        
-        return QtCore.QSize(375, 90)
+        return QtCore.QSize(175, 90)
 

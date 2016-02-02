@@ -35,8 +35,7 @@ class RvTrayDelegate(shotgun_view.WidgetDelegate):
                     # get the shotgun query data for this model item     
                     sg_item = shotgun_model.get_sg_data(model_index)   
 
-                    print "PAINT PAINT %r" % model_index
-                    print sg_item
+                    # print sg_item
                     # ShotgunModel.SG_ASSOCIATED_FIELD_ROLE
                     # extract the standard icon associated with the item
                     icon = model_index.data(QtCore.Qt.DecorationRole)
@@ -48,19 +47,20 @@ class RvTrayDelegate(shotgun_view.WidgetDelegate):
                     
                     
                     # fill the content of the widget with the data of the loaded Shotgun
-                    code_str = sg_item.get("code")
-                    type_str = sg_item.get("type")
-                    id_str = sg_item.get("id")
+                    # code_str = sg_item.get("code")
+                    # type_str = sg_item.get("type")
+                    # id_str = sg_item.get("id")
 
-                    header_str = "%s" % (code_str)
-                    body_str = "%s %s" % (type_str, id_str)
-                    widget.set_text(header_str, body_str)
+                    # header_str = "%s" % (code_str)
+                    # body_str = "%s %s" % (type_str, id_str)
+                    # widget.set_text(header_str, body_str)
 
         def _on_before_selection(self, widget, model_index, style_options):
                     """
                     Called when a cell is being selected.
                     """
                     # do std drawing first
+                    print "_on_before_selection"
                     self._on_before_paint(widget, model_index, style_options)        
                     widget.set_selected(True)        
 

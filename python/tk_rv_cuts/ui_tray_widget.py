@@ -5,7 +5,7 @@ from tank.platform.qt import QtCore, QtGui
 class Ui_TrayWidget(object):
     def setupUi(self, TrayWidget):
         TrayWidget.setObjectName("TrayWidget")
-        TrayWidget.resize(394, 93)
+        # TrayWidget.resize(394, 93)
         self.horizontalLayout_3 = QtGui.QHBoxLayout(TrayWidget)
         self.horizontalLayout_3.setSpacing(1)
         self.horizontalLayout_3.setContentsMargins(1, 1, 1, 1)
@@ -30,15 +30,15 @@ class Ui_TrayWidget(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.header_label = QtGui.QLabel(self.box)
+        # self.header_label = QtGui.QLabel(self.box)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.header_label.sizePolicy().hasHeightForWidth())
-        self.header_label.setSizePolicy(sizePolicy)
-        self.header_label.setObjectName("header_label")
-        self.header_label.setStyleSheet("QLabel { font-family: Proxima Nova; }")
-        self.horizontalLayout.addWidget(self.header_label)
+        # sizePolicy.setHeightForWidth(self.header_label.sizePolicy().hasHeightForWidth())
+        # self.header_label.setSizePolicy(sizePolicy)
+        # self.header_label.setObjectName("header_label")
+        # self.header_label.setStyleSheet("QLabel { font-family: Proxima Nova; }")
+        # self.horizontalLayout.addWidget(self.header_label)
         self.button = QtGui.QToolButton(self.box)
         self.button.setPopupMode(QtGui.QToolButton.InstantPopup)
         self.button.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
@@ -46,20 +46,20 @@ class Ui_TrayWidget(object):
         self.horizontalLayout.addWidget(self.button)
         self.verticalLayout.addLayout(self.horizontalLayout)
 
-        self.body_label = QtGui.QLabel(self.box)
+        #self.body_label = QtGui.QLabel(self.box)
 
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.body_label.sizePolicy().hasHeightForWidth())
+        # sizePolicy.setHeightForWidth(self.body_label.sizePolicy().hasHeightForWidth())
 
-        self.body_label.setSizePolicy(sizePolicy)
-        self.body_label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.body_label.setWordWrap(True)
-        self.body_label.setObjectName("body_label")
-        self.body_label.setStyleSheet("QLabel { font-family: Proxima Nova; font-size: 21pt; }")
+        # self.body_label.setSizePolicy(sizePolicy)
+        # self.body_label.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        # self.body_label.setWordWrap(True)
+        # self.body_label.setObjectName("body_label")
+        # self.body_label.setStyleSheet("QLabel { font-family: Proxima Nova; font-size: 21pt; }")
 
-        self.verticalLayout.addWidget(self.body_label)
+        # self.verticalLayout.addWidget(self.body_label)
         self.horizontalLayout_2.addLayout(self.verticalLayout)
         self.horizontalLayout_3.addWidget(self.box)
 
@@ -67,11 +67,12 @@ class Ui_TrayWidget(object):
         QtCore.QMetaObject.connectSlotsByName(TrayWidget)
 
     def retranslateUi(self, TrayWidget):
-        TrayWidget.setWindowTitle(QtGui.QApplication.translate("TrayWidget", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.header_label.setText(QtGui.QApplication.translate("TrayWidget", "Header", None, QtGui.QApplication.UnicodeUTF8))
-        self.button.setText(QtGui.QApplication.translate("TrayWidget", "Actions", None, QtGui.QApplication.UnicodeUTF8))
-        self.body_label.setText(QtGui.QApplication.translate("TrayWidget", "TextLabel\n"
-"Foo\n"
-"Bar", None, QtGui.QApplication.UnicodeUTF8))
+        pass
+        #TrayWidget.setWindowTitle(QtGui.QApplication.translate("TrayWidget", "Form", None, QtGui.QApplication.UnicodeUTF8))
+        #self.header_label.setText(QtGui.QApplication.translate("TrayWidget", "Header", None, QtGui.QApplication.UnicodeUTF8))
+        #self.button.setText(QtGui.QApplication.translate("TrayWidget", "Actions", None, QtGui.QApplication.UnicodeUTF8))
+        #self.body_label.setText(QtGui.QApplication.translate("TrayWidget", "TextLabel\n"
+        # "Foo\n"
+        # "Bar", None, QtGui.QApplication.UnicodeUTF8))
 
 #from . import resources_rc

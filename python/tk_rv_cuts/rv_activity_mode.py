@@ -174,8 +174,8 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                                         (n, shot_id) = s_id.split('_')
                 
                                         # display VERSION info not parent shot info
-                                        shot_filters = [ ['id','is', entity['id']] ]
-                                        self.shot_info_model.load_data(entity_type="Version", filters=shot_filters)
+                                        # shot_filters = [ ['id','is', entity['id']] ]
+                                        # self.shot_info_model.load_data(entity_type="Version", filters=shot_filters)
 
                                         # version_filters = [ ['project','is', {'type':'Project','id':71}],
                                         #     ['entity','is',{'type':'Shot','id': int(shot_id) }] ]
@@ -224,8 +224,8 @@ class RvActivityMode(rv.rvtypes.MinorMode):
 
                         self.load_data(entity)
                         
-                        shot_filters = [ ['id','is', int(shot_id)] ]
-                        self.shot_info_model.load_data(entity_type="Shot", filters=shot_filters)
+                        # shot_filters = [ ['id','is', int(shot_id)] ]
+                        # self.shot_info_model.load_data(entity_type="Shot", filters=shot_filters)
 
                         #self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
                         version_filters = [ ['project','is', {'type':'Project','id':71}],
@@ -265,6 +265,8 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 #print tracking_str
                print "ACTIVITY NODE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
                self.version_activity_stream.load_data(entity)
+               shot_filters = [ ['id','is', entity['id']] ]
+               self.shot_info_model.load_data(entity_type="Version", filters=shot_filters)
  
         # parent is note_dock here...
         def init_ui(self, note_dock, tray_dock):
@@ -387,38 +389,55 @@ class RvActivityMode(rv.rvtypes.MinorMode):
 
                 self.tray_list.setModel(self.tray_model)
 
-
-
                 self.tray_delegate = RvTrayDelegate(self.tray_list)
                 self.tray_list.setItemDelegate(self.tray_delegate)
 
-                self.tray_list.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+                # self.tray_list.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
                 # self.tray_list.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
                 self.tray_list.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
-                # self.tray_list.setUniformItemSizes(True)
+                self.tray_list.setFlow(QtGui.QListView.LeftToRight)
+                self.tray_list.setUniformItemSizes(True)
+                self.tray_list.setMinimumSize(QtCore.QSize(900,150))
                 self.tray_list.setObjectName("tray_list")
 
                 from .tray_widget import TrayWidget
-                self.tray_list.setMinimumSize(TrayWidget.calculate_size())
-                si_size = TrayWidget.calculate_size()
-                self.tray_list.setMaximumSize(QtCore.QSize(si_size.width() + 10, si_size.height() + 10))
+                #self.tray_list.setMinimumSize(TrayWidget.calculate_size())
+                #si_size = TrayWidget.calculate_size()
+                #self.tray_list.setMaximumSize(QtCore.QSize(si_size.width() + 10, si_size.height() + 10)) 
+
+                tray_filters = [ ['sg_cut','is', {'type':'CustomEntity10', 'id': 8}] ]
+                self.tray_model.load_data(entity_type="CustomEntity11", filters=tray_filters, fields=["sg_cut_in", "sg_cut_out", "sg_cut_order", "sg_version.Version.sg_path_to_frames", "sg_version.Version.id"])
+
+                self.tray_list.clicked.connect(self.tray_clicked)
                 
-                # tray_filters = [ ['entity','is',{'type':'Playlist','id': 4}] ]
-                # self.version_model.load_data(entity_type="Version", filters=version_filters)
- 
-
-                # tray_filters = [ ['id','is', 4] ]
-                # hierarchy = None
-                # self.tray_model.load_data(entity_type="Playlist", filters=tray_filters, fields=["code", "versions"], hierarchy=hierarchy)
-
                 #filters = [['id', 'is', 4]]
                 #fields = ['code', 'sg_sort_order', 'versions.Version.code', 'versions.Version.user', 'versions.Version.entity']
                 #order=[{'column':'sg_sort_order','direction':'asc'}]
-                
-                #self.tray_model.load_data(entity_type="Playlist", filters=filters, fields=fields)
 
-                # result = sg.find('PlaylistVersionConnection', filters, fields, order)
-                # self.tray_model.load_data(entity_type="Playlist", filters=tray_filters)
+        def on_item_changed(curr, prev):
+            print curr, prev
+
+        def tray_clicked(self, index):
+            print "CLICK CLICK %r" % index
+            sg_item = shotgun_model.get_sg_data(index)  
+            print sg_item['sg_version.Version.id']
+            entity = {}
+            entity["type"] = "Version"
+            entity["id"] = sg_item['sg_version.Version.id']
+            
+            # s = self._tracking_info['shot']
+            # (s_id, s_name, s_type) = s.split('|')
+            # (n, shot_id) = s_id.split('_')
+
+            self.load_data(entity)
+            
+            # shot_filters = [ ['id','is', int(shot_id)] ]
+            # self.shot_info_model.load_data(entity_type="Shot", filters=shot_filters)
+
+            # version_filters = [ ['project','is', {'type':'Project','id':71}],
+            #     ['entity','is',{'type':'Shot','id': int(shot_id)}] ]
+            # self.version_model.load_data(entity_type="Version", filters=version_filters)
+            
 
 
         def activate(self):
