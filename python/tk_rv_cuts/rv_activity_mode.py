@@ -109,7 +109,8 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                                 #self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
 
                 except Exception as e:
-                        print "OH NO %r" % e
+                        pass
+                        # print "OH NO %r" % e
 
         def viewChange(self, event):
                 pass
@@ -118,28 +119,30 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 event.reject()
 
         def frameChanged(self, event):
-                print "################### frameChanged %r" % event
-                print event.contents()
+                # print "################### frameChanged %r" % event
+                # print event.contents()
                 event.reject()
-                try:
-                        tl = rv.commands.getStringProperty(self.propName)
+                # try:
+                #         tl = rv.commands.getStringProperty(self.propName)
 
-                        self._tracking_info= {}
+                #         # self._tracking_info= {}
                         
-                        for i in range(0,len(tl)-1, 2):
-                                self._tracking_info[tl[i]] = tl[i+1]
-                        print self._tracking_info
+                #         # for i in range(0,len(tl)-1, 2):
+                #         #         self._tracking_info[tl[i]] = tl[i+1]
+                #         # print self._tracking_info
 
-                        # make an entity
-                        entity = {}
-                        entity["type"] = "Version"
-                        entity["id"] = int(self._tracking_info['id'])
-                        self.load_data(entity)
+                #         # make an entity
+                #         entity = {}
+                #         entity["type"] = "Version"
+                #         entity["id"] = int(self._tracking_info['id'])
                         
-                        #self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
+                #         self.load_data(entity)
+                        
+                #         #self.version_activity_stream.ui.shot_info_widget.load_data_rv(self._tracking_info)
 
-                except Exception as e:
-                        print "OH NO %r" % e
+                # except Exception as e:
+                #         pass
+                        # print "OH NO %r" % e
 
         def sourcePath(self, event):
                 pass
@@ -185,7 +188,8 @@ class RvActivityMode(rv.rvtypes.MinorMode):
 
                                         
                         except Exception as e:
-                                print "TRACKING ERROR: %r" % e
+                                pass
+                                #print "TRACKING ERROR: %r" % e
 
         def sourceGroupComplete(self, event):
                 print "################### sourceGroupComplete %r" % event
@@ -233,7 +237,8 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                         self.version_model.load_data(entity_type="Version", filters=version_filters)
 
                 except Exception as e:
-                        print "OH NO %r" % e
+                        pass
+                        # print "OH NO %r" % e
 
         def __init__(self):
                 rv.rvtypes.MinorMode.__init__(self)
@@ -258,6 +263,8 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                         None,
                         None);
 
+                rv.extra_commands.toggleFullScreen()
+                
 
         def load_data(self, entity):
                 # our session property is called tracking
@@ -381,9 +388,10 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 self.note_dock.setWidget(self.tab_widget)
 
                 # setup lower tray
+
+
                 self.tray_list = QtGui.QListView(self.tray_dock)
-                
-                # self.tray_model = shotgun_model.SimpleShotgunModel(self.tray_list)
+
                 from .tray_model import TrayModel
                 self.tray_model = TrayModel(self.tray_list)
 
@@ -392,27 +400,98 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 self.tray_delegate = RvTrayDelegate(self.tray_list)
                 self.tray_list.setItemDelegate(self.tray_delegate)
 
-                # self.tray_list.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-                # self.tray_list.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+                self.tray_list.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+                self.tray_list.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
                 self.tray_list.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
                 self.tray_list.setFlow(QtGui.QListView.LeftToRight)
                 self.tray_list.setUniformItemSizes(True)
                 self.tray_list.setMinimumSize(QtCore.QSize(900,150))
                 self.tray_list.setObjectName("tray_list")
 
-                from .tray_widget import TrayWidget
-                #self.tray_list.setMinimumSize(TrayWidget.calculate_size())
-                #si_size = TrayWidget.calculate_size()
-                #self.tray_list.setMaximumSize(QtCore.QSize(si_size.width() + 10, si_size.height() + 10)) 
-
                 tray_filters = [ ['sg_cut','is', {'type':'CustomEntity10', 'id': 8}] ]
-                self.tray_model.load_data(entity_type="CustomEntity11", filters=tray_filters, fields=["sg_cut_in", "sg_cut_out", "sg_cut_order", "sg_version.Version.sg_path_to_frames", "sg_version.Version.id"])
+                tray_fields= ["sg_cut_in", "sg_cut_out", "sg_cut_order", 
+                        "sg_version.Version.sg_path_to_frames", "sg_version.Version.id",
+                        "sg_version.Version.sg_first_frame", "sg_version.Version.sg_last_frame"]
 
+                self.tray_model.load_data(entity_type="CustomEntity11", filters=tray_filters, fields=tray_fields)
                 self.tray_list.clicked.connect(self.tray_clicked)
+            
+                self.tray_model.data_refreshed.connect(self.on_data_refreshed)
+                self.tray_model.cache_loaded.connect(self.on_cache_loaded)
+
+        def on_cache_loaded(self, stuff):
+            print "CACHE LOADED %r" % stuff
+
+        def on_data_refreshed(self, was_refreshed):
+                print "DATA_REFRESHED: %r" % was_refreshed
+
+                ids = self.tray_model.entity_ids
+                our_type =  self.tray_model.get_entity_type()
+
+                #print "ITEM: %r" % self.tray_model.index_from_entity(our_type, ids[0])
+
+                #       sourceNode = rve.nodesInGroupOfType (sources[i], "RVFileSource")[0]
+                #       (realMedia,frame) = rvc.sequenceOfFile (shot.file)
+                #           seq = rvc.newNode ("RVSequenceGroup")
+                        # rve.setUIName (seq, self._playlist.name)
+                        # rvc.setNodeInputs (seq, newSources)
+                        # rvc.setViewNode (seq)
+
+                #                         self._state = "loading media"
+                # self._preSources = rvc.nodesOfType("RVSourceGroup")
+                # deb ("calling addSources, media = %s" % media)
+                # rvc.addSources(media)
+
+
+
+                nums = []
+                frames = []
+                ins = []
+                outs = []
+                n = 0
+                t = 1
                 
-                #filters = [['id', 'is', 4]]
-                #fields = ['code', 'sg_sort_order', 'versions.Version.code', 'versions.Version.user', 'versions.Version.entity']
-                #order=[{'column':'sg_sort_order','direction':'asc'}]
+                for i in ids:
+                        item = self.tray_model.index_from_entity(our_type, i)
+                        sg_item = shotgun_model.get_sg_data(item)
+                        # print "ODR: %r" % sg_item
+                        f = sg_item['sg_version.Version.sg_path_to_frames']
+                        rv.commands.addSource(f)
+                        nums.append(n)
+                        n = n + 1
+                        ins.append( sg_item['sg_cut_in'] )
+                        outs.append( sg_item['sg_cut_out'] )
+                        frames.append(t)
+                        t = sg_item['sg_cut_out'] - sg_item['sg_cut_in'] + 1 + t
+                
+                nums.append(0)
+                ins.append(0)
+                outs.append(0)
+                frames.append(t)
+
+                self.cut_seq = rv.commands.newNode("RVSequenceGroup")
+                
+                # need to get the name into the query...
+                rv.extra_commands.setUIName(self.cut_seq, "CUTZ cut")
+                names = rv.extra_commands.nodesInGroupOfType(self.cut_seq, 'RVSequence')
+                
+                k = "%s.mode.autoEDL" % names[0]
+                if not rv.commands.propertyExists(k):
+                        rv.commands.newProperty(k, rv.commands.IntType, 1)
+                
+                
+                rv.commands.setIntProperty('%s.edl.source' % names[0], nums, True)
+                rv.commands.setIntProperty('%s.edl.frame' % names[0], frames, True)
+                rv.commands.setIntProperty('%s.edl.in' % names[0], ins, True)
+                rv.commands.setIntProperty('%s.edl.out' % names[0], outs, True)
+                
+                rv.commands.setIntProperty("%s.mode.autoEDL" % names[0], [0])
+                rv.commands.setIntProperty("%s.mode.useCutInfo" % names[0], [0])
+
+                sources = rv.commands.nodesOfType("RVSourceGroup")
+                rv.commands.setNodeInputs(self.cut_seq, sources)
+                rv.commands.setViewNode(self.cut_seq)
+                
 
         def on_item_changed(curr, prev):
             print curr, prev

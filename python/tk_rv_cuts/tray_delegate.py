@@ -20,6 +20,7 @@ class RvTrayDelegate(shotgun_view.WidgetDelegate):
         def __init__(self, view):
                     #from tank.platform.qt import QtCore, QtGui
                     #ListItemWidget.resize(366, 109)
+                    self.tray_view = view
                     shotgun_view.WidgetDelegate.__init__(self, view)
 
         def _create_widget(self, parent):
@@ -35,7 +36,13 @@ class RvTrayDelegate(shotgun_view.WidgetDelegate):
                     # get the shotgun query data for this model item     
                     sg_item = shotgun_model.get_sg_data(model_index)   
 
-                    # print sg_item
+                    # ptf = sg_item.get('sg_version.Version.sg_path_to_frames')
+                    # rv.commands.addSource(ptf)
+                    # if widget.take_ptf == None:
+                    #     widget.take_ptf = ptf
+                    #     self.tray_view.ptfs.append(ptf)
+                    #     print sg_item
+                    # print "WIDGET %r" % widget
                     # ShotgunModel.SG_ASSOCIATED_FIELD_ROLE
                     # extract the standard icon associated with the item
                     icon = model_index.data(QtCore.Qt.DecorationRole)
