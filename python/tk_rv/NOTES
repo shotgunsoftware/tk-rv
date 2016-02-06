@@ -1,3 +1,36 @@
+ 
+                # self.tray_list.setStyleSheet('QListWidget: { background: #ff0000; border 2px solid #00ff00; }')
+
+                # style = '''
+                # QListView {
+                #     show-decoration-selected: 1;
+                #     selection-color: white;
+                #     selection-background-color: #0068d9;
+                # }
+
+                # QListView::item:selected:active:hover{
+                #     background-color:red; color: white;
+                # }
+                # QListView::item:selected:active:!hover{
+                #     background-color: #0068d9; color: white;
+                # }
+                # QListView::item:selected:!active{
+                #     background-color:yellow; color: white;
+                # }
+                # QListView::item:!selected:hover{
+                #     background-color:green; color: white;
+                # }
+                # '''
+                # self.tray_dock.setStyleSheet(style)
+
+
+
+
+
+
+
+
+
                 # # Create a standard QT Tree View
                 # view = QtGui.QTreeView(self.tools_tab)
 

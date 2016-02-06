@@ -23,6 +23,7 @@ def groupMemberOfType(node, memberType):
 
 class RvActivityMode(rv.rvtypes.MinorMode):
 
+
         # def sourceSetup (self, event):
         #         print "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& sourceSetup"
         #         print event.contents()
@@ -245,6 +246,7 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 self.note_dock = None
                 self.tray_dock = None
                 self.tab_widget = None
+                self.mini_cut = False
 
                 self._tracking_info= {}
 
@@ -270,10 +272,10 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 # our session property is called tracking
                 #tracking_str = rv.commands.getStringProperty('sourceGroup000001_source.tracking.info ')
                 #print tracking_str
-               print "ACTIVITY NODE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-               self.version_activity_stream.load_data(entity)
-               shot_filters = [ ['id','is', entity['id']] ]
-               self.shot_info_model.load_data(entity_type="Version", filters=shot_filters)
+                # print "ACTIVITY NODE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                self.version_activity_stream.load_data(entity)
+                shot_filters = [ ['id','is', entity['id']] ]
+                self.shot_info_model.load_data(entity_type="Version", filters=shot_filters)
  
         # parent is note_dock here...
         def init_ui(self, note_dock, tray_dock):
@@ -388,24 +390,84 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 self.note_dock.setWidget(self.tab_widget)
 
                 # setup lower tray
+                self.tray_dock.setMinimumSize(QtCore.QSize(1200,160))
+                
+                self.tray_frame = QtGui.QFrame(self.tray_dock)
+                self.tray_frame.setMinimumSize(QtCore.QSize(1200,130))
+                self.tray_frame_vlayout = QtGui.QVBoxLayout(self.tray_frame)
 
 
-                self.tray_list = QtGui.QListView(self.tray_dock)
+                sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+                sizePolicy.setHorizontalPolicy(QtGui.QSizePolicy.Expanding)
+                sizePolicy.setHorizontalStretch(0)
+                sizePolicy.setVerticalStretch(0)
+                self.tray_frame.setSizePolicy(sizePolicy)
 
+                # tray button bar
+                self.tray_button_bar = QtGui.QFrame(self.tray_dock)
+                self.tray_button_bar.setMinimumSize(QtCore.QSize(1000,25))
+                # self.tray_button_bar.setStyleSheet('QFrame { border: 1px solid #ff0000; padding: 1px; } QPushButton { margin: 0px; }')
+                sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+                sizePolicy.setHorizontalPolicy(QtGui.QSizePolicy.Expanding)
+                sizePolicy.setHorizontalStretch(1)
+                sizePolicy.setVerticalStretch(0)
+                self.tray_button_bar.setSizePolicy(sizePolicy)
+
+                self.tray_button_bar_hlayout = QtGui.QHBoxLayout(self.tray_button_bar)
+                self.tray_button_bar_hlayout.setContentsMargins(0, 0, 0, 0)
+                
+                self.tray_button_one = QtGui.QPushButton()
+                self.tray_button_one.setStyleSheet('QPushButton { border: 1px solid #00ff00; margin: 0px;}')
+                self.tray_button_bar_hlayout.addWidget(self.tray_button_one)
+
+                self.tray_button_two = QtGui.QPushButton()
+                self.tray_button_two.setStyleSheet('QPushButton { border: 1px solid #00fff0; }')
+                self.tray_button_bar_hlayout.addWidget(self.tray_button_two)
+
+                self.tray_button_bar_hlayout.addStretch(1)
+
+                self.tray_button_entire_cut = QtGui.QPushButton()
+                self.tray_button_entire_cut.setText('Entire Cut')
+                #self.tray_button_three.setStyleSheet('QPushButton { border: 1px solid #000ff0; }')
+                self.tray_button_bar_hlayout.addWidget(self.tray_button_entire_cut)
+                self.tray_button_entire_cut.clicked.connect(self.on_entire_cut)
+
+                self.tray_button_mini_cut = QtGui.QPushButton()
+                self.tray_button_mini_cut.setText('Mini Cut')
+                #self.tray_button_four.setStyleSheet('QPushButton { border: 1px solid #f00ff0; }')
+                self.tray_button_bar_hlayout.addWidget(self.tray_button_mini_cut)
+                self.tray_button_mini_cut.clicked.connect(self.on_mini_cut)
+
+                self.tray_button_bar_hlayout.addStretch(1)
+
+                self.tray_button_five = QtGui.QPushButton()
+                self.tray_button_five.setStyleSheet('QPushButton { border: 1px solid #f0f000; }')
+                self.tray_button_bar_hlayout.addWidget(self.tray_button_five)
+
+                self.tray_frame_vlayout.addWidget(self.tray_button_bar)
+
+                self.tray_list = QtGui.QListView()
+                self.tray_frame_vlayout.addWidget(self.tray_list)
+                
                 from .tray_model import TrayModel
                 self.tray_model = TrayModel(self.tray_list)
+                from .tray_sort_filter import TraySortFilter
+                self.tray_proxyModel =  TraySortFilter(self.tray_list)
+                self.tray_proxyModel.setSourceModel(self.tray_model)
 
-                self.tray_list.setModel(self.tray_model)
+                self.tray_list.setModel(self.tray_proxyModel)
 
                 self.tray_delegate = RvTrayDelegate(self.tray_list)
                 self.tray_list.setItemDelegate(self.tray_delegate)
 
+                self.tray_list.setSelectionBehavior(QtGui.QAbstractItemView.SelectItems)
+                self.tray_list.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
                 self.tray_list.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
                 self.tray_list.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
                 self.tray_list.setHorizontalScrollMode(QtGui.QAbstractItemView.ScrollPerPixel)
                 self.tray_list.setFlow(QtGui.QListView.LeftToRight)
                 self.tray_list.setUniformItemSizes(True)
-                self.tray_list.setMinimumSize(QtCore.QSize(900,150))
+                #self.tray_list.setMinimumSize(QtCore.QSize(1000,80))
                 self.tray_list.setObjectName("tray_list")
 
                 tray_filters = [ ['sg_cut','is', {'type':'CustomEntity10', 'id': 8}] ]
@@ -413,17 +475,58 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                         "sg_version.Version.sg_path_to_frames", "sg_version.Version.id",
                         "sg_version.Version.sg_first_frame", "sg_version.Version.sg_last_frame"]
 
-                self.tray_model.load_data(entity_type="CustomEntity11", filters=tray_filters, fields=tray_fields)
-                self.tray_list.clicked.connect(self.tray_clicked)
-            
+                orders = [{'field_name':'sg_cut_order','direction':'asc'}]
+                self.tray_model.load_data(entity_type="CustomEntity11", filters=tray_filters, fields=tray_fields, order=orders)
+                
                 self.tray_model.data_refreshed.connect(self.on_data_refreshed)
                 self.tray_model.cache_loaded.connect(self.on_cache_loaded)
 
+                self.tray_list.clicked.connect(self.tray_clicked)
+                self.tray_list.activated.connect(self.tray_activated)
+                self.tray_list.doubleClicked.connect(self.tray_double_clicked)
+
+                # st = "QListWidget::item { border: 2px solid #00ff00;} \n\
+                # QListWidget::item:selected { background-color: red;} \
+                # QListView::item:hover { background: #f000f0;}"
+                # self.tray_dock.setStyleSheet(st)
+
+        def on_entire_cut(self):
+                print "ON ENTIRE CUT"
+                self.mini_cut = False
+ 
+                e_ids = self.tray_model.entity_ids
+                e_type = self.tray_model.get_entity_type()
+                
+                rv.commands.setIntProperty('%s.edl.source' % self.cut_seq_name, self.rv_source_nums, True)
+                rv.commands.setIntProperty('%s.edl.frame' % self.cut_seq_name, self.rv_frames, True)
+                rv.commands.setIntProperty('%s.edl.in' % self.cut_seq_name, self.rv_ins, True)
+                rv.commands.setIntProperty('%s.edl.out' % self.cut_seq_name, self.rv_outs, True)
+                
+                # rv.commands.setIntProperty("%s.mode.autoEDL" % self.cut_seq_name, [0])
+                # rv.commands.setIntProperty("%s.mode.useCutInfo" % self.cut_seq_name, [0])
+
+                sources = rv.commands.nodesOfType("RVSourceGroup")
+                rv.commands.setNodeInputs(self.cut_seq, sources)
+                rv.commands.setViewNode(self.cut_seq)
+
+        def on_mini_cut(self):
+                print "ON MINI CUT"
+                print "current selection: %r" % self.tray_list.currentIndex()
+                self.mini_cut = True
+                # get current selection
+                cur_index = self.tray_list.currentIndex()
+                # get cut info from somewhere... model? sg_data
+                # get prev and next from current... selRange
+                # get shots on either side
+                # tear down graph, build new one
+
         def on_cache_loaded(self, stuff):
-            print "CACHE LOADED %r" % stuff
+                print "CACHE LOADED %r" % stuff
 
         def on_data_refreshed(self, was_refreshed):
                 print "DATA_REFRESHED: %r" % was_refreshed
+
+                self.tray_proxyModel.sort(0, QtCore.Qt.AscendingOrder)
 
                 ids = self.tray_model.entity_ids
                 our_type =  self.tray_model.get_entity_type()
@@ -442,51 +545,50 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 # deb ("calling addSources, media = %s" % media)
                 # rvc.addSources(media)
 
-
-
-                nums = []
-                frames = []
-                ins = []
-                outs = []
+                self.rv_source_nums = []
+                self.rv_frames = []
+                self.rv_ins = []
+                self.rv_outs = []
                 n = 0
                 t = 1
                 
                 for i in ids:
                         item = self.tray_model.index_from_entity(our_type, i)
                         sg_item = shotgun_model.get_sg_data(item)
-                        # print "ODR: %r" % sg_item
+                        print "ODR: %r" % sg_item
                         f = sg_item['sg_version.Version.sg_path_to_frames']
                         rv.commands.addSource(f)
-                        nums.append(n)
+                        self.rv_source_nums.append(n)
                         n = n + 1
-                        ins.append( sg_item['sg_cut_in'] )
-                        outs.append( sg_item['sg_cut_out'] )
-                        frames.append(t)
+                        self.rv_ins.append( sg_item['sg_cut_in'] )
+                        self.rv_outs.append( sg_item['sg_cut_out'] )
+                        self.rv_frames.append(t)
                         t = sg_item['sg_cut_out'] - sg_item['sg_cut_in'] + 1 + t
                 
-                nums.append(0)
-                ins.append(0)
-                outs.append(0)
-                frames.append(t)
+                self.rv_source_nums.append(0)
+                self.rv_ins.append(0)
+                self.rv_outs.append(0)
+                self.rv_frames.append(t)
 
                 self.cut_seq = rv.commands.newNode("RVSequenceGroup")
                 
                 # need to get the name into the query...
                 rv.extra_commands.setUIName(self.cut_seq, "CUTZ cut")
-                names = rv.extra_commands.nodesInGroupOfType(self.cut_seq, 'RVSequence')
-                
-                k = "%s.mode.autoEDL" % names[0]
+                self.cut_seq_name = rv.extra_commands.nodesInGroupOfType(self.cut_seq, 'RVSequence')[0]
+
+                k = "%s.mode.autoEDL" % str(self.cut_seq_name)
+                print "ADDING %s" % k
                 if not rv.commands.propertyExists(k):
                         rv.commands.newProperty(k, rv.commands.IntType, 1)
                 
                 
-                rv.commands.setIntProperty('%s.edl.source' % names[0], nums, True)
-                rv.commands.setIntProperty('%s.edl.frame' % names[0], frames, True)
-                rv.commands.setIntProperty('%s.edl.in' % names[0], ins, True)
-                rv.commands.setIntProperty('%s.edl.out' % names[0], outs, True)
+                rv.commands.setIntProperty('%s.edl.source' % self.cut_seq_name, self.rv_source_nums, True)
+                rv.commands.setIntProperty('%s.edl.frame' % self.cut_seq_name, self.rv_frames, True)
+                rv.commands.setIntProperty('%s.edl.in' % self.cut_seq_name, self.rv_ins, True)
+                rv.commands.setIntProperty('%s.edl.out' % self.cut_seq_name, self.rv_outs, True)
                 
-                rv.commands.setIntProperty("%s.mode.autoEDL" % names[0], [0])
-                rv.commands.setIntProperty("%s.mode.useCutInfo" % names[0], [0])
+                rv.commands.setIntProperty("%s.mode.autoEDL" % self.cut_seq_name, [0])
+                rv.commands.setIntProperty("%s.mode.useCutInfo" % self.cut_seq_name, [0])
 
                 sources = rv.commands.nodesOfType("RVSourceGroup")
                 rv.commands.setNodeInputs(self.cut_seq, sources)
@@ -494,30 +596,72 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 
 
         def on_item_changed(curr, prev):
-            print curr, prev
+                print "item changed"
+                print curr, prev
+
+        def tray_double_clicked(self, index):
+                print "DOUBLE CLICK %r" % index
+                sg_item = shotgun_model.get_sg_data(index)
+                print sg_item
+
+        def tray_activated(self, index):
+                print "Tray Activated! %r" % index
+
 
         def tray_clicked(self, index):
-            print "CLICK CLICK %r" % index
-            sg_item = shotgun_model.get_sg_data(index)  
-            print sg_item['sg_version.Version.id']
-            entity = {}
-            entity["type"] = "Version"
-            entity["id"] = sg_item['sg_version.Version.id']
-            
-            # s = self._tracking_info['shot']
-            # (s_id, s_name, s_type) = s.split('|')
-            # (n, shot_id) = s_id.split('_')
+                print "MODE_TRAY_CLICKED %r" % index.row()
+                if self.mini_cut:
+                        e_ids = self.tray_model.entity_ids
+                        e_type = self.tray_model.get_entity_type()
 
-            self.load_data(entity)
-            
-            # shot_filters = [ ['id','is', int(shot_id)] ]
-            # self.shot_info_model.load_data(entity_type="Shot", filters=shot_filters)
+                        mini_sources = []
+                        mini_frames = []
+                        mini_ins = []
+                        mini_outs = []
+                        t = 1
+                        for x in range(index.row()-2, index.row()+2):
+                                m_item = self.tray_model.item_from_entity(e_type, e_ids[x])
+                                sg = shotgun_model.get_sg_data(m_item)
+                                print "%d %r" % (x, sg['sg_version.Version.sg_path_to_frames'])
+                                mini_sources.append(x)
+                                mini_ins.append( sg['sg_cut_in'] )
+                                mini_outs.append( sg['sg_cut_out'] )
+                                mini_frames.append(t)
+                                t = sg['sg_cut_out'] - sg['sg_cut_in'] + 1 + t
+                        mini_sources.append(0)
+                        mini_ins.append(0)
+                        mini_outs.append(0)
+                        mini_frames.append(t)
+                        
+                        rv.commands.setIntProperty('%s.edl.source' % self.cut_seq_name, mini_sources, True)
+                        rv.commands.setIntProperty('%s.edl.frame' % self.cut_seq_name, mini_frames, True)
+                        rv.commands.setIntProperty('%s.edl.in' % self.cut_seq_name, mini_ins, True)
+                        rv.commands.setIntProperty('%s.edl.out' % self.cut_seq_name, mini_outs, True)
+                        
+                        # rv.commands.setIntProperty("%s.mode.autoEDL" % self.cut_seq_name, [0])
+                        # rv.commands.setIntProperty("%s.mode.useCutInfo" % self.cut_seq_name, [0])
 
-            # version_filters = [ ['project','is', {'type':'Project','id':71}],
-            #     ['entity','is',{'type':'Shot','id': int(shot_id)}] ]
-            # self.version_model.load_data(entity_type="Version", filters=version_filters)
-            
+                        sources = rv.commands.nodesOfType("RVSourceGroup")
+                        rv.commands.setNodeInputs(self.cut_seq, sources)
+                        rv.commands.setViewNode(self.cut_seq)
 
+                sg_item = shotgun_model.get_sg_data(index)  
+
+                entity = {}
+                entity["type"] = "Version"
+                entity["id"] = sg_item['sg_version.Version.id']
+
+                # s = self._tracking_info['shot']
+                # (s_id, s_name, s_type) = s.split('|')
+                # (n, shot_id) = s_id.split('_')
+
+                self.load_data(entity)
+
+                # self.tray_list.selectionModel().clear()
+                
+                # version_filters = [ ['project','is', {'type':'Project','id':71}],
+                #     ['entity','is',{'type':'Shot','id': int(shot_id)}] ]
+                # self.version_model.load_data(entity_type="Version", filters=version_filters)
 
         def activate(self):
                 rv.rvtypes.MinorMode.activate(self)
