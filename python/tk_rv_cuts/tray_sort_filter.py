@@ -12,5 +12,4 @@ class TraySortFilter(QtGui.QSortFilterProxyModel):
 
                 sg_left = shotgun_model.get_sg_data(left)
                 sg_right = shotgun_model.get_sg_data(right)
-                print "%d vs %d" % (sg_left['sg_cut_order'] , sg_right['sg_cut_order'])
                 return sg_left['sg_cut_order'] < sg_right['sg_cut_order']

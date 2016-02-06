@@ -109,6 +109,9 @@ class TrayWidget(QtGui.QWidget):
         # self.ui.header_label.setText(header)
         # self.ui.body_label.setText(body)
 
+    def SizeHint(self):
+        return QtCore.QSize(112, 64)
+
     @staticmethod
     def calculate_size():
         """

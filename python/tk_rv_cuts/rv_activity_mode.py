@@ -390,18 +390,19 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 self.note_dock.setWidget(self.tab_widget)
 
                 # setup lower tray
-                self.tray_dock.setMinimumSize(QtCore.QSize(1200,160))
+                self.tray_dock.setMinimumSize(QtCore.QSize(1300,160))
                 
                 self.tray_frame = QtGui.QFrame(self.tray_dock)
-                self.tray_frame.setMinimumSize(QtCore.QSize(1200,130))
-                self.tray_frame_vlayout = QtGui.QVBoxLayout(self.tray_frame)
-
-
-                sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
-                sizePolicy.setHorizontalPolicy(QtGui.QSizePolicy.Expanding)
-                sizePolicy.setHorizontalStretch(0)
-                sizePolicy.setVerticalStretch(0)
+                sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+                # sizePolicy.setHorizontalPolicy(QtGui.QSizePolicy.Expanding)
+                #sizePolicy.setHorizontalStretch(0)
+                #sizePolicy.setVerticalStretch(0)
                 self.tray_frame.setSizePolicy(sizePolicy)
+                self.tray_frame.setMinimumSize(QtCore.QSize(1200,130))
+
+                self.tray_frame_vlayout = QtGui.QVBoxLayout(self.tray_frame)
+                self.tray_frame_vlayout.setStretchFactor(self.tray_frame, 1)
+
 
                 # tray button bar
                 self.tray_button_bar = QtGui.QFrame(self.tray_dock)
@@ -445,15 +446,18 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                 self.tray_button_bar_hlayout.addWidget(self.tray_button_five)
 
                 self.tray_frame_vlayout.addWidget(self.tray_button_bar)
-
+                self.tray_frame_vlayout.setStretchFactor(self.tray_button_bar, 1)
                 self.tray_list = QtGui.QListView()
+                self.tray_list.setSizePolicy(sizePolicy)
                 self.tray_frame_vlayout.addWidget(self.tray_list)
+                self.tray_frame_vlayout.setStretchFactor(self.tray_list, 1)
                 
                 from .tray_model import TrayModel
                 self.tray_model = TrayModel(self.tray_list)
                 from .tray_sort_filter import TraySortFilter
                 self.tray_proxyModel =  TraySortFilter(self.tray_list)
                 self.tray_proxyModel.setSourceModel(self.tray_model)
+                self.tray_proxyModel.setDynamicSortFilter(True)
 
                 self.tray_list.setModel(self.tray_proxyModel)
 
@@ -619,7 +623,7 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                         mini_ins = []
                         mini_outs = []
                         t = 1
-                        for x in range(index.row()-2, index.row()+2):
+                        for x in range(index.row()-2, index.row()+3):
                                 m_item = self.tray_model.item_from_entity(e_type, e_ids[x])
                                 sg = shotgun_model.get_sg_data(m_item)
                                 print "%d %r" % (x, sg['sg_version.Version.sg_path_to_frames'])
@@ -633,16 +637,17 @@ class RvActivityMode(rv.rvtypes.MinorMode):
                         mini_outs.append(0)
                         mini_frames.append(t)
                         
-                        rv.commands.setIntProperty('%s.edl.source' % self.cut_seq_name, mini_sources, True)
+                        #rv.commands.setIntProperty('%s.edl.source' % self.cut_seq_name, mini_sources, True)
                         rv.commands.setIntProperty('%s.edl.frame' % self.cut_seq_name, mini_frames, True)
                         rv.commands.setIntProperty('%s.edl.in' % self.cut_seq_name, mini_ins, True)
                         rv.commands.setIntProperty('%s.edl.out' % self.cut_seq_name, mini_outs, True)
                         
-                        # rv.commands.setIntProperty("%s.mode.autoEDL" % self.cut_seq_name, [0])
-                        # rv.commands.setIntProperty("%s.mode.useCutInfo" % self.cut_seq_name, [0])
+                        rv.commands.setIntProperty("%s.mode.autoEDL" % self.cut_seq_name, [0])
+                        rv.commands.setIntProperty("%s.mode.useCutInfo" % self.cut_seq_name, [0])
 
                         sources = rv.commands.nodesOfType("RVSourceGroup")
-                        rv.commands.setNodeInputs(self.cut_seq, sources)
+                        # print "SOURCES: %r" % sources
+                        rv.commands.setNodeInputs(self.cut_seq, sources[index.row()-2:index.row()+3])
                         rv.commands.setViewNode(self.cut_seq)
 
                 sg_item = shotgun_model.get_sg_data(index)  
