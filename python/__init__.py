@@ -1,4 +1,4 @@
-# Copyright (c) 2015 Shotgun Software Inc.
+# Copyright (c) 2016 Shotgun Software Inc.
 # 
 # CONFIDENTIAL AND PROPRIETARY
 # 
@@ -9,4 +9,3 @@
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 from . import tk_rv
-from . import tk_rv_cuts
