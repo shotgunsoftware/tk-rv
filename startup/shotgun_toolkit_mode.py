@@ -99,6 +99,33 @@ class ShotgunToolkit(rvtypes.MinorMode):
             self.__engine = self.start_engine()
         return self.__engine
 
+    @staticmethod
+    def http_proxy_from_env_vars() :
+
+        # Note from shotgun api source about expected proxy string
+        #
+        #   :param http_proxy: Optional, URL for the http proxy server, in the
+        #   form [username:pass@]proxy.com[:8080]
+
+        user   = os.getenv("RV_NETWORK_PROXY_USER",     None)
+        passwd = os.getenv("RV_NETWORK_PROXY_PASSWORD", None)
+        host   = os.getenv("RV_NETWORK_PROXY_HOST",     None)
+        port   = os.getenv("RV_NETWORK_PROXY_PORT",     None)
+
+        http_proxy = None
+
+        if (host) :
+            http_proxy = host
+            if (user) :
+                if (passwd) :
+                    http_proxy = user + ":" + passwd + "@" + http_proxy
+                else :
+                    http_proxy = user + "@" + http_proxy
+            if (port) :
+                http_proxy += ":" + port
+
+        return http_proxy
+
     def start_engine(self):
         engine = None
 
@@ -136,8 +163,8 @@ class ShotgunToolkit(rvtypes.MinorMode):
                 # Get default session info from slutils (rv/shotgun licensing) module
                 (url, login, token) = slutils_py.defaultSession()
 
-                # XXX Need format of http_proxy arg to replace None below
-                user = ShotgunUser(RVUserImpl(url, login, token, None))
+                user = ShotgunUser(RVUserImpl(url, login, token, 
+                        ShotgunToolkit.http_proxy_from_env_vars()))
                 sg_conn = user.create_sg_connection()
                 sgtk.set_authenticated_user(user)
 
@@ -146,6 +173,7 @@ class ShotgunToolkit(rvtypes.MinorMode):
                 #     wait for login process to succeed and then continue.
 
             except:
+                err = traceback.print_exc()
                 commands.alertPanel (True, commands.ErrorAlert, "Login Session Invalid", 
                         "Login with RV Shotgun session token failed; please use the File Menu's "
                         "\"License Manager\" to log in to the Shotgun server and re-start RV.", 
