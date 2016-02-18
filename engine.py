@@ -29,17 +29,11 @@ class RVEngine(Engine):
 
     @property
     def toolkit_rv_mode_name(self):
-
-        # manne: I have NO IDEA what this means. Hard coding to get things to work :(
-        #return os.environ.get("TK_RV_MODE_NAME")
-        return "tk_rv_mode"
+        return os.environ.get("TK_RV_MODE_NAME")
 
     @property
     def menu_name(self):
-        if self.get_setting("use_sgtk_as_menu_name"):
-            return "SGTK"
-        else:
-            return "tk-rv"
+        return "tk-rv"
 
     #####################################################################################
     # Engine Initialization and Destruction
@@ -64,15 +58,21 @@ class RVEngine(Engine):
     def post_app_init(self):
         if self._ui_enabled:
             tk_rv = self.import_module("tk_rv")
-            self._menu_generator = tk_rv.MenuGenerator(self)
-            self._menu_generator.create_menu()
+            # manne: commenting out menu code as I was
+            #        getting errors
+            #self._menu_generator = tk_rv.MenuGenerator(self)
+            #self._menu_generator.create_menu()
+
+        # instead hack in a launch of the about app
+        # after startup...
+        self.commands['Work Area Info...']["callback"]()
 
     def destroy_engine(self):
         self.log_debug("%r: Destroying tk-rv engine." % self)
 
         if self._ui_enabled:
             self.log_debug("%r: Destroying Shotgun menu" % self)
-            self._menu_generator.destroy_menu()
+            #self._menu_generator.destroy_menu()
 
     #####################################################################################
     # Logging
