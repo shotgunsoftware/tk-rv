@@ -29,7 +29,10 @@ class RVEngine(Engine):
 
     @property
     def toolkit_rv_mode_name(self):
-        return os.environ.get("TK_RV_MODE_NAME")
+
+        # manne: I have NO IDEA what this means. Hard coding to get things to work :(
+        #return os.environ.get("TK_RV_MODE_NAME")
+        return "tk_rv_mode"
 
     @property
     def menu_name(self):

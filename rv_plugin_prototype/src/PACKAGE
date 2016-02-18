@@ -9,7 +9,7 @@ optional: true
 url: http://www.shotgunsoftware.com
 
 modes: 
-  - file: bootstrap.py
+  - file: sgtk_bootstrap.py
     load: immediate
 
 description: |
