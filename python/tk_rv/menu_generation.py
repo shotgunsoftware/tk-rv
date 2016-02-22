@@ -32,8 +32,14 @@ class MenuGenerator(object):
 
         self._menu_handle = []
 
-        sgtk_menu = [(self.engine.menu_name, [("_", None)])]
-        rv.commands.defineModeMenu(self.engine.toolkit_rv_mode_name, sgtk_menu)
+        sgtk_menu = [
+            (
+                "Toolkit",
+                [("_", None), ]
+            )
+        ]
+        print sgtk_menu
+        #rv.commands.defineModeMenu("sgtk-mode", sgtk_menu)
 
         self._context_menu = self._add_context_menu()
         self._menu_handle.append(self._context_menu)

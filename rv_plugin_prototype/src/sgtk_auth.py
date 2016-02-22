@@ -8,17 +8,11 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
-import sys
 import os
 from pymu import MuSymbol
 import rv
 
-
-sys.path.append("/Users/manne/Documents/work_dev/toolkit/tk-core/python")
-from tank_vendor import shotgun_base, shotgun_deploy, shotgun_authentication
-
-
-# Assuming Toolkit is available in the path.
+# at this point, it is assumed that core has been added to the pythonpath
 from tank_vendor.shotgun_api3 import Shotgun
 from tank_vendor.shotgun_authentication.user import ShotgunUser
 from tank_vendor.shotgun_authentication.user_impl import ShotgunUserImpl
@@ -118,9 +112,6 @@ def _get_default_rv_auth_session():
     # grab the first three tokens out of the string
     (url, login, token) = last_session.split("|")[:3]
     # return (url, login, token)
-    print url
-    print login
-    print token
     return url, login, token
 
 def _http_proxy_from_env_vars():

@@ -8,9 +8,18 @@ rv: 6.2.4
 optional: true
 url: http://www.shotgunsoftware.com
 
-modes: 
+modes:
   - file: sgtk_bootstrap.py
-    load: immediate
+    menu: 'Tools/Boot Latest Toolkit'
+    shortcut: ''
+    event: ''
+    load: delay
+
+  - file: sgtk_canned_bootstrap.py
+    menu: 'Tools/Boot Canned Toolkit'
+    shortcut: ''
+    event: ''
+    load: delay
 
 description: |
 
