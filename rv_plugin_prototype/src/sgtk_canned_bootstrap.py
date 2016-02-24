@@ -125,7 +125,7 @@ class ToolkitCannedBootstrap(rvtypes.MinorMode):
         mgr.set_namespace("rv")
 
         # tell it where to go look for apps
-        mgr.set_bundle_cache_root(bundle_cache)
+        mgr.set_bundle_cache_search_path([bundle_cache])
 
         # if nothing is found in Shotgun, kick off using the base config
         mgr.set_base_configuration(BOOTSTRAP_BASE)
