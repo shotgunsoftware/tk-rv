@@ -122,17 +122,17 @@ class ToolkitCannedBootstrap(rvtypes.MinorMode):
 
         # hint bootstrapper about our name space so that we don't pick
         # the site config for maya or desktop
-        mgr.set_namespace("rv")
+        mgr.namespace = "rv"
 
         # tell it where to go look for apps
-        mgr.set_bundle_cache_search_path([bundle_cache])
+        mgr.bundle_cache_fallback_paths = [bundle_cache]
 
         # if nothing is found in Shotgun, kick off using the base config
-        mgr.set_base_configuration(BOOTSTRAP_BASE)
+        mgr.base_configuration = BOOTSTRAP_BASE
 
         # and bootstrap the tk-rv engine into an empty context
         log.info("Executing bootstrap...")
-        mgr.bootstrap_engine("tk-rv")
+        e = mgr.bootstrap_engine("tk-rv")
 
         log.info("...bootstrap complete!")
 

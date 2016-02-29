@@ -117,10 +117,10 @@ class ToolkitBootstrap(rvtypes.MinorMode):
 
         # hint bootstrapper about our name space so that we don't pick
         # the site config for maya or desktop
-        mgr.set_namespace("rv")
+        mgr.namespace = "rv"
 
         # if nothing is found in Shotgun, kick off using the base config
-        mgr.set_base_configuration(uri)
+        mgr.base_configuration = uri
 
         # and bootstrap the tk-rv engine into an empty context
         mgr.bootstrap_engine("tk-rv")
