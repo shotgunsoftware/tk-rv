@@ -1,22 +1,16 @@
-package: Toolkit in a Jar
-author: Manne Ohrstrom
-organization: Autodesk
+package: Shotgun Review
+author: Shotgun Software
+organization: Autodesk, Inc
 contact: support@shotgunsoftware.com
 version: 1.0
 requires: ''
-rv: 6.2.4
+rv: 6.2.6
 optional: true
 url: http://www.shotgunsoftware.com
 
 modes:
   - file: sgtk_bootstrap.py
     menu: 'Tools/Boot Latest Toolkit'
-    shortcut: ''
-    event: ''
-    load: delay
-
-  - file: sgtk_canned_bootstrap.py
-    menu: 'Tools/Boot Canned Toolkit'
     shortcut: ''
     event: ''
     load: delay
