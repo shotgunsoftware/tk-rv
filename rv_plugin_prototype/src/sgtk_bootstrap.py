@@ -12,52 +12,41 @@ import logging
 import cgi
 import sys
 import os
-from rv import rvtypes
+
 import rv
-from PySide import QtGui, QtCore
 
-# set up logging
-log = logging.getLogger("sgtk_rv_bootstrap")
-log.setLevel(logging.DEBUG)
-
-class EscapedHtmlFormatter(logging.Formatter):
-
-    def __init__(self, fmt, datefmt=None):
-        logging.Formatter.__init__(self, fmt, datefmt)
-
-    def format(self, record):
-        result = logging.Formatter.format(self, record)
-        return cgi.escape(result)
-
-log_handler = logging.StreamHandler()
-log_handler.setFormatter(EscapedHtmlFormatter("%(asctime)s %(name)s %(levelname)s: %(message)s"))
-log.addHandler(log_handler)
-
-
-class ToolkitBootstrap(rvtypes.MinorMode):
+class ToolkitBootstrap(rv.rvtypes.MinorMode):
     """
-    Creates a tk rv engine
+    An RV mode that will handle bootstrapping SGTK and starting
+    up the tk-rv engine. The mode expects an installation of
+    tk-core to be present in the same directory underneath an
+    "sgtk_core" subdirectory. Alternatively, an environment variable
+    "TK_CORE" can be set to an alternate installation of tk-core
+    to override the default behavior.
     """
-
     def __init__(self):
         """
-        Constructor.
+        Initializes the RV mode. An environment variable "TK_RV_MODE_NAME"
+        will be set to the name of this mode. That variable can then be
+        used by other logic to generate menu items in RV associated with
+        this mode.
         """
-        rvtypes.MinorMode.__init__(self)
-        self.init("sgtk_bootstrap", None, None)
-        os.environ["TK_RV_MODE_NAME"] = "sgtk_bootstrap"
+        super(ToolkitBootstrap, self).__init__()
+
+        self._mode_name = "sgtk_bootstrap"
+        self.init(self._mode_name, None, None)
+
+        # The menu generation code makes use of the TK_RV_MODE_NAME
+        # environment variable. Each menu that is created in RV is
+        # associated with a mode identified by its name. We need to
+        # make a note of our name as a result.
+        os.environ["TK_RV_MODE_NAME"] = self._mode_name
 
     def activate(self):
+        """
+        Activates the RV mode and bootstraps SGTK.
+        """
         rv.rvtypes.MinorMode.activate(self)
-
-        log.info("------------------------------------------------------------------")
-        log.info("Starting up remote configuration!")
-        log.info("")
-        log.info("For this, we need to have a core to 'seed' the process - a place ")
-        log.info("where we can run the actual bootstrap code from.")
-        log.info("")
-        log.info("This will be picked up from the TK_CORE env var if set.")
-        log.info("------------------------------------------------------------------")
 
         core = os.path.join(os.path.dirname(__file__), "sgtk_core")
         core = os.environ.get("TK_CORE") or core
@@ -65,7 +54,7 @@ class ToolkitBootstrap(rvtypes.MinorMode):
         # append python path to get to the actual code
         core = os.path.join(core, "python")
 
-        log.info("Looking for core here: %s" % str(core))
+        log.info("Looking for tk-core here: %s" % str(core))
 
         # now we can kick off sgtk
         sys.path.append(core)
@@ -85,12 +74,12 @@ class ToolkitBootstrap(rvtypes.MinorMode):
         user = get_toolkit_user()
         log.info("Will connect using %r" % user)
 
-        # now bootstrap
+        # Now do the bootstrap!
         log.info("Ready for bootstrap!")
         mgr = shotgun_deploy.ToolkitManager(user)
 
-        # hint bootstrapper about our name space so that we don't pick
-        # the site config for maya or desktop
+        # Hint bootstrapper about our namespace so that we don't pick
+        # the site config for Maya or Desktop.
         mgr.namespace = "rv"
 
         mgr.base_configuration = dict(
@@ -98,17 +87,51 @@ class ToolkitBootstrap(rvtypes.MinorMode):
             path=r"d:\repositories\tk-config-rv",
         )
 
-        # and bootstrap the tk-rv engine into an empty context
+        # Bootstrap the tk-rv engine into an empty context!
         mgr.bootstrap_engine("tk-rv")
+        log.info("Bootstrapping process complete!")
 
 
     def deactivate(self):
+        """
+        Deactivates the mode and tears down the currently-running
+        SGTK engine.
+        """
+        import sgtk
+
         rv.rvtypes.MinorMode.deactivate(self)
         log.info("Shutting down engine...")
-        import sgtk
         sgtk.platform.current_engine().destroy()
         log.info("Engine is down.")
 
+
+###############################################################################
+# functions
+
 def createMode():
-    "Required to initialize the module. RV will call this function to create your mode."
+    """
+    Required to initialize the module. RV will call this function
+    to create your mode.
+    """
     return ToolkitBootstrap()
+
+
+###############################################################################
+# logging
+
+log = logging.getLogger("sgtk_rv_bootstrap")
+log.setLevel(logging.DEBUG)
+
+class EscapedHtmlFormatter(logging.Formatter):
+    def __init__(self, fmt, datefmt=None):
+        logging.Formatter.__init__(self, fmt, datefmt)
+
+    def format(self, record):
+        result = logging.Formatter.format(self, record)
+        return cgi.escape(result)
+
+log_handler = logging.StreamHandler()
+log_handler.setFormatter(
+    EscapedHtmlFormatter("%(asctime)s %(name)s %(levelname)s: %(message)s")
+)
+log.addHandler(log_handler)
