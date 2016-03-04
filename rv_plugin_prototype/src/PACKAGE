@@ -10,10 +10,7 @@ url: http://www.shotgunsoftware.com
 
 modes:
   - file: sgtk_bootstrap.py
-    menu: 'Tools/Boot Latest Toolkit'
-    shortcut: ''
-    event: ''
-    load: delay
+    load: immediate
 
 description: |
 

@@ -33,7 +33,7 @@ class RVEngine(Engine):
 
     @property
     def menu_name(self):
-        return "tk-rv"
+        return "SG Review"
 
     #####################################################################################
     # Engine Initialization and Destruction
@@ -58,14 +58,12 @@ class RVEngine(Engine):
     def post_app_init(self):
         if self._ui_enabled:
             tk_rv = self.import_module("tk_rv")
-            # manne: commenting out menu code as I was
-            #        getting errors
-            #self._menu_generator = tk_rv.MenuGenerator(self)
-            #self._menu_generator.create_menu()
+            self._menu_generator = tk_rv.MenuGenerator(self)
+            self._menu_generator.create_menu()
 
         # instead hack in a launch of the about app
         # after startup...
-        self.commands['Work Area Info...']["callback"]()
+        # self.commands['Work Area Info...']["callback"]()
 
     def destroy_engine(self):
         self.log_debug("%r: Destroying tk-rv engine." % self)

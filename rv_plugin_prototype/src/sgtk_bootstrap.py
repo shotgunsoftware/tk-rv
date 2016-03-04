@@ -45,14 +45,10 @@ class ToolkitBootstrap(rvtypes.MinorMode):
         """
         rvtypes.MinorMode.__init__(self)
         self.init("sgtk_bootstrap", None, None)
+        os.environ["TK_RV_MODE_NAME"] = "sgtk_bootstrap"
 
     def activate(self):
         rv.rvtypes.MinorMode.activate(self)
-
-        # leaving this in here for later. Gets a path to the resources folder
-        # but not sure exactly what gets put there...
-        # payload_path = os.path.join(self.supportPath(bootstrap, "bootstrap"), "payload")
-
 
         log.info("------------------------------------------------------------------")
         log.info("Starting up remote configuration!")
@@ -65,16 +61,6 @@ class ToolkitBootstrap(rvtypes.MinorMode):
 
         core = os.path.join(os.path.dirname(__file__), "sgtk_core")
         core = os.environ.get("TK_CORE") or core
-
-        # (core, status) = QtGui.QInputDialog.getText(
-        #     None,
-        #     "Toolkit Bootstrap",
-        #     "Where is core:",
-        #     QtGui.QLineEdit.Normal,
-        #     default_core)
-
-        # if not status:
-        #     return
 
         # append python path to get to the actual code
         core = os.path.join(core, "python")
@@ -95,19 +81,6 @@ class ToolkitBootstrap(rvtypes.MinorMode):
         sgtk_root_logger.setLevel(logging.DEBUG)
         sgtk_root_logger.addHandler(log_handler)
 
-        # now figure out which config to use
-        uri = r"sgtk:location:git_branch:git@github.com%3Ashotgunsoftware/tk-config-shotgunreview.git:master:latest"
-
-        # (uri, status) = QtGui.QInputDialog.getText(
-        #     None,
-        #     "Toolkit Bootstrap",
-        #     "Config Uri:",
-        #     QtGui.QLineEdit.Normal,
-        #     default_uri)
-
-        # if not status:
-        #     return
-
         # Get an authenticated user object from rv's security architecture
         user = get_toolkit_user()
         log.info("Will connect using %r" % user)
@@ -119,14 +92,6 @@ class ToolkitBootstrap(rvtypes.MinorMode):
         # hint bootstrapper about our name space so that we don't pick
         # the site config for maya or desktop
         mgr.namespace = "rv"
-
-        # if nothing is found in Shotgun, kick off using the base config
-        # mgr.base_configuration = dict(
-        #     type="git_branch",
-        #     path="git@github.com%3Ashotgunsoftware/tk-config-shotgunreview.git",
-        #     branch="master",
-        #     version="latest",
-        # )
 
         mgr.base_configuration = dict(
             type="dev",
