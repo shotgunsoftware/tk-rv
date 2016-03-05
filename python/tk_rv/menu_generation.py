@@ -29,6 +29,10 @@ class MenuGenerator(object):
         context menu, plus any app commands that were registered
         with the engine.
         """
+        # We'll clear out the menu data we have in case this is being
+        # run multiple times within the same RV session. This would be
+        # the case during context changes.
+        self._menu_handle = []
         self._context_menu = self._add_context_menu()
         self._menu_handle.append(self._context_menu)
 

@@ -67,7 +67,7 @@ class ToolkitBootstrap(rv.rvtypes.MinorMode):
 
         # bind toolkit logging to our logger
         sgtk_root_logger = shotgun_base.get_sgtk_logger()
-        sgtk_root_logger.setLevel(logging.DEBUG)
+        sgtk_root_logger.setLevel(logging.WARNING)
         sgtk_root_logger.addHandler(log_handler)
 
         # Get an authenticated user object from rv's security architecture
@@ -98,10 +98,13 @@ class ToolkitBootstrap(rv.rvtypes.MinorMode):
         SGTK engine.
         """
         import sgtk
-
         rv.rvtypes.MinorMode.deactivate(self)
+
         log.info("Shutting down engine...")
-        sgtk.platform.current_engine().destroy()
+
+        if sgtk.platform.current_engine():
+            sgtk.platform.current_engine().destroy()
+
         log.info("Engine is down.")
 
 
@@ -120,7 +123,7 @@ def createMode():
 # logging
 
 log = logging.getLogger("sgtk_rv_bootstrap")
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 class EscapedHtmlFormatter(logging.Formatter):
     def __init__(self, fmt, datefmt=None):
