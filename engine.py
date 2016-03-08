@@ -15,7 +15,7 @@ import tank
 import rv.qtutils
 
 from tank.platform import Engine
-from PySide import QtCore
+# from tank.platform.qt import QtGui, QtCore
 
 class RVEngine(Engine):
     """
@@ -64,8 +64,8 @@ class RVEngine(Engine):
         # Unicode characters returned by the shotgun api need to be converted
         # to display correctly in all of the app windows. Tell Qt to interpret
         # C strings as utf-8.
-        utf8 = QtCore.QTextCodec.codecForName("utf-8")
-        QtCore.QTextCodec.setCodecForCStrings(utf8)
+        # utf8 = QtCore.QTextCodec.codecForName("utf-8")
+        # QtCore.QTextCodec.setCodecForCStrings(utf8)
 
     def post_app_init(self):
         """
