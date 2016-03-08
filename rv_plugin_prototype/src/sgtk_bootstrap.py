@@ -83,13 +83,12 @@ class ToolkitBootstrap(rv.rvtypes.MinorMode):
         mgr.namespace = "rv"
 
         mgr.base_configuration = dict(
-            name="tk-config-rv",
-            type="dev",
-            path=r"d:\repositories\tk-config-rv",
-            # path="git@github.com:shotgunsoftware/tk-config-rv.git",
-            # type="git_branch",
-            # branch="34904_bootstrap_rv",
-            # version="latest",
+            # type="dev",
+            # path=r"d:\repositories\tk-config-rv",
+            path="git@github.com:shotgunsoftware/tk-config-rv.git",
+            type="git_branch",
+            branch="34904_bootstrap_rv",
+            version="latest",
         )
 
         # Bootstrap the tk-rv engine into an empty context!
