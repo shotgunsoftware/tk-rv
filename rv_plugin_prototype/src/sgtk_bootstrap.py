@@ -87,7 +87,7 @@ class ToolkitBootstrap(rv.rvtypes.MinorMode):
             # path=r"d:\repositories\tk-config-rv",
             path="git@github.com:shotgunsoftware/tk-config-rv.git",
             type="git_branch",
-            branch="34904_bootstrap_rv",
+            branch="master",
             version="latest",
         )
 
