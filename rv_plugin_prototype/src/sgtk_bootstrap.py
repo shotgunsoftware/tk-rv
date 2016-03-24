@@ -129,6 +129,13 @@ def createMode():
 log = logging.getLogger("sgtk_rv_bootstrap")
 log.setLevel(logging.INFO)
 
+# note: the RV console treats log information as html. As a consequence, all
+# <html like tokens> will simply disappear when shown in the RV console. These
+# <tokens> are common in toolkit, often returned by __repr__() as object identifiers.
+# 
+# To ensure we can see everything in the RV console, html escape all log messages
+# before they hit the console.
+#
 class EscapedHtmlFormatter(logging.Formatter):
     def __init__(self, fmt, datefmt=None):
         logging.Formatter.__init__(self, fmt, datefmt)
