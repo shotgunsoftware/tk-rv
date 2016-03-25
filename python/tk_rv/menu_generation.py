@@ -158,6 +158,10 @@ class AppCommand(object):
         hotkey = self.properties.get("hotkey")
 
         if hotkey:
+            # Note that the None as the last argument pertains to a callback
+            # RV can use to ask whether the menu item should be enabled/disabled,
+            # and/or checked/unchecked. In our case we just want the default
+            # behavior, which is active and unchecked.
             menu_item = (self.name, self.menu_item_callback, hotkey, None)
         else:
             menu_item = (self.name, self.menu_item_callback, None, None)
