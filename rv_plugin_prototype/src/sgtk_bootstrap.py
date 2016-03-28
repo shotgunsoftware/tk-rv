@@ -162,7 +162,7 @@ class ToolkitBootstrap(rvt.MinorMode):
         # 'bundle_cache' baked during the build process.
         mgr.bundle_cache_fallback_paths = [ bundle_cache_dir ]
 
-        dev_config = os.environ["RV_TK_DEV_CONFIG"]
+        dev_config = os.environ.get("RV_TK_DEV_CONFIG")
 
         if (dev_config):
             # Use designated developer's tk-config-rv instead of disted one.
