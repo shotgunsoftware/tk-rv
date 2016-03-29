@@ -24,6 +24,13 @@ class pyGMAWindow :
         s.setAttribute(QtWebKit.QWebSettings.JavascriptCanCloseWindows, True);
 
         self.main_window = QtGui.QMainWindow(rvqt.sessionWindow())
+        self.main_window.setStyleSheet(
+            "QWidget { font-family: Proxima Nova; "
+            "background: rgb(36,38,41); "
+            "color: rgb(126,127,129); "
+            "border-color: rgb(36,38,41);}"
+        )
+
         self.gma_web_view = QtWebKit.QWebView(self.main_window)
 
         p = getCppPointer(self.gma_web_view.page().mainFrame())

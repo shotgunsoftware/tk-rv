@@ -60,8 +60,25 @@ class ToolkitBootstrap(rvt.MinorMode):
                     ("HTTP Server", None, None, lambda: rvc.DisabledMenuState),
                     ("    Start Server", self.httpServerSetup, None, lambda: rvc.UncheckedMenuState),
                     ("    Test Certificate", self.testCert, None, lambda: rvc.UncheckedMenuState),
+                    ("_", None),
                     ("GMA WebView", self.gmaWebView, None, lambda: rvc.UncheckedMenuState),
-                    ("_", None)],
+                    ("_", None),
+                    ("Test Cuts", None, None, lambda: rvc.DisabledMenuState),
+                    ("    08_a-team_client_cut_002",                               
+                        self.playEntityFactory("Cut", 6), None, lambda: rvc.UncheckedMenuState),
+                    ("    08_a-team_base_layer_example_versions_that_fit_cut_001", 
+                        self.playEntityFactory("Cut", 1), None, lambda: rvc.UncheckedMenuState),
+                    ("Test Versions", None, None, lambda: rvc.DisabledMenuState),
+                    ("    BBB_08_a-team_010_ANIM_001", 
+                        self.playEntityFactory("Version", 6048), None, lambda: rvc.UncheckedMenuState),
+                    ("    BBB_08_a-team_001_ANIM_001", 
+                        self.playEntityFactory("Version", 6004), None, lambda: rvc.UncheckedMenuState),
+                    ("    BBB_09_tree_trunk_011_ANIM_001", 
+                        self.playEntityFactory("Version", 6023), None, lambda: rvc.UncheckedMenuState),
+                    ("Test Playlists", None, None, lambda: rvc.DisabledMenuState),
+                    ("    Alan's Playlist 2/19/2016", 
+                        self.playEntityFactory("Playlist", 62), None, lambda: rvc.UncheckedMenuState),
+                    ("_", None)]
                 )])
 
         self.httpServerThread = None
@@ -74,6 +91,14 @@ class ToolkitBootstrap(rvt.MinorMode):
         # can add menu items for this mode later.
 
         os.environ["TK_RV_MODE_NAME"] = self._mode_name
+
+    def playEntityFactory (self, entity, id):
+
+        def playEntity(event):
+            contents = '{"type":"' + entity + '","id":' + str(id) + '}'
+            rvc.sendInternalEvent("id_from_gma", contents)
+
+        return playEntity
 
     def gmaWebView (self, event) :
 
