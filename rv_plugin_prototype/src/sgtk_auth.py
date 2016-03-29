@@ -34,6 +34,18 @@ class RVUserImpl(ShotgunUserImpl):
         :raises IncompleteCredentials: If there is not enough values
             provided to initialize the user, this exception will be thrown.
         """
+        # The host comes in as unicode. We need to get back to a utf-8 string
+        # instead, because unicode strings end up infecting other strings
+        # when they're concatinated together.
+        if host:
+            host = host.encode("utf-8")
+        if login:
+            login = login.encode("utf-8")
+        if session_token:
+            session_token = session_token.encode("utf-8")
+        if http_proxy:
+            http_proxy = http_proxy.encode("utf-8")
+
         super(RVUserImpl, self).__init__(host, http_proxy)
 
         self._login = login
