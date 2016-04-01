@@ -15,6 +15,7 @@ import tank
 import rv.qtutils
 
 from tank.platform import Engine
+from tank import constants
 from PySide import QtGui, QtCore
 
 class RVEngine(Engine):
@@ -54,6 +55,16 @@ class RVEngine(Engine):
         """
         Runs before apps have been initialized.
         """
+        # The "qss_watcher" setting causes us to monitor the engine's
+        # style.qss file and re-apply it on the fly when it changes
+        # on disk. This is very useful for development work,
+        if self.get_setting("qss_watcher", False):
+            self._qss_watcher = QtCore.QFileSystemWatcher(
+                [os.path.join(self.disk_location, constants.BUNDLE_STYLESHEET_FILE)],
+            )
+
+            self._qss_watcher.fileChanged.connect(self.reload_qss)
+
         # The assumption here is that the default case has us presenting a
         # Shotgun menu and loading it with at least Cutz Support and maybe
         # an expected Shotgun browser or two. _ui_enabled turns the menu on.
@@ -156,5 +167,29 @@ class RVEngine(Engine):
         RV's bottom toolbar widget.
         """
         return rv.qtutils.sessionBottomToolBar()
+
+    #####################################################################################
+    # Styling
+
+    def _create_dialog(self, *args, **kwargs):
+        """
+        Overrides and extends the default _create_dialog implementation
+        from tank.platform.engine.Engine. Dialogs are created as is typical,
+        and then have the tk-rv engine-specific style.qss file applies to
+        them.
+        """
+        dialog = super(RVEngine, self)._create_dialog(*args, **kwargs)
+        self._apply_external_styleshet(self, dialog)
+        return dialog
+
+    def reload_qss(self):
+        """
+        Causes the style.qss file that comes with the tk-rv engine to
+        be re-applied to all dialogs that the engine has previously
+        launched.
+        """
+        for dialog in self.created_qt_dialogs:
+            self._apply_external_styleshet(self, dialog)
+            dialog.update()
 
 
