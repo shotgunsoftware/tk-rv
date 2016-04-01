@@ -15,6 +15,7 @@ import tank
 import rv.qtutils
 
 from tank.platform import Engine
+from tank import constants
 from PySide import QtGui, QtCore
 
 class RVEngine(Engine):
@@ -54,17 +55,12 @@ class RVEngine(Engine):
         """
         Runs before apps have been initialized.
         """
-        # We'll be keeping track of dialogs that we launch, because
-        # we might need to re-apply style.qss to them on the fly per
-        # the "qss_watcher" setting.
-        self._app_dialogs = []
-
         # The "qss_watcher" setting causes us to monitor the engine's
         # style.qss file and re-apply it on the fly when it changes
         # on disk. This is very useful for development work,
         if self.get_setting("qss_watcher", False):
             self._qss_watcher = QtCore.QFileSystemWatcher(
-                [os.path.join(self.disk_location, "style.qss")],
+                [os.path.join(self.disk_location, constants.BUNDLE_STYLESHEET_FILE)],
             )
 
             self._qss_watcher.fileChanged.connect(self.reload_qss)
@@ -184,19 +180,15 @@ class RVEngine(Engine):
         """
         dialog = super(RVEngine, self)._create_dialog(*args, **kwargs)
         self._apply_external_styleshet(self, dialog)
-        self._app_dialogs.append(dialog)
         return dialog
 
-    @QtCore.Slot(str)
-    def reload_qss(self, path):
+    def reload_qss(self):
         """
         Causes the style.qss file that comes with the tk-rv engine to
         be re-applied to all dialogs that the engine has previously
         launched.
-
-        :param path:    The path to the .qss file being re-applied.
         """
-        for dialog in self._app_dialogs:
+        for dialog in self.created_qt_dialogs:
             self._apply_external_styleshet(self, dialog)
             dialog.update()
 
