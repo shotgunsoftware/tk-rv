@@ -4,7 +4,10 @@ configuration:
         type: bool
         default_value: true
         description: Controls whether debug messages should be emitted to the logger
-
+    qss_watcher:
+        type: bool
+        default_value: false
+        description: Controls whether the engine's style.qss file is re-applied when it is changed.
 
 # the Shotgun fields that this engine needs in order to operate correctly
 requires_shotgun_fields:
