@@ -14,7 +14,7 @@ import sys
 import os
 import platform
 
-from PySide import QtCore
+from PySide import QtCore, QtGui
 
 from pymu import MuSymbol
 
@@ -22,6 +22,7 @@ import rv
 import rv.rvtypes as rvt
 import rv.commands as rvc
 import rv.extra_commands as rve
+import rv.qtutils as rvqt
 
 def sgtk_dist_dir():
     executable_dir = os.path.dirname(os.environ["RV_APP_RV"])
@@ -54,34 +55,40 @@ class ToolkitBootstrap(rvt.MinorMode):
         self._mode_name = "sgtk_bootstrap"
         self.init(self._mode_name, None,
                 [
-                    ("external-gma-play-entity", self.externalGMAPlayEntity, "")
+                    ("external-gma-play-entity", self.external_gma_play_entity, "")
                 ],
                 [("SG Review", [
                     ("HTTP Server", None, None, lambda: rvc.DisabledMenuState),
-                    ("    Start Server", self.httpServerSetup, None, lambda: rvc.UncheckedMenuState),
-                    ("    Test Certificate", self.testCert, None, lambda: rvc.UncheckedMenuState),
+                    ("    Start Server", self.http_server_setup, None, lambda: rvc.UncheckedMenuState),
+                    ("    Test Certificate", self.test_certificate, None, lambda: rvc.UncheckedMenuState),
                     ("_", None),
-                    ("GMA WebView", self.gmaWebView, None, lambda: rvc.UncheckedMenuState),
+                    ("GMA WebView", self.gma_web_view, None, lambda: rvc.UncheckedMenuState),
                     ("_", None),
                     ("Test Cuts", None, None, lambda: rvc.DisabledMenuState),
                     ("    08_a-team_client_cut_002",                               
-                        self.playEntityFactory("Cut", 6), None, lambda: rvc.UncheckedMenuState),
+                        self.play_entity_factory("Cut", 6), None, lambda: rvc.UncheckedMenuState),
                     ("    08_a-team_base_layer_example_versions_that_fit_cut_001", 
-                        self.playEntityFactory("Cut", 1), None, lambda: rvc.UncheckedMenuState),
+                        self.play_entity_factory("Cut", 1), None, lambda: rvc.UncheckedMenuState),
+                    ("    Select a Cut by ID ...", 
+                        self.play_entity_dialog_factory("Cut"), None, lambda: rvc.UncheckedMenuState),
                     ("Test Versions", None, None, lambda: rvc.DisabledMenuState),
                     ("    BBB_08_a-team_010_ANIM_001", 
-                        self.playEntityFactory("Version", 6048), None, lambda: rvc.UncheckedMenuState),
+                        self.play_entity_factory("Version", 6048), None, lambda: rvc.UncheckedMenuState),
                     ("    BBB_08_a-team_001_ANIM_001", 
-                        self.playEntityFactory("Version", 6004), None, lambda: rvc.UncheckedMenuState),
+                        self.play_entity_factory("Version", 6004), None, lambda: rvc.UncheckedMenuState),
                     ("    BBB_09_tree_trunk_011_ANIM_001", 
-                        self.playEntityFactory("Version", 6023), None, lambda: rvc.UncheckedMenuState),
+                        self.play_entity_factory("Version", 6023), None, lambda: rvc.UncheckedMenuState),
+                    ("    Select a Version by ID ...", 
+                        self.play_entity_dialog_factory("Version"), None, lambda: rvc.UncheckedMenuState),
                     ("Test Playlists", None, None, lambda: rvc.DisabledMenuState),
                     ("    Alan's Playlist 2/19/2016", 
-                        self.playEntityFactory("Playlist", 62), None, lambda: rvc.UncheckedMenuState),
+                        self.play_entity_factory("Playlist", 62), None, lambda: rvc.UncheckedMenuState),
+                    ("    Select a Playlist by ID ...", 
+                        self.play_entity_dialog_factory("Playlist"), None, lambda: rvc.UncheckedMenuState),
                     ("_", None)]
                 )])
 
-        self.httpServerThread = None
+        self.http_server_thread = None
         self.webview = None
         self.server_url = None
 
@@ -92,24 +99,45 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         os.environ["TK_RV_MODE_NAME"] = self._mode_name
 
-    def playEntityFactory (self, entity, id):
+    def play_entity_factory (self, entity, id):
 
-        def playEntity(event):
+        def play_entity(event):
             contents = '{"type":"' + entity + '","id":' + str(id) + '}'
+            rvc.stop()
             rvc.sendInternalEvent("id_from_gma", contents)
+            rvc.play()
 
-        return playEntity
+        return play_entity
 
-    def gmaWebView (self, event) :
+    def play_entity_dialog_factory (self, entity):
+
+        def dialog(event):
+            """
+            Opens the text version of the input dialog
+            """
+            idStr, result = QtGui.QInputDialog.getText(rvqt.sessionWindow(), "I'm a text Input Dialog!",
+                                        "What is your favorite " + entity + " ?")
+            if result:
+                try:
+                    contents = '{"type":"' + entity + '","id":' + str(int(idStr)) + '}'
+                    rvc.stop()
+                    rvc.sendInternalEvent("id_from_gma", contents)
+                    rvc.play()
+                except:
+                    log.error("could not convert '%s' to %s ID" % (idStr, entity))
+
+        return dialog
+
+    def gma_web_view (self, event) :
 
         import sgtk_webview_gma
 
         self.webview = sgtk_webview_gma.pyGMAWindow(self.server_url)
 
-    def externalGMAPlayEntity(self, event):
-        self.httpEventCallback(event.name(), event.contents())
+    def external_gma_play_entity(self, event):
+        self.http_event_callback(event.name(), event.contents())
 
-    def httpEventCallback(self, name, contents) :
+    def http_event_callback(self, name, contents) :
         log.debug("callback ---------------------------- current thread " + str(QtCore.QThread.currentThread()))
         rve.displayFeedback(name + " " + contents, 2.5)
         if (name == "external-gma-play-entity") :
@@ -119,19 +147,19 @@ class ToolkitBootstrap(rvt.MinorMode):
             rvc.redraw()
             rvc.play()
         
-    def httpServerSetup(self, event) :
+    def http_server_setup(self, event) :
         import sgtk_rvserver
-        self.httpServerThread = sgtk_rvserver.RvServerThread(self.httpEventCallback)
-        self.httpServerThread.start()
+        self.http_server_thread = sgtk_rvserver.RvServerThread(self.http_event_callback)
+        self.http_server_thread.start()
 
-    def testCert(self, event) :
+    def test_certificate(self, event) :
 
         # Start up server if it's not already going
-        if (not self.httpServerThread) :
-            self.httpServerSetup(None)
+        if (not self.http_server_thread) :
+            self.http_server_setup(None)
 
         # Get port number from server itself
-        url = "https://localhost:" + str(self.httpServerThread.httpServer.server_address[1])
+        url = "https://localhost:" + str(self.http_server_thread.httpServer.server_address[1])
         log.debug("open url: '%s'" % url)
         rvc.openUrl(url)
 
