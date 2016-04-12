@@ -13,6 +13,7 @@ import cgi
 import sys
 import os
 import platform
+import json
 
 from PySide import QtCore, QtGui
 
@@ -55,7 +56,8 @@ class ToolkitBootstrap(rvt.MinorMode):
         self._mode_name = "sgtk_bootstrap"
         self.init(self._mode_name, None,
                 [
-                    ("external-gma-play-entity", self.external_gma_play_entity, "")
+                    ("external-gma-play-entity", self.external_gma_play_entity, ""),
+                    ("external-sgtk-launch-app", self.launch_app, "")
                 ],
                 [("SG Review", [
                     ("HTTP Server", None, None, lambda: rvc.DisabledMenuState),
@@ -137,7 +139,7 @@ class ToolkitBootstrap(rvt.MinorMode):
     def external_gma_play_entity(self, event):
         self.http_event_callback(event.name(), event.contents())
 
-    def http_event_callback(self, name, contents) :
+    def http_event_callback(self, name, contents):
         log.debug("callback ---------------------------- current thread " + str(QtCore.QThread.currentThread()))
         rve.displayFeedback(name + " " + contents, 2.5)
         if (name == "external-gma-play-entity") :
@@ -147,12 +149,12 @@ class ToolkitBootstrap(rvt.MinorMode):
             rvc.redraw()
             rvc.play()
         
-    def http_server_setup(self, event) :
+    def http_server_setup(self, event):
         import sgtk_rvserver
         self.http_server_thread = sgtk_rvserver.RvServerThread(self.http_event_callback)
         self.http_server_thread.start()
 
-    def test_certificate(self, event) :
+    def test_certificate(self, event):
 
         # Start up server if it's not already going
         if (not self.http_server_thread) :
@@ -162,6 +164,20 @@ class ToolkitBootstrap(rvt.MinorMode):
         url = "https://localhost:" + str(self.http_server_thread.httpServer.server_address[1])
         log.debug("open url: '%s'" % url)
         rvc.openUrl(url)
+
+    def launch_app(self, event):
+        app_data = json.loads(event.contents())
+
+        if (app_data["app"] == "tk-multi-importcut"):
+            import sgtk
+            eng = sgtk.platform.current_engine()
+            if (eng):
+                # XXX Need to check URL in data, and pass on project ID if there is one
+                callback = eng.commands.get("Cut Import", dict()).get("callback")
+                if (callback):
+                    callback()
+        else:
+            log.error("don't know how to launch app '%s'" % app_data["app"])
 
     def activate(self):
         """
