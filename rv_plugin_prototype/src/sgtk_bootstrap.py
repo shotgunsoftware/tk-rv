@@ -144,8 +144,19 @@ class ToolkitBootstrap(rvt.MinorMode):
         rve.displayFeedback(name + " " + contents, 2.5)
         if (name == "external-gma-play-entity") :
             rvc.stop()
-            log.debug("callback sendEvent %s '%s'" % (name, contents))
-            rvc.sendInternalEvent("id_from_gma", contents)
+            internalName = "id_from_gma"
+
+            # Currently lower-level code only supports singular "id", but GMA
+            # will send (sometimes) multiple ids.  For now pull out the first
+            # one and send it on.
+            #
+            gma_data = json.loads(contents)
+            if gma_data.has_key("ids") and not gma_data.has_key("id"):
+                gma_data["id"] = gma_data["ids"][0]
+            contents = json.dumps(gma_data)
+
+            log.debug("callback sendEvent %s '%s'" % (internalName, contents))
+            rvc.sendInternalEvent(internalName, contents)
             rvc.redraw()
             rvc.play()
         
@@ -187,7 +198,7 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-        core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.0")
+        core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.1")
         core = os.environ.get("RV_TK_CORE") or core
 
         # append python path to get to the actual code
@@ -243,7 +254,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             mgr.base_configuration = dict(
                 type="manual",
                 name="tk-config-rv",
-                version="v1.0.0",
+                version="v1.0.1",
             )
 
         # Bootstrap the tk-rv engine into an empty context!
