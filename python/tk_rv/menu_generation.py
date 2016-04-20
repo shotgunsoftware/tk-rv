@@ -12,6 +12,8 @@ import tank
 import rv.commands
 
 class MenuGenerator(object):
+    RV_MENU_SPACER = ("_", None)
+
     def __init__(self, engine):
         """
         Initializes the menu generator for RV.
@@ -42,15 +44,19 @@ class MenuGenerator(object):
         # each RV menu listed so that we can then organize the appropriate
         # commands into the requested menu.
         menu_overrides = self.engine.get_setting("menu_overrides", dict())
+
+        # Note: dict comprehension is not available in Python 2.5. We are
+        # safe here because all available versions of RV are 2.7 as of this
+        # writing.
         commands_by_menu = {n: [] for n in menu_overrides.keys()}
 
         # We're placing a spacer before and after the context menu because
         # this is likely going into the existing "Shotgun" menu in RV, which
         # contains menu actions that will be listed before it.
         commands_by_menu[self.engine.default_menu_name] = [
-            ("_", None),
+            MenuGenerator.RV_MENU_SPACER,
             self._context_menu,
-            ("_", None),
+            MenuGenerator.RV_MENU_SPACER,
         ]
 
         # Organize the various commands into the appropriate RV menu
@@ -58,14 +64,27 @@ class MenuGenerator(object):
         # the config we put it into that RV menu's list of commands,
         # otherwise we fall back on the default menu defined by the
         # engine.
+        #
+        # Config setting structure:
+        #
+        # menu_overrides:
+        #   SG Review:
+        #     - {app_instance: tk-multi-importcut, name: Cut Import}
+        #
+        # Dictionary structure:
+        #
+        # commands_by_menu = {
+        #     "Shotgun":[menu_item, ...],
+        #     "SG Review":[menu_item, ...],
+        # }
         for cmd in menu_commands:
             menu_item = cmd.define_menu_item()
             if cmd.get_type() == "context_menu":
                 self._add_item_to_context_menu(menu_item)
             else:
-                for menu_override, comm in menu_overrides.iteritems():
+                for menu_override, commands in menu_overrides.iteritems():
                     app_name = cmd.get_app_name()
-                    if app_name in [c.get("app_instance") for c in comm if cmd.name == c.get("name")]:
+                    if app_name in [c.get("app_instance") for c in commands if cmd.name == c.get("name")]:
                         commands_by_menu[menu_override].append(menu_item)
                     else:
                         commands_by_menu[self.engine.default_menu_name].append(menu_item)
@@ -91,6 +110,9 @@ class MenuGenerator(object):
         # This is a no-op right now. Because we allow engine commands
         # to both new and existing menus, we can't just zero out the
         # contents and be on our way.
+        #
+        # TODO: Menu destruction. Right now we'll end up with duplicate
+        # menu items if the context ever changes.
         pass
 
     ##########################################################################################
