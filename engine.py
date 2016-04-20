@@ -27,13 +27,6 @@ class RVEngine(Engine):
     # Properties
 
     @property
-    def context_change_allowed(self):
-        """
-        Specifies that on-the-fly context changes are supported.
-        """
-        return True
-
-    @property
     def toolkit_rv_mode_name(self):
         """
         The name of the RV Mode that bootstrapped SGTK and started
@@ -42,11 +35,11 @@ class RVEngine(Engine):
         return os.environ.get("TK_RV_MODE_NAME")
 
     @property
-    def menu_name(self):
+    def default_menu_name(self):
         """
         The name of the top-level menu created by the engine.
         """
-        return "SG Review"
+        return "Shotgun"
 
     #####################################################################################
     # Engine Initialization and Destruction
@@ -96,23 +89,7 @@ class RVEngine(Engine):
         self.log_debug("%r: Destroying tk-rv engine." % self)
 
         if self._ui_enabled:
-            self.log_debug("%r: Destroying %s menu" % (self, self.menu_name))
             self._menu_generator.destroy_menu()
-
-    def post_context_change(self, old_context, new_context):
-        """
-        Run after any on-the-fly context changes. This will trigger a
-        rebuild of the top-level menu created by the engine when it was
-        initialized.
-
-        :param old_context: The previously-active context.
-        :param new_context: The context that was switched to.
-        """
-        if not self._ui_enabled:
-            return
-
-        self._menu_generator.destroy_menu()
-        self._menu_generator.create_menu()
 
     #####################################################################################
     # Logging
