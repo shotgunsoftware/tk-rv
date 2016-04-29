@@ -79,15 +79,19 @@ class MenuGenerator(object):
         # }
         for cmd in menu_commands:
             menu_item = cmd.define_menu_item()
+
             if cmd.get_type() == "context_menu":
                 self._add_item_to_context_menu(menu_item)
             else:
-                for menu_override, commands in menu_overrides.iteritems():
-                    app_name = cmd.get_app_name()
-                    if app_name in [c.get("app_instance") for c in commands if cmd.name == c.get("name")]:
-                        commands_by_menu[menu_override].append(menu_item)
-                    else:
-                        commands_by_menu[self.engine.default_menu_name].append(menu_item)
+                if menu_overrides:
+                    for menu_override, commands in menu_overrides.iteritems():
+                        app_name = cmd.get_app_name()
+                        if app_name in [c.get("app_instance") for c in commands if cmd.name == c.get("name")]:
+                            commands_by_menu[menu_override].append(menu_item)
+                        else:
+                            commands_by_menu[self.engine.default_menu_name].append(menu_item)
+                else:
+                    commands_by_menu[self.engine.default_menu_name].append(menu_item)
 
         mode_menu_definition = []
 
