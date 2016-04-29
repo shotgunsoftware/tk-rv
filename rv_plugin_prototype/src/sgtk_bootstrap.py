@@ -60,34 +60,35 @@ class ToolkitBootstrap(rvt.MinorMode):
                     ("external-sgtk-launch-app", self.launch_app, "")
                 ],
                 [("SG Review", [
-                    ("HTTP Server", None, None, lambda: rvc.DisabledMenuState),
-                    ("    Start Server", self.http_server_setup, None, lambda: rvc.UncheckedMenuState),
-                    ("    Test Certificate", self.test_certificate, None, lambda: rvc.UncheckedMenuState),
-                    ("_", None),
-                    ("GMA WebView", self.gma_web_view, None, lambda: rvc.UncheckedMenuState),
-                    ("_", None),
-                    ("Test Cuts", None, None, lambda: rvc.DisabledMenuState),
-                    ("    08_a-team_client_cut_002",                               
-                        self.play_entity_factory("Cut", 6), None, lambda: rvc.UncheckedMenuState),
-                    ("    08_a-team_base_layer_example_versions_that_fit_cut_001", 
-                        self.play_entity_factory("Cut", 1), None, lambda: rvc.UncheckedMenuState),
-                    ("    Select a Cut by ID ...", 
-                        self.play_entity_dialog_factory("Cut"), None, lambda: rvc.UncheckedMenuState),
-                    ("Test Versions", None, None, lambda: rvc.DisabledMenuState),
-                    ("    BBB_08_a-team_010_ANIM_001", 
-                        self.play_entity_factory("Version", 6048), None, lambda: rvc.UncheckedMenuState),
-                    ("    BBB_08_a-team_001_ANIM_001", 
-                        self.play_entity_factory("Version", 6004), None, lambda: rvc.UncheckedMenuState),
-                    ("    BBB_09_tree_trunk_011_ANIM_001", 
-                        self.play_entity_factory("Version", 6023), None, lambda: rvc.UncheckedMenuState),
-                    ("    Select a Version by ID ...", 
-                        self.play_entity_dialog_factory("Version"), None, lambda: rvc.UncheckedMenuState),
-                    ("Test Playlists", None, None, lambda: rvc.DisabledMenuState),
-                    ("    Alan's Playlist 2/19/2016", 
-                        self.play_entity_factory("Playlist", 62), None, lambda: rvc.UncheckedMenuState),
-                    ("    Select a Playlist by ID ...", 
-                        self.play_entity_dialog_factory("Playlist"), None, lambda: rvc.UncheckedMenuState),
-                    ("_", None)]
+                    # ("HTTP Server", None, None, lambda: rvc.DisabledMenuState),
+                    # ("    Start Server", self.http_server_setup, None, lambda: rvc.UncheckedMenuState),
+                    # ("    Test Certificate", self.test_certificate, None, lambda: rvc.UncheckedMenuState),
+                    # ("_", None),
+                    # ("GMA WebView", self.gma_web_view, None, lambda: rvc.UncheckedMenuState),
+                    # ("_", None),
+                    # ("Test Cuts", None, None, lambda: rvc.DisabledMenuState),
+                    # ("    08_a-team_client_cut_002",                               
+                    #     self.play_entity_factory("Cut", 6), None, lambda: rvc.UncheckedMenuState),
+                    # ("    08_a-team_base_layer_example_versions_that_fit_cut_001", 
+                    #     self.play_entity_factory("Cut", 1), None, lambda: rvc.UncheckedMenuState),
+                    # ("    Select a Cut by ID ...", 
+                    #     self.play_entity_dialog_factory("Cut"), None, lambda: rvc.UncheckedMenuState),
+                    # ("Test Versions", None, None, lambda: rvc.DisabledMenuState),
+                    # ("    BBB_08_a-team_010_ANIM_001", 
+                    #     self.play_entity_factory("Version", 6048), None, lambda: rvc.UncheckedMenuState),
+                    # ("    BBB_08_a-team_001_ANIM_001", 
+                    #     self.play_entity_factory("Version", 6004), None, lambda: rvc.UncheckedMenuState),
+                    # ("    BBB_09_tree_trunk_011_ANIM_001", 
+                    #     self.play_entity_factory("Version", 6023), None, lambda: rvc.UncheckedMenuState),
+                    # ("    Select a Version by ID ...", 
+                    #     self.play_entity_dialog_factory("Version"), None, lambda: rvc.UncheckedMenuState),
+                    # ("Test Playlists", None, None, lambda: rvc.DisabledMenuState),
+                    # ("    Alan's Playlist 2/19/2016", 
+                    #     self.play_entity_factory("Playlist", 62), None, lambda: rvc.UncheckedMenuState),
+                    # ("    Select a Playlist by ID ...", 
+                    #     self.play_entity_dialog_factory("Playlist"), None, lambda: rvc.UncheckedMenuState),
+                    # ("_", None)]
+                    ]
                 )])
 
         self.http_server_thread = None
@@ -198,7 +199,7 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-        core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.2")
+        core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.3")
         core = os.environ.get("RV_TK_CORE") or core
 
         # append python path to get to the actual code
@@ -254,7 +255,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             mgr.base_configuration = dict(
                 type="manual",
                 name="tk-config-rv",
-                version="v1.0.2",
+                version="v1.0.3",
             )
 
         # Bootstrap the tk-rv engine into an empty context!
