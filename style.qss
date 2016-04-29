@@ -11,8 +11,7 @@ not expressly granted therein are reserved by Shotgun Software Inc.
 
 */
 
-QWidget
-{
+QWidget {
     background-color:  rgb(50, 50, 50);
     color: rgb(185, 185, 185);
     border-radius: 2px;
@@ -40,26 +39,23 @@ QGroupBox::title {
     color: rgb(200,200,200);
 }
 
-QFrame, QLineEdit, QComboBox, QSpinBox
-{
+QFrame, QLineEdit, QComboBox, QSpinBox {
     background-color: rgb(50, 50, 50);
 }     
 
-QLabel
-{
+QLabel {
+    font-family: "Open Sans";
     background-color: none;
     border:none;
 }
 
 /*tabwidget*/
-QTabWidget::pane  
-{
+QTabWidget::pane {
     border-radius: 2px;
     border: 1px solid rgb(20, 20, 20);
 }
 
-QTabBar::tab  
-{
+QTabBar::tab {
     border-radius: 1px;
     padding: 3px 3px 3px 3px;
 }
@@ -68,25 +64,21 @@ QTabWidget::tab-bar {
     alignment: left;
 }
 
-QTabBar::tab:selected, QTabBar::tab:hover  
-{
+QTabBar::tab:selected, QTabBar::tab:hover {
     background-color: rgb(90, 90, 90);
 }
 
-QTabBar::tab:!selected 
-{
+QTabBar::tab:!selected {
     background-color: rgb(60, 60, 60);
 }
 
 /*radiobuttons+checkboxes*/
-QRadioButton, QCheckBox
-{
+QRadioButton, QCheckBox {
     background:transparent;
     border:none
 }
 
-QRadioButton:disabled, QCheckBox:disabled
-{
+QRadioButton:disabled, QCheckBox:disabled {
     background:transparent;
     color:rgb(120, 120, 120)
 }
@@ -94,8 +86,7 @@ QRadioButton:disabled, QCheckBox:disabled
 
 /*Push Button*/
 
-QPushButton
-{
+QPushButton {
     background-color: rgb(65, 65, 65);
     border-width: 1px;
     border-color: rgb(20, 20, 20);
@@ -107,8 +98,7 @@ QPushButton
     padding-right: 5px;
 }
 
-QToolButton
-{
+QToolButton {
     border-color: rgb(20, 20, 20);
     border-style: solid;
     border-radius: 1;
@@ -119,13 +109,11 @@ QToolButton
     padding-right: 5px;
 }
 
-QPushButton:pressed, QToolButton:pressed
-{
+QPushButton:pressed, QToolButton:pressed {
     background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2d2d2d, stop: 0.1 #2b2b2b, stop: 0.5 #292929, stop: 0.9 #282828, stop: 1 #252525);
 }
 
-QPushButton:hover, QToolButton:hover
-{
+QPushButton:hover, QToolButton:hover {
     border: 1px solid {{SG_HIGHLIGHT_COLOR}};
 }
 
