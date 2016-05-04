@@ -11,11 +11,11 @@
 import os
 import sys
 
-import tank
+import sgtk
 import rv.qtutils
 
-from tank.platform import Engine
-from tank import constants
+from sgtk.platform import Engine
+from sgtk import constants
 from PySide import QtGui, QtCore
 
 class RVEngine(Engine):
@@ -48,6 +48,35 @@ class RVEngine(Engine):
         """
         Runs before apps have been initialized.
         """
+        # We can't use import_framework here because the engine.py
+        # wasn't imported via import_module itself. As a result, we
+        # forgo the convenience and grab the framework ourselves and
+        # import the submodules we need directly.
+        shotgun_utils = self.frameworks["tk-framework-shotgunutils"]
+        shotgun_globals = shotgun_utils.import_module("shotgun_globals")
+        task_manager = shotgun_utils.import_module("task_manager")
+        shotgun_data = shotgun_utils.import_module("shotgun_data")
+
+        # We need a QObject to act as a parent for the task manager
+        # and data retriever instances. This will keep them and their
+        # threads from being garbage collected prematurely by Qt.
+        self.__task_parent = QtCore.QObject()
+
+        # We will provide both a task manager and a data retriever
+        # that apps can make shared use of.
+        self.bg_task_manager = task_manager.BackgroundTaskManager(
+            parent=self.__task_parent,
+            start_processing=True,
+            max_threads=self.get_setting("max_threads", 4),
+        )
+
+        shotgun_globals.register_bg_task_manager(self.bg_task_manager)
+
+        self.data_retriever = shotgun_data.ShotgunDataRetriever(
+            parent=self.__task_parent,
+            bg_task_manager=self.bg_task_manager,
+        )
+
         # The "qss_watcher" setting causes us to monitor the engine's
         # style.qss file and re-apply it on the fly when it changes
         # on disk. This is very useful for development work,
@@ -90,6 +119,8 @@ class RVEngine(Engine):
 
         if self._ui_enabled:
             self._menu_generator.destroy_menu()
+
+        self.data_retriever.stop()
 
     #####################################################################################
     # Logging
@@ -151,7 +182,7 @@ class RVEngine(Engine):
     def _create_dialog(self, *args, **kwargs):
         """
         Overrides and extends the default _create_dialog implementation
-        from tank.platform.engine.Engine. Dialogs are created as is typical,
+        from sgtk.platform.engine.Engine. Dialogs are created as is typical,
         and then have the tk-rv engine-specific style.qss file applies to
         them.
         """
