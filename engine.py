@@ -11,11 +11,11 @@
 import os
 import sys
 
-import tank
+import sgtk
 import rv.qtutils
 
-from tank.platform import Engine
-from tank import constants
+from sgtk.platform import Engine
+from sgtk import constants
 from PySide import QtGui, QtCore
 
 class RVEngine(Engine):
@@ -23,23 +23,39 @@ class RVEngine(Engine):
     Shotgun Toolkit engine for RV.
     """
 
+    MAX_THREADS = 4
+
     #####################################################################################
     # Properties
+
+    @property
+    def default_menu_name(self):
+        """
+        The name of the top-level menu created by the engine.
+
+        :returns:   str
+        """
+        return "Shotgun"
 
     @property
     def toolkit_rv_mode_name(self):
         """
         The name of the RV Mode that bootstrapped SGTK and started
         the engine.
+
+        :returns:   str
         """
         return os.environ.get("TK_RV_MODE_NAME")
 
     @property
-    def default_menu_name(self):
+    def bg_task_manager(self):
         """
-        The name of the top-level menu created by the engine.
+        An engine-level background task manager instance that can be
+        shared across apps.
+
+        :returns:   task_manager.BackgroundTaskManager
         """
-        return "Shotgun"
+        return self._bg_task_manager
 
     #####################################################################################
     # Engine Initialization and Destruction
@@ -48,6 +64,28 @@ class RVEngine(Engine):
         """
         Runs before apps have been initialized.
         """
+        # We can't use import_framework here because the engine.py
+        # wasn't imported via import_module itself. As a result, we
+        # forgo the convenience and grab the framework ourselves and
+        # import the submodules we need directly.
+        shotgun_utils = self.frameworks["tk-framework-shotgunutils"]
+        shotgun_globals = shotgun_utils.import_module("shotgun_globals")
+        task_manager = shotgun_utils.import_module("task_manager")
+
+        # We need a QObject to act as a parent for the task manager.
+        # This will keep them and their threads from being garbage
+        # collected prematurely by Qt.
+        self.__task_parent = QtCore.QObject()
+
+        # We will provide a task manager that apps can share.
+        self._bg_task_manager = task_manager.BackgroundTaskManager(
+            parent=self.__task_parent,
+            start_processing=True,
+            max_threads=RVEngine.MAX_THREADS,
+        )
+
+        shotgun_globals.register_bg_task_manager(self._bg_task_manager)
+
         # The "qss_watcher" setting causes us to monitor the engine's
         # style.qss file and re-apply it on the fly when it changes
         # on disk. This is very useful for development work,
@@ -90,6 +128,8 @@ class RVEngine(Engine):
 
         if self._ui_enabled:
             self._menu_generator.destroy_menu()
+
+        self.bg_task_manager.shut_down()
 
     #####################################################################################
     # Logging
@@ -151,7 +191,7 @@ class RVEngine(Engine):
     def _create_dialog(self, *args, **kwargs):
         """
         Overrides and extends the default _create_dialog implementation
-        from tank.platform.engine.Engine. Dialogs are created as is typical,
+        from sgtk.platform.engine.Engine. Dialogs are created as is typical,
         and then have the tk-rv engine-specific style.qss file applies to
         them.
         """
