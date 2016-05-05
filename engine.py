@@ -23,23 +23,39 @@ class RVEngine(Engine):
     Shotgun Toolkit engine for RV.
     """
 
+    MAX_THREADS = 4
+
     #####################################################################################
     # Properties
+
+    @property
+    def default_menu_name(self):
+        """
+        The name of the top-level menu created by the engine.
+
+        :returns:   str
+        """
+        return "Shotgun"
 
     @property
     def toolkit_rv_mode_name(self):
         """
         The name of the RV Mode that bootstrapped SGTK and started
         the engine.
+
+        :returns:   str
         """
         return os.environ.get("TK_RV_MODE_NAME")
 
     @property
-    def default_menu_name(self):
+    def bg_task_manager(self):
         """
-        The name of the top-level menu created by the engine.
+        An engine-level background task manager instance that can be
+        shared across apps.
+
+        :returns:   task_manager.BackgroundTaskManager
         """
-        return "Shotgun"
+        return self._bg_task_manager
 
     #####################################################################################
     # Engine Initialization and Destruction
@@ -55,27 +71,20 @@ class RVEngine(Engine):
         shotgun_utils = self.frameworks["tk-framework-shotgunutils"]
         shotgun_globals = shotgun_utils.import_module("shotgun_globals")
         task_manager = shotgun_utils.import_module("task_manager")
-        shotgun_data = shotgun_utils.import_module("shotgun_data")
 
-        # We need a QObject to act as a parent for the task manager
-        # and data retriever instances. This will keep them and their
-        # threads from being garbage collected prematurely by Qt.
+        # We need a QObject to act as a parent for the task manager.
+        # This will keep them and their threads from being garbage
+        # collected prematurely by Qt.
         self.__task_parent = QtCore.QObject()
 
-        # We will provide both a task manager and a data retriever
-        # that apps can make shared use of.
-        self.bg_task_manager = task_manager.BackgroundTaskManager(
+        # We will provide a task manager that apps can share.
+        self._bg_task_manager = task_manager.BackgroundTaskManager(
             parent=self.__task_parent,
             start_processing=True,
-            max_threads=self.get_setting("max_threads", 4),
+            max_threads=RVEngine.MAX_THREADS,
         )
 
-        shotgun_globals.register_bg_task_manager(self.bg_task_manager)
-
-        self.data_retriever = shotgun_data.ShotgunDataRetriever(
-            parent=self.__task_parent,
-            bg_task_manager=self.bg_task_manager,
-        )
+        shotgun_globals.register_bg_task_manager(self._bg_task_manager)
 
         # The "qss_watcher" setting causes us to monitor the engine's
         # style.qss file and re-apply it on the fly when it changes
@@ -120,7 +129,7 @@ class RVEngine(Engine):
         if self._ui_enabled:
             self._menu_generator.destroy_menu()
 
-        self.data_retriever.stop()
+        self.bg_task_manager.shut_down()
 
     #####################################################################################
     # Logging
