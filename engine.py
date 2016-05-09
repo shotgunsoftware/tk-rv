@@ -64,6 +64,20 @@ class RVEngine(Engine):
         """
         Runs before apps have been initialized.
         """
+        # Here we're going to set the hyperlink text color to white
+        # since the default is a dark blue that is pretty much unreadable
+        # in a dark color environment like RV. It would be great if we
+        # could style this in qss and only affect toolkit apps, but that's
+        # no possible. As a result, we're modifying the QApplication-level
+        # palette, which is also going to affect RV itself. This is generally
+        # a BAD IDEA, but in this one case it is the best compromise solution
+        # available.
+        palette = QtGui.QApplication.palette()
+        link_color = QtGui.QColor(255, 255, 255)
+        palette.setColor(QtGui.QPalette.Link, link_color)
+        palette.setColor(QtGui.QPalette.LinkVisited, link_color)
+        QtGui.QApplication.setPalette(palette)
+
         # We can't use import_framework here because the engine.py
         # wasn't imported via import_module itself. As a result, we
         # forgo the convenience and grab the framework ourselves and
