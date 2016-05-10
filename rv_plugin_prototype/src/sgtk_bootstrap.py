@@ -57,6 +57,7 @@ class ToolkitBootstrap(rvt.MinorMode):
         self.init(self._mode_name, None,
                 [
                     ("external-gma-play-entity", self.external_gma_play_entity, ""),
+                    ("external-gma-compare-entities", self.external_gma_compare_entities, ""),
                     ("external-sgtk-launch-app", self.launch_app, "")
                 ],
                 [("SG Review", [
@@ -137,14 +138,18 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         self.webview = sgtk_webview_gma.pyGMAWindow(self.server_url)
 
+    def external_gma_compare_entities(self, event):
+        rvc.sendInternalEvent("compare_ids_from_gma", event.contents())
+        rvc.redraw()
+
     def external_gma_play_entity(self, event):
         self.http_event_callback(event.name(), event.contents())
+        rvc.redraw()
 
     def http_event_callback(self, name, contents):
         log.debug("callback ---------------------------- current thread " + str(QtCore.QThread.currentThread()))
         rve.displayFeedback(name + " " + contents, 2.5)
         if (name == "external-gma-play-entity") :
-            rvc.stop()
             internalName = "id_from_gma"
 
             # Currently lower-level code only supports singular "id", but GMA
@@ -158,8 +163,6 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             log.debug("callback sendEvent %s '%s'" % (internalName, contents))
             rvc.sendInternalEvent(internalName, contents)
-            rvc.redraw()
-            rvc.play()
         
     def http_server_setup(self, event):
         import sgtk_rvserver
@@ -199,7 +202,7 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-        core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.3")
+        core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.11")
         core = os.environ.get("RV_TK_CORE") or core
 
         # append python path to get to the actual code
@@ -255,7 +258,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             mgr.base_configuration = dict(
                 type="manual",
                 name="tk-config-rv",
-                version="v1.0.3",
+                version="v1.0.11",
             )
 
         # Bootstrap the tk-rv engine into an empty context!
