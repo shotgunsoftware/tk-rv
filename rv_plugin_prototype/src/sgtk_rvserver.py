@@ -17,11 +17,6 @@ from PySide import QtGui
 from PySide import QtWebKit
 from PySide import QtCore
 
-# Assuming Toolkit is available in the path.
-from tank_vendor.shotgun_api3 import Shotgun
-from tank_vendor.shotgun_authentication.user import ShotgunUser
-from tank_vendor.shotgun_authentication.user_impl import ShotgunUserImpl
-
 def deb(s, addNL=True) :
     if (addNL) :
         sys.stderr.write(s + "\n");
