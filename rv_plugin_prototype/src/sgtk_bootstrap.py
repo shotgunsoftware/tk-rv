@@ -159,7 +159,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             eng = sgtk.platform.current_engine()
             if (eng):
                 # XXX Need to check URL in data, and pass on project ID if there is one
-                callback = eng.commands.get("Cut Import", dict()).get("callback")
+                callback = eng.commands.get("Import Cut", dict()).get("callback")
                 if (callback):
                     callback()
         else:
@@ -173,7 +173,7 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-        core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.14")
+        core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.15")
         core = os.environ.get("RV_TK_CORE") or core
 
         # append python path to get to the actual code
@@ -229,7 +229,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             mgr.base_configuration = dict(
                 type="manual",
                 name="tk-config-rv",
-                version="v1.0.14",
+                version="v1.0.15",
             )
 
         # Bootstrap the tk-rv engine into an empty context!
