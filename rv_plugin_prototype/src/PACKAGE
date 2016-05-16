@@ -5,7 +5,7 @@ contact: support@shotgunsoftware.com
 version: 1.0
 requires: ''
 rv: 6.2.6
-optional: true
+optional: false
 url: http://www.shotgunsoftware.com
 
 modes:
@@ -14,22 +14,5 @@ modes:
 
 description: |
 
-    <h1>
-    <font color="#ffbad2">T</font><font color="#fd9bbd">o</font><font color="#fb7ca9">o</font><font color="#f95d94">l</font><font color="#f63e7f">k</font><font color="#f41f6b">i</font><font color="#f20056">t</font><font color="#eb2366"> </font><font color="#e44575">i</font><font color="#dd6885">n</font><font color="#d68a95"> </font><font color="#cfada4">R</font><font color="#c8cfb4">V</font>
-    </h1>
+    <h3>Toolkit RV Engine</h3>
 
-    <div>
-    <font color="#558cb4">T</font><font color="#568db5">o</font><font color="#578db5">o</font><font color="#588eb6">l</font><font color="#598fb6">k</font><font color="#5990b7">i</font><font color="#5a90b8">t</font><font color="#5b91b8"> </font><font color="#5c92b9">R</font><font color="#5d93b9">V</font><font color="#5e93ba"> </font><font color="#5f94bb">P</font><font color="#6095bb">l</font><font color="#6095bc">u</font><font color="#6196bc">g</font><font color="#6297bd">i</font><font color="#6398bd">n</font><font color="#6498be"> </font><font color="#6599bf">P</font><font color="#669abf">r</font><font color="#679bc0">o</font><font color="#679bc0">t</font><font color="#689cc1">o</font><font color="#699dc2">t</font><font color="#6a9dc2">y</font><font color="#6b9ec3">p</font><font color="#6c9fc3">e</font><font color="#6da0c4"> </font><font color="#6ea0c5">I</font><font color="#6ea1c5">n</font><font color="#6fa2c6">t</font><font color="#70a3c6">e</font><font color="#71a3c7">g</font><font color="#72a4c8">r</font><font color="#73a5c8">a</font><font color="#74a5c9">t</font><font color="#75a6c9">i</font><font color="#76a7ca">o</font><font color="#76a8ca">n</font><font color="#77a8cb">.</font></div><div><font color="#78a9cc">T</font><font color="#79aacc">h</font><font color="#7aabcd">i</font><font color="#7babcd">s</font><font color="#7cacce"> </font><font color="#7dadcf">i</font><font color="#7dadcf">s</font><font color="#7eaed0"> </font><font color="#7fafd0">a</font><font color="#80b0d1"> </font><font color="#81b0d2">h</font><font color="#82b1d2">e</font><font color="#83b2d3">l</font><font color="#84b3d3">l</font><font color="#84b3d4">o</font><font color="#85b4d5"> </font><font color="#86b5d5">w</font><font color="#87b5d6">o</font><font color="#88b6d6">r</font><font color="#89b7d7">l</font><font color="#8ab8d7">d</font><font color="#8bb8d8"> </font><font color="#8bb9d9">p</font><font color="#8cbad9">r</font><font color="#8dbbda">o</font><font color="#8ebbda">t</font><font color="#8fbcdb">o</font><font color="#91bcdb">t</font><font color="#92bdda">y</font><font color="#94bdda">p</font><font color="#95bed9">e</font><font color="#97bed9"> </font><font color="#98bed8">s</font><font color="#9abfd8">h</font><font color="#9bbfd7">o</font><font color="#9dc0d7">w</font><font color="#9ec0d6">i</font><font color="#a0c0d6">n</font><font color="#a1c1d5">g</font><font color="#a3c1d5"> </font><font color="#a4c2d4">h</font><font color="#a6c2d4">o</font><font color="#a7c2d3">w</font><font color="#a9c3d3"> </font><font color="#abc3d3">t</font><font color="#acc3d2">o</font><font color="#aec4d2"> </font><font color="#afc4d1">b</font><font color="#b1c5d1">o</font><font color="#b2c5d0">o</font><font color="#b4c5d0">t</font><font color="#b5c6cf">s</font><font color="#b7c6cf">t</font><font color="#b8c7ce">r</font><font color="#bac7ce">a</font><font color="#bbc7cd">p</font><font color="#bdc8cd"> </font><font color="#bec8cc">t</font><font color="#c0c9cc">o</font><font color="#c2c9cc">o</font><font color="#c3c9cb">l</font><font color="#c5cacb">k</font><font color="#c6caca">i</font><font color="#c8cbca">t</font><font color="#c9cbc9"> </font><font color="#cbcbc9">i</font><font color="#ccccc8">n</font><font color="#ceccc8"> </font><font color="#cfcdc7">R</font><font color="#d1cdc7">V</font><font color="#d2cdc6">.</font></div><div><font color="#d4cec6">F</font><font color="#d5cec5">o</font><font color="#d7cfc5">r</font><font color="#d8cfc4"> </font><font color="#dacfc4">d</font><font color="#dcd0c4">e</font><font color="#ddd0c3">t</font><font color="#dfd0c3">a</font><font color="#e0d1c2">i</font><font color="#e2d1c2">l</font><font color="#e3d2c1">s</font><font color="#e5d2c1">,</font><font color="#e6d2c0"> </font><font color="#e8d3c0">s</font><font color="#e9d3bf">e</font><font color="#ebd4bf">e</font><font color="#ecd4be"> </font>
-
-    <a href='https://github.com/shotgunsoftware/tk-rv'>
-    <font color="#eed4be">h</font><font color="#efd5bd">e</font><font color="#f1d5bd">r</font><font color="#f2d6bc">e</font><font color="#f4d6bc">.</font>
-    </a>
-
-    </div>
-
-    <!--
-
-    Text says:
-        Toolkit RV Plugin Integration
-
-    -->

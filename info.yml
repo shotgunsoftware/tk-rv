@@ -3,8 +3,14 @@ configuration:
     debug_logging:
         type: bool
         default_value: true
-        description: Controls whether debug messages should be emitted to the logger
-
+        description: Controls whether debug messages should be emitted to the logger.
+    menu_overrides:
+        type: dict
+        description: "Controls which RV menu engine commands are placed in. If a
+                      command is not defined in the menu_overrides, then it will be
+                      placed within the Shotgun menu."
+        allows_empty: True
+        default_value: {}
 
 # the Shotgun fields that this engine needs in order to operate correctly
 requires_shotgun_fields:

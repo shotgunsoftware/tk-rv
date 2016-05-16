@@ -10,9 +10,10 @@
 
 import tank
 import rv.commands
-from tank.platform.qt import QtGui, QtCore
 
 class MenuGenerator(object):
+    RV_MENU_SPACER = ("_", None)
+
     def __init__(self, engine):
         """
         Initializes the menu generator for RV.
@@ -20,7 +21,6 @@ class MenuGenerator(object):
         :param engine:  The parent sgtk engine.
         """
         self.engine = engine
-        self._menu_handle = []
         self._context_menu = None
 
     def create_menu(self):
@@ -29,61 +29,101 @@ class MenuGenerator(object):
         context menu, plus any app commands that were registered
         with the engine.
         """
-        # We'll clear out the menu data we have in case this is being
-        # run multiple times within the same RV session. This would be
-        # the case during context changes.
-        self._menu_handle = []
         self._context_menu = self._add_context_menu()
-        self._menu_handle.append(self._context_menu)
-
-        separator_item = ("_", None)
-        self._menu_handle.append(separator_item)
-
-        menu_commands = []
 
         # Wrap each command that was registered with the engine in
         # an AppCommand object. This will make it easy to then add
         # those commands to our menu in RV.
-        for (cmd_name, cmd_details) in self.engine.commands.items():
-            menu_commands.append(AppCommand(cmd_name, cmd_details))
+        menu_commands = [AppCommand(n, d) for n, d in self.engine.commands.items()]
 
         # All of the commands will be sorted by name in the menu.
         menu_commands.sort(key=lambda x: x.name)
 
-        # Add a separator between the context menu and the rest
-        # of the menu items.
-        self._menu_handle.append(separator_item)
+        # Separate the various menu items out into their sections. We're
+        # checking the menu_overrides setting and initializing a place for
+        # each RV menu listed so that we can then organize the appropriate
+        # commands into the requested menu.
+        menu_overrides = self.engine.get_setting("menu_overrides", dict())
 
-        # Separate the various menu items out into their sections.
-        commands_by_app = dict()
+        # Note: dict comprehension is not available in Python 2.5. We are
+        # safe here because all available versions of RV are 2.7 as of this
+        # writing.
+        commands_by_menu = {n: [] for n in menu_overrides.keys()}
 
+        # We're placing a spacer before and after the context menu because
+        # this is likely going into the existing "Shotgun" menu in RV, which
+        # contains menu actions that will be listed before it.
+        commands_by_menu[self.engine.default_menu_name] = [
+            MenuGenerator.RV_MENU_SPACER,
+            self._context_menu,
+            MenuGenerator.RV_MENU_SPACER,
+        ]
+
+        # Organize the various commands into the appropriate RV menu
+        # within our dictionary. If we find an override that came from
+        # the config we put it into that RV menu's list of commands,
+        # otherwise we fall back on the default menu defined by the
+        # engine.
+        #
+        # Config setting structure:
+        #
+        # menu_overrides:
+        #   SG Review:
+        #     - {app_instance: tk-multi-importcut, name: Cut Import}
+        #
+        # Dictionary structure:
+        #
+        # commands_by_menu = {
+        #     "Shotgun":[menu_item, ...],
+        #     "SG Review":[menu_item, ...],
+        # }
         for cmd in menu_commands:
             menu_item = cmd.define_menu_item()
 
             if cmd.get_type() == "context_menu":
                 self._add_item_to_context_menu(menu_item)
             else:
-                app_name = cmd.get_app_name()
+                if menu_overrides:
+                    command_added = False
 
-                if app_name not in commands_by_app:
-                    commands_by_app[app_name] = []
+                    for menu_override, commands in menu_overrides.iteritems():
+                        app_name = cmd.get_app_name()
 
-                commands_by_app[app_name].append(menu_item)
+                        if app_name in [c.get("app_instance") for c in commands if cmd.name == c.get("name")]:
+                            commands_by_menu[menu_override].append(menu_item)
+                            command_added = True
+                            break
 
-        # Add app-specific menus to the menu handle.
-        for menu_name, menu_items in commands_by_app.iteritems():
-            self._menu_handle.append((menu_name, menu_items))
+                    if not command_added:
+                        commands_by_menu[self.engine.default_menu_name].append(menu_item)
+                else:
+                    commands_by_menu[self.engine.default_menu_name].append(menu_item)
 
-        # Create the main menu in RV.
-        sgtk_menu = [(self.engine.menu_name, self._menu_handle)]
-        rv.commands.defineModeMenu(self.engine.toolkit_rv_mode_name, sgtk_menu)
+        mode_menu_definition = []
+
+        for menu_name, menu_items in commands_by_menu.iteritems():
+            # If there are no commands to add to a specific menu, then
+            # don't bother adding it to the menu definition.
+            if not menu_items:
+                continue
+            mode_menu_definition.append((menu_name, menu_items))
+
+        rv.commands.defineModeMenu(
+            self.engine.toolkit_rv_mode_name,
+            mode_menu_definition,
+        )
 
     def destroy_menu(self):
         """
         Tears down the top-level menu in RV.
         """
-        sgtk_menu = [("", [("_", None)])]
-        rv.commands.defineModeMenu(self.engine.toolkit_rv_mode_name, sgtk_menu)
+        # This is a no-op right now. Because we allow engine commands
+        # to both new and existing menus, we can't just zero out the
+        # contents and be on our way.
+        #
+        # TODO: Menu destruction. Right now we'll end up with duplicate
+        # menu items if the context ever changes.
+        pass
 
     ##########################################################################################
     # context menu and UI
@@ -135,10 +175,10 @@ class AppCommand(object):
 
     def get_app_name(self):
         """
-        Gets the name of the parent app that registered this command.
+        Gets the instance name of the parent app that registered this command.
         """
         if "app" in self.properties:
-            return self.properties["app"].display_name
+            return self.properties["app"].instance_name
 
         return
 
