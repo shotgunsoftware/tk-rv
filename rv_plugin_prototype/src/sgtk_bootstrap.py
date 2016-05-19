@@ -32,7 +32,7 @@ def sgtk_dist_dir():
         content_dir = os.path.split(os.path.split(executable_dir)[0])[0]
     else:
         content_dir = os.path.split(executable_dir)[0]
-    
+
     return os.path.join(content_dir, "src", "python", "sgtk")
 
 class ToolkitBootstrap(rvt.MinorMode):
@@ -134,7 +134,7 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             log.debug("callback sendEvent %s '%s'" % (internalName, contents))
             rvc.sendInternalEvent(internalName, contents)
-        
+
     def http_server_setup(self, event):
         import sgtk_rvserver
         self.http_server_thread = sgtk_rvserver.RvServerThread(self.http_event_callback)
@@ -185,7 +185,10 @@ class ToolkitBootstrap(rvt.MinorMode):
         sys.path.append(core)
 
         # import bootstrapper
-        from tank_vendor import shotgun_base, shotgun_deploy, shotgun_authentication
+        import sgtk
+
+        # begin logging the toolkit log tree file
+        sgtk.LogManager().initialize_base_file_handler("tk-rv")
 
         # import authentication code
         from sgtk_auth import get_toolkit_user
@@ -196,9 +199,9 @@ class ToolkitBootstrap(rvt.MinorMode):
             log_level = logging.DEBUG
 
         # bind toolkit logging to our logger
-        sgtk_root_logger = shotgun_base.get_sgtk_logger()
-        sgtk_root_logger.setLevel(log_level)
-        sgtk_root_logger.addHandler(log_handler)
+        sgtk.LogManager().initialize_custom_handler(log_handler)
+        # and set the level
+        log_handler.setLevel(log_level)
 
         # Get an authenticated user object from rv's security architecture
         (user, url) = get_toolkit_user()
@@ -206,12 +209,8 @@ class ToolkitBootstrap(rvt.MinorMode):
         log.info("Will connect using %r" % user)
 
         # Now do the bootstrap!
-        log.info("Ready for bootstrap!")
-        mgr = shotgun_deploy.ToolkitManager(user)
-
-        # Hint bootstrapper about our namespace so that we don't pick
-        # the site config for Maya or Desktop.
-        mgr.namespace = "rv"
+        log.debug("Ready for bootstrap!")
+        mgr = sgtk.bootstrap.ToolkitManager(user)
 
         # In disted code, by default, all TK code is read from the
         # 'bundle_cache' baked during the build process.
@@ -234,7 +233,7 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         # Bootstrap the tk-rv engine into an empty context!
         mgr.bootstrap_engine("tk-rv")
-        log.info("Bootstrapping process complete!")
+        log.debug("Bootstrapping process complete!")
 
 
     def deactivate(self):
@@ -273,7 +272,7 @@ log.setLevel(logging.INFO)
 # note: the RV console treats log information as html. As a consequence, all
 # <html like tokens> will simply disappear when shown in the RV console. These
 # <tokens> are common in toolkit, often returned by __repr__() as object identifiers.
-# 
+#
 # To ensure we can see everything in the RV console, html escape all log messages
 # before they hit the console.
 #

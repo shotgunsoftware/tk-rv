@@ -14,8 +14,10 @@ import rv
 
 # at this point, it is assumed that core has been added to the pythonpath
 from tank_vendor.shotgun_api3 import Shotgun
-from tank_vendor.shotgun_authentication.user import ShotgunUser
-from tank_vendor.shotgun_authentication.user_impl import ShotgunUserImpl
+from sgtk.authentication import ShotgunUser
+
+# @TODO: This imports a private part of the sgtk.authentication API
+from sgtk.authentication.user_impl import ShotgunUserImpl
 
 
 class RVUserImpl(ShotgunUserImpl):
