@@ -14,6 +14,7 @@ import sys
 import os
 import platform
 import json
+import traceback
 
 from PySide import QtCore, QtGui
 
@@ -109,13 +110,29 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         self.webview = sgtk_webview_gma.pyGMAWindow(self.server_url)
 
+    def server_check (self, contents) :
+        gma_data = json.loads(contents)
+        if gma_data.has_key("server"):
+            sys.stderr.write("-------------------------------- event server '%s' vs '%s'\n" % (gma_data["server"], self.server_url))
+            # check 
+            if gma_data["server"] == self.server_url:
+                return True
+            else:
+                sys.stderr.write("ERROR: Server mismatch ('%s' vs '%s') Please authenticate RV with your Shotgun server and restart.\n" %
+                    (gma_data["server"], self.server_url))
+                return False
+
+        return True
+
     def external_gma_compare_entities(self, event):
-        rvc.sendInternalEvent("compare_ids_from_gma", event.contents())
-        rvc.redraw()
+        if self.server_check(event.contents()):
+            rvc.sendInternalEvent("compare_ids_from_gma", event.contents())
+            rvc.redraw()
 
     def external_gma_play_entity(self, event):
-        self.http_event_callback(event.name(), event.contents())
-        rvc.redraw()
+        if self.server_check(event.contents()):
+            self.http_event_callback(event.name(), event.contents())
+            rvc.redraw()
 
     def http_event_callback(self, name, contents):
         log.debug("callback ---------------------------- current thread " + str(QtCore.QThread.currentThread()))
@@ -123,9 +140,9 @@ class ToolkitBootstrap(rvt.MinorMode):
         if (name == "external-gma-play-entity") :
             internalName = "id_from_gma"
 
-            # Currently lower-level code only supports singular "id", but GMA
-            # will send (sometimes) multiple ids.  For now pull out the first
-            # one and send it on.
+            # Currently some lower-level code only supports singular "id", but
+            # GMA will send (sometimes) multiple ids.  For now pull out the
+            # first one and send it on.
             #
             gma_data = json.loads(contents)
             if gma_data.has_key("ids") and not gma_data.has_key("id"):
@@ -152,6 +169,9 @@ class ToolkitBootstrap(rvt.MinorMode):
         rvc.openUrl(url)
 
     def launch_app(self, event):
+        if not self.server_check(event.contents()):
+            return
+
         app_data = json.loads(event.contents())
 
         if (app_data["app"] == "tk-multi-importcut"):
@@ -171,69 +191,80 @@ class ToolkitBootstrap(rvt.MinorMode):
         """
         rvt.MinorMode.activate(self)
 
-        bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
+        try:
+            bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-        core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.15")
-        core = os.environ.get("RV_TK_CORE") or core
+            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.19")
+            core = os.environ.get("RV_TK_CORE") or core
 
-        # append python path to get to the actual code
-        core = os.path.join(core, "python")
+            # append python path to get to the actual code
+            core = os.path.join(core, "python")
 
-        log.info("Looking for tk-core here: %s" % str(core))
+            log.info("Looking for tk-core here: %s" % str(core))
 
-        # now we can kick off sgtk
-        sys.path.append(core)
+            # now we can kick off sgtk
+            sys.path.append(core)
 
-        # import bootstrapper
-        import sgtk
+            # import bootstrapper
+            import sgtk
 
-        # begin logging the toolkit log tree file
-        sgtk.LogManager().initialize_base_file_handler("tk-rv")
+            # begin logging the toolkit log tree file
+            sgtk.LogManager().initialize_base_file_handler("tk-rv")
 
-        # import authentication code
-        from sgtk_auth import get_toolkit_user
+            # import authentication code
+            from sgtk_auth import get_toolkit_user
 
-        # allow dev to override log level
-        log_level = logging.WARNING
-        if (os.environ.has_key("RV_TK_LOG_DEBUG")) :
-            log_level = logging.DEBUG
+            # allow dev to override log level
+            log_level = logging.WARNING
+            if (os.environ.has_key("RV_TK_LOG_DEBUG")) :
+                log_level = logging.DEBUG
 
-        # bind toolkit logging to our logger
-        sgtk.LogManager().initialize_custom_handler(log_handler)
-        # and set the level
-        log_handler.setLevel(log_level)
+            # bind toolkit logging to our logger
+            sgtk.LogManager().initialize_custom_handler(log_handler)
+            # and set the level
+            log_handler.setLevel(log_level)
 
-        # Get an authenticated user object from rv's security architecture
-        (user, url) = get_toolkit_user()
-        self.server_url = url
-        log.info("Will connect using %r" % user)
+            # Get an authenticated user object from rv's security architecture
+            (user, url) = get_toolkit_user()
+            self.server_url = url
+            log.info("Will connect using %r" % user)
 
-        # Now do the bootstrap!
-        log.debug("Ready for bootstrap!")
-        mgr = sgtk.bootstrap.ToolkitManager(user)
+            # Now do the bootstrap!
+            log.debug("Ready for bootstrap!")
+            mgr = sgtk.bootstrap.ToolkitManager(user)
 
-        # In disted code, by default, all TK code is read from the
-        # 'bundle_cache' baked during the build process.
-        mgr.bundle_cache_fallback_paths = [ bundle_cache_dir ]
+            # In disted code, by default, all TK code is read from the
+            # 'bundle_cache' baked during the build process.
+            mgr.bundle_cache_fallback_paths = [ bundle_cache_dir ]
 
-        dev_config = os.environ.get("RV_TK_DEV_CONFIG")
+            dev_config = os.environ.get("RV_TK_DEV_CONFIG")
 
-        if (dev_config):
-            # Use designated developer's tk-config-rv instead of disted one.
-            mgr.base_configuration = dict(
-                type="dev",
-                path=dev_config,
-            )
-        else:
-            mgr.base_configuration = dict(
-                type="manual",
-                name="tk-config-rv",
-                version="v1.0.15",
-            )
+            if (dev_config):
+                # Use designated developer's tk-config-rv instead of disted one.
+                mgr.base_configuration = dict(
+                    type="dev",
+                    path=dev_config,
+                )
+            else:
+                mgr.base_configuration = dict(
+                    type="manual",
+                    name="tk-config-rv",
+                    version="v1.0.19",
+                )
 
-        # Bootstrap the tk-rv engine into an empty context!
-        mgr.bootstrap_engine("tk-rv")
-        log.debug("Bootstrapping process complete!")
+            # Bootstrap the tk-rv engine into an empty context!
+            mgr.bootstrap_engine("tk-rv")
+            log.debug("Bootstrapping process complete!")
+
+        except Exception, e:
+            sys.stderr.write(
+            "ERROR: Toolkit initialization failed.  Please authenticate RV with your Shotgun server and restart.\n" +
+            "**********************************\n")
+            traceback.print_exc(None, sys.stderr)
+            sys.stderr.write(
+            "**********************************\n")
+            # raise
+
 
 
     def deactivate(self):
