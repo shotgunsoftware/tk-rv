@@ -67,6 +67,8 @@ class ToolkitBootstrap(rvt.MinorMode):
         self.http_server_thread = None
         self.webview = None
         self.server_url = None
+        self.toolkit_initialized = False
+        self.licensingStyle = ""
 
         # The menu generation code makes use of the TK_RV_MODE_NAME environment
         # variable. Each menu item that is created in RV is associated with a
@@ -185,16 +187,11 @@ class ToolkitBootstrap(rvt.MinorMode):
         else:
             log.error("don't know how to launch app '%s'" % app_data["app"])
 
-    def activate(self):
-        """
-        Activates the RV mode and bootstraps SGTK.
-        """
-        rvt.MinorMode.activate(self)
-
+    def initialize(self):
         try:
             bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.19")
+            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.20")
             core = os.environ.get("RV_TK_CORE") or core
 
             # append python path to get to the actual code
@@ -249,12 +246,14 @@ class ToolkitBootstrap(rvt.MinorMode):
                 mgr.base_configuration = dict(
                     type="manual",
                     name="tk-config-rv",
-                    version="v1.0.19",
+                    version="v1.0.20",
                 )
 
             # Bootstrap the tk-rv engine into an empty context!
             mgr.bootstrap_engine("tk-rv")
             log.debug("Bootstrapping process complete!")
+
+            self.toolkit_initialized = True
 
         except Exception, e:
             sys.stderr.write(
@@ -265,22 +264,37 @@ class ToolkitBootstrap(rvt.MinorMode):
             "**********************************\n")
             # raise
 
+    def activate(self):
+        """
+        Activates the RV mode and bootstraps SGTK.
+        """
+        rvt.MinorMode.activate(self)
 
+        self.licensingStyle = rvc.readSettings("Licensing", "activeLicensingStyle", "")
+
+        sys.stderr.write("LICENSING STYLE '%s'\n" % self.licensingStyle)
+
+        if self.licensingStyle != "shotgun":
+            sys.stderr.write("ERROR: Please authenticate RV with your Shotgun server.\n")
+        else:
+            self.initialize()
 
     def deactivate(self):
         """
         Deactivates the mode and tears down the currently-running
         SGTK engine.
         """
-        import sgtk
         rvt.MinorMode.deactivate(self)
 
-        log.info("Shutting down engine...")
+        if self.toolkit_initialized:
+            import sgtk
 
-        if sgtk.platform.current_engine():
-            sgtk.platform.current_engine().destroy()
+            log.info("Shutting down engine...")
 
-        log.info("Engine is down.")
+            if sgtk.platform.current_engine():
+                sgtk.platform.current_engine().destroy()
+
+            log.info("Engine is down.")
 
 
 ###############################################################################
