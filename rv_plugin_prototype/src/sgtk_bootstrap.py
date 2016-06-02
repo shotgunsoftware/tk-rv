@@ -77,16 +77,10 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         os.environ["TK_RV_MODE_NAME"] = self._mode_name
 
-    def play_entity_factory (self, entity, id):
-
-        def play_entity(event):
-            contents = '{"type":"' + entity + '","id":' + str(id) + '}'
-            rvc.stop()
-            rvc.sendInternalEvent("id_from_gma", contents)
-            rvc.play()
-
-        return play_entity
-
+     
+    #  This is dead code, but keep around in case we want to do this for
+    #  debugging.
+    #
     def play_entity_dialog_factory (self, entity):
 
         def dialog(event):
@@ -105,12 +99,6 @@ class ToolkitBootstrap(rvt.MinorMode):
                     log.error("could not convert '%s' to %s ID" % (idStr, entity))
 
         return dialog
-
-    def gma_web_view (self, event) :
-
-        import sgtk_webview_gma
-
-        self.webview = sgtk_webview_gma.pyGMAWindow(self.server_url)
 
     def server_check (self, contents) :
         gma_data = json.loads(contents)
@@ -133,42 +121,22 @@ class ToolkitBootstrap(rvt.MinorMode):
 
     def external_gma_play_entity(self, event):
         if self.server_check(event.contents()):
-            self.http_event_callback(event.name(), event.contents())
-            rvc.redraw()
-
-    def http_event_callback(self, name, contents):
-        log.debug("callback ---------------------------- current thread " + str(QtCore.QThread.currentThread()))
-        rve.displayFeedback(name + " " + contents, 2.5)
-        if (name == "external-gma-play-entity") :
             internalName = "id_from_gma"
+
+            gma_data = json.loads(contents)
 
             # Currently some lower-level code only supports singular "id", but
             # GMA will send (sometimes) multiple ids.  For now pull out the
             # first one and send it on.
             #
-            gma_data = json.loads(contents)
             if gma_data.has_key("ids") and not gma_data.has_key("id"):
                 gma_data["id"] = gma_data["ids"][0]
+
             contents = json.dumps(gma_data)
 
             log.debug("callback sendEvent %s '%s'" % (internalName, contents))
             rvc.sendInternalEvent(internalName, contents)
-
-    def http_server_setup(self, event):
-        import sgtk_rvserver
-        self.http_server_thread = sgtk_rvserver.RvServerThread(self.http_event_callback)
-        self.http_server_thread.start()
-
-    def test_certificate(self, event):
-
-        # Start up server if it's not already going
-        if (not self.http_server_thread) :
-            self.http_server_setup(None)
-
-        # Get port number from server itself
-        url = "https://localhost:" + str(self.http_server_thread.httpServer.server_address[1])
-        log.debug("open url: '%s'" % url)
-        rvc.openUrl(url)
+            rvc.redraw()
 
     def launch_app(self, event):
         if not self.server_check(event.contents()):
