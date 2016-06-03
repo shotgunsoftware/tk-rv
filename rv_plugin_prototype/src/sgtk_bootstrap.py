@@ -112,11 +112,12 @@ class ToolkitBootstrap(rvt.MinorMode):
             self.external_launch_app(name, contents)
 
     def process_queued_events(self):
-        sys.stderr.write("INFO: Queued events waited %g seconds.\n" % 
-            (rvc.theTime() - self.event_queue_time))
-        for e in self.event_queue:
-            self.process_event(e[0], e[1])
-        self.event_queue = []
+        if self.event_queue:
+            sys.stderr.write("INFO: Queued events waited %g seconds.\n" % 
+                (rvc.theTime() - self.event_queue_time))
+            for e in self.event_queue:
+                self.process_event(e[0], e[1])
+            self.event_queue = []
 
     #  This is dead code, but keep around in case we want to do this for
     #  debugging.
