@@ -52,23 +52,27 @@ class ToolkitBootstrap(rvt.MinorMode):
         used by other logic to generate menu items in RV associated with
         this mode.
         """
+        self.startup_time = rvc.theTime()
+
         super(ToolkitBootstrap, self).__init__()
 
         self._mode_name = "sgtk_bootstrap"
         self.init(self._mode_name, None,
                 [
-                    ("external-gma-play-entity", self.external_gma_play_entity, ""),
-                    ("external-gma-compare-entities", self.external_gma_compare_entities, ""),
-                    ("external-sgtk-launch-app", self.launch_app, "")
+                    ("external-gma-play-entity",      self.pre_process_event, ""),
+                    ("external-gma-compare-entities", self.pre_process_event, ""),
+                    ("external-sgtk-launch-app",      self.pre_process_event, ""),
+                    ("license-state-transition",      self.license_state_transition, "")
                 ],
                 None
                 )
 
-        self.http_server_thread = None
-        self.webview = None
         self.server_url = None
         self.toolkit_initialized = False
-        self.licensingStyle = ""
+        self.licensing_style = ""
+        self.event_queue = []
+        self.event_queue_time = 0.0
+        self.wait_for_authentication = (not "RV_TK_NO_AUTH_WAIT" in os.environ)
 
         # The menu generation code makes use of the TK_RV_MODE_NAME environment
         # variable. Each menu item that is created in RV is associated with a
@@ -77,7 +81,43 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         os.environ["TK_RV_MODE_NAME"] = self._mode_name
 
+    def pre_process_event(self, event):
+
+        if self.toolkit_initialized:
+            self.process_event(event.name(), event.contents())
+
+        elif self.wait_for_authentication:
+            # msg = "Queuing event '%s'" % event.name()
+            msg = "Authenticating ..."
+            rve.displayFeedback2(msg, 6.0)
+            self.event_queue += [(event.name(), event.contents())]
+            self.event_queue_time = rvc.theTime()
+
+        else:
+            self.initialize_toolkit()
+            self.process_event(event.name(), event.contents())
      
+    def process_event(self, name, contents):
+
+        sys.stderr.write("INFO: Processing event '%s' %g seconds after startup.\n" % 
+            (name, rvc.theTime() - self.startup_time))
+
+        if   name == "external-gma-play-entity":
+            self.external_gma_play_entity(name, contents)
+
+        elif name == "external-gma-compare-entities":
+            self.external_gma_compare_entities(name, contents)
+
+        elif name == "external-sgtk-launch-app":
+            self.external_launch_app(name, contents)
+
+    def process_queued_events(self):
+        sys.stderr.write("INFO: Queued events waited %g seconds.\n" % 
+            (rvc.theTime() - self.event_queue_time))
+        for e in self.event_queue:
+            self.process_event(e[0], e[1])
+        self.event_queue = []
+
     #  This is dead code, but keep around in case we want to do this for
     #  debugging.
     #
@@ -103,7 +143,7 @@ class ToolkitBootstrap(rvt.MinorMode):
     def server_check (self, contents) :
         gma_data = json.loads(contents)
         if gma_data.has_key("server"):
-            sys.stderr.write("-------------------------------- event server '%s' vs '%s'\n" % (gma_data["server"], self.server_url))
+            # sys.stderr.write("-------------------------------- event server '%s' vs '%s'\n" % (gma_data["server"], self.server_url))
             # check 
             if gma_data["server"] == self.server_url:
                 return True
@@ -114,13 +154,13 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         return True
 
-    def external_gma_compare_entities(self, event):
-        if self.server_check(event.contents()):
-            rvc.sendInternalEvent("compare_ids_from_gma", event.contents())
+    def external_gma_compare_entities(self, name, contents):
+        if self.server_check(contents):
+            rvc.sendInternalEvent("compare_ids_from_gma", contents)
             rvc.redraw()
 
-    def external_gma_play_entity(self, event):
-        if self.server_check(event.contents()):
+    def external_gma_play_entity(self, name, contents):
+        if self.server_check(contents):
             internalName = "id_from_gma"
 
             gma_data = json.loads(contents)
@@ -138,11 +178,11 @@ class ToolkitBootstrap(rvt.MinorMode):
             rvc.sendInternalEvent(internalName, contents)
             rvc.redraw()
 
-    def launch_app(self, event):
-        if not self.server_check(event.contents()):
+    def external_launch_app(self, name, contents):
+        if not self.server_check(contents):
             return
 
-        app_data = json.loads(event.contents())
+        app_data = json.loads(contents)
 
         if (app_data["app"] == "tk-multi-importcut"):
             import sgtk
@@ -155,8 +195,9 @@ class ToolkitBootstrap(rvt.MinorMode):
         else:
             log.error("don't know how to launch app '%s'" % app_data["app"])
 
-    def initialize(self):
+    def initialize_toolkit(self):
         try:
+            startTime = rvc.theTime()
             bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
             core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.20")
@@ -169,12 +210,15 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             # now we can kick off sgtk
             sys.path.append(core)
+            sys.stderr.write("INFO: Toolkit initialization: ready to import sgtk at %g sec.\n" % (rvc.theTime() - startTime))
 
             # import bootstrapper
             import sgtk
+            sys.stderr.write("INFO: Toolkit initialization: sgtk import complete at %g sec.\n" % (rvc.theTime() - startTime))
 
             # begin logging the toolkit log tree file
             sgtk.LogManager().initialize_base_file_handler("tk-rv")
+            sys.stderr.write("INFO: Toolkit initialization: initialize_base_file_handler complete at %g sec.\n" % (rvc.theTime() - startTime))
 
             # import authentication code
             from sgtk_auth import get_toolkit_user
@@ -186,6 +230,7 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             # bind toolkit logging to our logger
             sgtk.LogManager().initialize_custom_handler(log_handler)
+            sys.stderr.write("INFO: Toolkit initialization: initialize_custom_handler complete at %g sec.\n" % (rvc.theTime() - startTime))
             # and set the level
             log_handler.setLevel(log_level)
 
@@ -197,6 +242,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             # Now do the bootstrap!
             log.debug("Ready for bootstrap!")
             mgr = sgtk.bootstrap.ToolkitManager(user)
+            sys.stderr.write("INFO: Toolkit initialization: ToolkitManager complete at %g sec.\n" % (rvc.theTime() - startTime))
 
             # In disted code, by default, all TK code is read from the
             # 'bundle_cache' baked during the build process.
@@ -222,6 +268,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             log.debug("Bootstrapping process complete!")
 
             self.toolkit_initialized = True
+            sys.stderr.write("INFO: Toolkit initialization took %g sec.\n" % (rvc.theTime() - startTime))
 
         except Exception, e:
             sys.stderr.write(
@@ -238,15 +285,21 @@ class ToolkitBootstrap(rvt.MinorMode):
         """
         rvt.MinorMode.activate(self)
 
-        self.licensingStyle = rvc.readSettings("Licensing", "activeLicensingStyle", "")
+        self.licensing_style = rvc.readSettings("Licensing", "activeLicensingStyle", "")
+        self.startup_licensing_state = rvc.licensingState()
 
-        sys.stderr.write("LICENSING STYLE '%s'\n" % self.licensingStyle)
-
-        if self.licensingStyle != "shotgun":
+        if self.startup_licensing_state != 1 or self.licensing_style != "shotgun":
+            # RV is not licensed via Shotgun, so notify user.
             sys.stderr.write("ERROR: Please authenticate RV with your Shotgun server.\n")
-        else:
-            self.initialize()
 
+    def license_state_transition(self, event):
+        # XXX should handle off-line case too
+        event.reject()
+        sys.stderr.write("LICENSE STATE CHANGE '%s'\n" % event.contents())
+        if rvc.licensingState() == 2 and not self.toolkit_initialized:
+            self.initialize_toolkit()
+            self.process_queued_events()
+        
     def deactivate(self):
         """
         Deactivates the mode and tears down the currently-running
