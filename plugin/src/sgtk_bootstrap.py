@@ -353,6 +353,6 @@ class EscapedHtmlFormatter(logging.Formatter):
 
 log_handler = logging.StreamHandler()
 log_handler.setFormatter(
-    EscapedHtmlFormatter("%(asctime)s %(name)s %(levelname)s: %(message)s")
+    EscapedHtmlFormatter("%(levelname)s: %(name)s %(message)s")
 )
 log.addHandler(log_handler)
