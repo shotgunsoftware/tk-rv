@@ -264,6 +264,14 @@ class ToolkitBootstrap(rvt.MinorMode):
                     version="v1.0.20",
                 )
 
+            # tell the bootstrap API that we don't want to
+            # allow for overrides from Shotgun
+            mgr.do_shotgun_config_lookup = False
+
+            # define the entry point for this plugin in
+            # order to sandbox it relative to other plugins
+            mgr.entry_point = "rv_review"
+
             # Bootstrap the tk-rv engine into an empty context!
             mgr.bootstrap_engine("tk-rv")
             log.debug("Bootstrapping process complete!")
