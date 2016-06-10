@@ -14,8 +14,7 @@ import sys
 import sgtk
 import rv.qtutils
 
-from sgtk.platform import Engine
-from sgtk import constants
+from sgtk.platform import Engine, constants
 from PySide import QtGui, QtCore
 
 class RVEngine(Engine):
@@ -227,6 +226,7 @@ class RVEngine(Engine):
         be re-applied to all dialogs that the engine has previously
         launched.
         """
+        self.log_warning("Reloading engine QSS...")
         for dialog in self.created_qt_dialogs:
             self._apply_external_styleshet(self, dialog)
             dialog.update()
