@@ -35,7 +35,11 @@ class RVEngine(Engine):
 
         :returns:   str
         """
-        return "Shotgun"
+
+        # XXX Set "SG Review" as the default top level menu, so that we don't
+        # create another empty menu.  Eventually we'll want somewhere to store
+        # "user apps" but we're not ready for that yet anyway.
+        return "SG Review"
 
     @property
     def toolkit_rv_mode_name(self):
@@ -122,6 +126,10 @@ class RVEngine(Engine):
         # C strings as utf-8.
         utf8 = QtCore.QTextCodec.codecForName("utf-8")
         QtCore.QTextCodec.setCodecForCStrings(utf8)
+
+    def register_command(self, name, callback, properties=None):
+        if not "type" in properties or properties["type"] != "context_menu":
+            super(RVEngine, self).register_command(name, callback, properties)
 
     def post_app_init(self):
         """
