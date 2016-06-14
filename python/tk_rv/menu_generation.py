@@ -29,7 +29,9 @@ class MenuGenerator(object):
         context menu, plus any app commands that were registered
         with the engine.
         """
-        self._context_menu = self._add_context_menu()
+        # For now we disable all context menu items, and the menu itself, for RV.
+        # See register_command() in engine.py.
+        # self._context_menu = self._add_context_menu()
 
         # Wrap each command that was registered with the engine in
         # an AppCommand object. This will make it easy to then add
