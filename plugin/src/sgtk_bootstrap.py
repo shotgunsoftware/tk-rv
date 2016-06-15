@@ -89,7 +89,7 @@ class ToolkitBootstrap(rvt.MinorMode):
         elif self.wait_for_authentication:
             # msg = "Queuing event '%s'" % event.name()
             msg = "Authenticating ..."
-            rve.displayFeedback2(msg, 6.0)
+            rve.displayFeedback2(msg, 2000.0)
             self.event_queue += [(event.name(), event.contents())]
             self.event_queue_time = rvc.theTime()
 
@@ -201,7 +201,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             startTime = rvc.theTime()
             bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.22")
+            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.23")
             core = os.environ.get("RV_TK_CORE") or core
 
             # append python path to get to the actual code
@@ -261,7 +261,7 @@ class ToolkitBootstrap(rvt.MinorMode):
                 mgr.base_configuration = dict(
                     type="manual",
                     name="tk-config-rv",
-                    version="v1.0.22",
+                    version="v1.0.23",
                 )
 
             # tell the bootstrap API that we don't want to
