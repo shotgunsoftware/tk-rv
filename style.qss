@@ -199,6 +199,7 @@ QCheckBox::indicator:checked {
 
 #update_shot_statuses_checkbox {
     spacing: 0px;
+    margin-top: 2px;
 }
 
 
