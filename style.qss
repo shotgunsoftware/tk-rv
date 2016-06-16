@@ -118,8 +118,8 @@ QPushButton {
     border-radius: 3;
     padding-top: 3px;
     padding-bottom: 3px;
-    padding-left: 10px;
-    padding-right: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 QToolButton {
