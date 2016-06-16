@@ -44,7 +44,7 @@ QFrame, QLineEdit, QComboBox, QSpinBox {
 }
 
 QComboBox {
-    padding-top: 1px;
+    padding-top: 0px;
     padding-left: 5px;
     padding-right: 0px;
     margin-right: 0px;
@@ -67,6 +67,7 @@ QComboBox::down-arrow {
 QLineEdit, QTextEdit {
     background: rgb(40, 40, 40);
     padding-right: 0px;
+    padding-top: 0px;
     border: 1px solid rgb(32, 32, 32);
 }
 
@@ -97,7 +98,7 @@ QTabWidget::tab-bar {
 /*radiobuttons+checkboxes*/
 QRadioButton, QCheckBox {
     background: transparent;
-    border: 0px solid;
+    border: none;
     padding: 0px;
 }
 
@@ -150,7 +151,7 @@ QPushButton[flat=true] {
     min-height: 0px;
 }
 
-QLineEdit:focus {
+QLineEdit:focus, QTextEdit:focus {
     border: 1px solid {{SG_HIGHLIGHT_COLOR}};
 }
 
@@ -176,8 +177,10 @@ SearchWidget {
 }
 
 QCheckBox::indicator {
-    width: 12;
-    height: 12;
+    min-width: 12px;
+    width: 12px;
+    max-width: 12px;
+    height: 12px;
 }
 
 QCheckBox::indicator:unchecked {
@@ -192,6 +195,10 @@ QCheckBox::indicator:checked {
     background: rgb(40, 40, 40);
     border: 1px solid rgb(40, 40, 40);
     border-radius: 2px;
+}
+
+#update_shot_statuses_checkbox {
+    spacing: 0px;
 }
 
 
