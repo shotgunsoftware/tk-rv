@@ -88,7 +88,7 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         elif self.wait_for_authentication:
             # msg = "Queuing event '%s'" % event.name()
-            msg = "Authenticating ..."
+            msg = "Initializing Shotgun ..."
             rve.displayFeedback2(msg, 2000.0)
             self.event_queue += [(event.name(), event.contents())]
             self.event_queue_time = rvc.theTime()
@@ -137,6 +137,7 @@ class ToolkitBootstrap(rvt.MinorMode):
                     rvc.sendInternalEvent("id_from_gma", contents)
                     rvc.play()
                 except:
+                    rve.displayFeedback2("", 0.1)
                     log.error("could not convert '%s' to %s ID" % (idStr, entity))
 
         return dialog
@@ -151,6 +152,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             else:
                 sys.stderr.write("ERROR: Server mismatch ('%s' vs '%s') Please authenticate RV with your Shotgun server and restart.\n" %
                     (gma_data["server"], self.server_url))
+                rve.displayFeedback2("", 0.1)
                 return False
 
         return True
@@ -286,6 +288,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             traceback.print_exc(None, sys.stderr)
             sys.stderr.write(
             "**********************************\n")
+            rve.displayFeedback2("", 0.1)
             # raise
 
     def activate(self):
