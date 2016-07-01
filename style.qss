@@ -158,6 +158,10 @@ SearchWidget {
     padding: 4px;
 }
 
+QDockWidget {
+    border: none;
+}
+
 
 
 
