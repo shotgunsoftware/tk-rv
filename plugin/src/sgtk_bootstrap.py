@@ -203,7 +203,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             startTime = rvc.theTime()
             bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.23")
+            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.25")
             core = os.environ.get("RV_TK_CORE") or core
 
             # append python path to get to the actual code
@@ -221,7 +221,6 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             # begin logging the toolkit log tree file
             sgtk.LogManager().initialize_base_file_handler("tk-rv")
-            sys.stderr.write("INFO: Toolkit initialization: initialize_base_file_handler complete at %g sec.\n" % (rvc.theTime() - startTime))
 
             # import authentication code
             from sgtk_auth import get_toolkit_user
@@ -233,7 +232,6 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             # bind toolkit logging to our logger
             sgtk.LogManager().initialize_custom_handler(log_handler)
-            sys.stderr.write("INFO: Toolkit initialization: initialize_custom_handler complete at %g sec.\n" % (rvc.theTime() - startTime))
             # and set the level
             log_handler.setLevel(log_level)
 
@@ -263,7 +261,7 @@ class ToolkitBootstrap(rvt.MinorMode):
                 mgr.base_configuration = dict(
                     type="manual",
                     name="tk-config-rv",
-                    version="v1.0.23",
+                    version="v1.0.25",
                 )
 
             # tell the bootstrap API that we don't want to
