@@ -72,7 +72,7 @@ class ToolkitBootstrap(rvt.MinorMode):
         self.licensing_style = ""
         self.event_queue = []
         self.event_queue_time = 0.0
-        self.wait_for_authentication = (not "RV_TK_NO_AUTH_WAIT" in os.environ)
+        self.first_event = True
 
         # The menu generation code makes use of the TK_RV_MODE_NAME environment
         # variable. Each menu item that is created in RV is associated with a
@@ -81,21 +81,35 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         os.environ["TK_RV_MODE_NAME"] = self._mode_name
 
+    def init_and_process_events(self):
+        self.initialize_toolkit()
+        self.process_queued_events()
+
     def pre_process_event(self, event):
+        self.pre_process_event_pair(event.name(), event.contents())
 
-        if self.toolkit_initialized:
-            self.process_event(event.name(), event.contents())
+    def pre_process_event_pair(self, name, contents):
 
-        elif self.wait_for_authentication:
-            # msg = "Queuing event '%s'" % event.name()
-            msg = "Initializing Shotgun ..."
-            rve.displayFeedback2(msg, 2000.0)
-            self.event_queue += [(event.name(), event.contents())]
-            self.event_queue_time = rvc.theTime()
+        sys.stderr.write("pre_process_event: lic style '%s' \n" % self.licensing_style)
+        if self.licensing_style != "shotgun":
+            # RV is not licensed via Shotgun, so notify user.
+            sys.stderr.write("ERROR: Please authenticate RV with your Shotgun server and restart.\n")
 
         else:
-            self.initialize_toolkit()
-            self.process_event(event.name(), event.contents())
+            if self.toolkit_initialized:
+                self.process_event(name, contents)
+
+            else:
+                if self.first_event:
+                    msg = "Initializing Shotgun ..."
+                    rve.displayFeedback2(msg, 2000.0)
+                    self.first_event = False
+
+                self.event_queue += [(name, contents)]
+                self.event_queue_time = rvc.theTime()
+
+                if rvc.licensingState() == 2:
+                    self.init_and_process_events()
      
     def process_event(self, name, contents):
 
@@ -110,6 +124,11 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         elif name == "external-sgtk-launch-app":
             self.external_launch_app(name, contents)
+            rve.displayFeedback2("", 0.1)
+
+        elif name == "external-launch-submit-tool":
+            rvc.sendInternalEvent("launch-submit-tool", "")
+            rve.displayFeedback2("", 0.1)
 
     def process_queued_events(self):
         if self.event_queue:
@@ -200,10 +219,14 @@ class ToolkitBootstrap(rvt.MinorMode):
 
     def initialize_toolkit(self):
         try:
+            # Clear the "stand-in" mode menu, and let the apps rebuild it
+            modeMenu = [("SG Review", None)]
+            rvc.defineModeMenu(self._modeName, modeMenu)
+
             startTime = rvc.theTime()
             bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.25")
+            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.27")
             core = os.environ.get("RV_TK_CORE") or core
 
             # append python path to get to the actual code
@@ -261,7 +284,7 @@ class ToolkitBootstrap(rvt.MinorMode):
                 mgr.base_configuration = dict(
                     type="manual",
                     name="tk-config-rv",
-                    version="v1.0.25",
+                    version="v1.0.27",
                 )
 
             # tell the bootstrap API that we don't want to
@@ -289,6 +312,78 @@ class ToolkitBootstrap(rvt.MinorMode):
             rve.displayFeedback2("", 0.1)
             # raise
 
+    def get_default_rv_auth_session(self):
+        """
+        Returns a tuple with session details from rv authentication
+
+        :returns: tuple (url, login, token) with shotgun url, login and session token
+        """
+        from pymu import MuSymbol
+        rv.runtime.eval("require slutils;", [])
+        # get session data from RV
+        (last_session, sessions) = MuSymbol("slutils.retrieveSessionsData")()
+        # grab the first three tokens out of the string
+        (url, login, token) = last_session.split("|")[:3]
+        # return (url, login, token)
+        return url, login, token
+
+    def get_help(self, event):
+        rvc.openUrl("https://shotgunsoftware.zendesk.com/hc/en-us/articles/222840748")
+
+    def launch_media_app(self, event):
+        rvc.openUrl(self.server_url + "/page/media_center")
+
+    def queue_launch_submit_tool(self, event):
+        self.pre_process_event_pair("external-launch-submit-tool", "")
+
+    def queue_launch_import_cut_app(self, event):
+        self.pre_process_event_pair('external-sgtk-launch-app', 
+            '{"protocol_version":1,"server":"%s","app":"tk-multi-importcut"}' % self.server_url)
+
+    def initialize_shotgun(self, event):
+        self.init_and_process_events()
+
+    def launch_submit_tool(self):
+            
+        # Flag the session as "sgreview.submitInProgress" so JS submit tool
+        # code can tell this is not Screening Room.
+        #
+        prop = "#Session.sgreview.submitInProgress"
+        try:
+            rvc.newProperty(prop, rvc.IntType, 1)
+        except:
+            pass
+        rvc.setIntProperty(prop, [1], True)
+
+        rv.runtime.eval("""
+            {
+                require shotgun_mode;
+                require shotgun_review_app;
+                require shotgun_upload;
+
+                if (! shotgun_mode.localModeReady())
+                {
+                    //  Silence the mode first, then activate it.
+                    //  shotgun_mode.silent = true;
+                    shotgun_mode.createLocalMode();
+                }
+                if (! shotgun_review_app.localModeReady())
+                {
+                    //  Silence the mode first, then activate it.
+                    //  shotgun_review_app.silent = true;
+                    shotgun_review_app.createLocalMode();
+                }
+                if (! shotgun_upload.localModeReady())
+                {
+                    //  Silence the mode first, then activate it.
+                    //  shotgun_upload.silent = true;
+                    shotgun_upload.createLocalMode();
+                }
+
+                shotgun_review_app.theMode().internalLaunchSubmitTool();
+            }
+            """, [])
+
     def activate(self):
         """
         Activates the RV mode and bootstraps SGTK.
@@ -298,17 +393,46 @@ class ToolkitBootstrap(rvt.MinorMode):
         self.licensing_style = rvc.readSettings("Licensing", "activeLicensingStyle", "")
         self.startup_licensing_state = rvc.licensingState()
 
-        if self.startup_licensing_state != 1 or self.licensing_style != "shotgun":
-            # RV is not licensed via Shotgun, so notify user.
-            sys.stderr.write("ERROR: Please authenticate RV with your Shotgun server.\n")
-
     def license_state_transition(self, event):
-        # XXX should handle off-line case too
         event.reject()
-        sys.stderr.write("LICENSE STATE CHANGE '%s'\n" % event.contents())
-        if rvc.licensingState() == 2 and not self.toolkit_initialized:
-            self.initialize_toolkit()
-            self.process_queued_events()
+
+        if rvc.licensingState() == 2 and self.licensing_style == "shotgun":
+            # If we can't reach Shotgun server, don't bother trying to initialize toolkit.
+            if self.event_queue:
+                if "Offline usage" in event.contents():
+                    sys.stderr.write("INFO: Offline, so not initilizing Shotgun Toolkit\n")
+                    msg = "Shotgun Offline ..."
+                    rve.displayFeedback2(msg, 2.0)
+                if not self.toolkit_initialized:
+                    self.init_and_process_events()
+
+            elif not "RV_SHOTGUN_NO_SG_REVIEW_MENU" in os.environ:
+                # No events queued, so build Stand-in menu (IE don't initialize toolkit until we must)
+                modeMenu = [("SG Review", [
+                    ("_", None), 
+                    ("Get Help ...", self.get_help, None, lambda: rvc.UncheckedMenuState),
+
+                    ("_", None), 
+                    ("Launch Media App", self.launch_media_app, None, lambda: rvc.UncheckedMenuState),
+
+                    ("_", None),
+                    ("Submit Tool", self.queue_launch_submit_tool, None, lambda: rvc.UncheckedMenuState),
+
+                    ("_", None),
+                    ("Import Cut", self.queue_launch_import_cut_app, None, lambda: rvc.UncheckedMenuState),
+
+                    ("_", None),
+                    ("Initialize Shotgun", self.initialize_shotgun, None, lambda: rvc.UncheckedMenuState),
+
+                    ("_", None),
+                    ]
+                )]
+                rvc.defineModeMenu(self._modeName, modeMenu)
+
+                # We need url for some of these menu items
+                (url, login, token) = self.get_default_rv_auth_session()
+                self.server_url = url.encode("utf-8")
+
         
     def deactivate(self):
         """
