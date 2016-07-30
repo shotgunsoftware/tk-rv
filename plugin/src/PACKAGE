@@ -16,3 +16,9 @@ description: |
 
     <h3>Toolkit RV Engine</h3>
 
+    This Package supplies the RV mode that bootstraps the Shotgun Toolkit RV engine, which then hosts the SG Review, Import Cut, and Python Console Toolkit apps.
+
+    Complete docs on the SG Review workflows can be found <a href=https://shotgunsoftware.zendesk.com/hc/en-us/articles/222840748>here</a>.
+
+
+
