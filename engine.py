@@ -22,7 +22,7 @@ class RVEngine(Engine):
     Shotgun Toolkit engine for RV.
     """
 
-    MAX_THREADS = 4
+    MAX_THREADS = 6
 
     #####################################################################################
     # Properties
