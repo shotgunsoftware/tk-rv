@@ -90,7 +90,7 @@ class ToolkitBootstrap(rvt.MinorMode):
 
     def pre_process_event_pair(self, name, contents):
 
-        sys.stderr.write("pre_process_event: lic style '%s' \n" % self.licensing_style)
+        # sys.stderr.write("pre_process_event: lic style '%s' \n" % self.licensing_style)
         if self.licensing_style != "shotgun":
             # RV is not licensed via Shotgun, so notify user.
             sys.stderr.write("ERROR: Please authenticate RV with your Shotgun server and restart.\n")
