@@ -224,18 +224,23 @@ class ToolkitBootstrap(rvt.MinorMode):
             rvc.defineModeMenu(self._modeName, modeMenu)
 
             startTime = rvc.theTime()
-            bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.27")
-            core = os.environ.get("RV_TK_CORE") or core
 
-            # append python path to get to the actual code
-            core = os.path.join(core, "python")
+            # begin by sourcing our manifest which contains all taap settings
+            # add python module to path
+            python_path = os.path.join(sgtk_dist_dir(), "python")
+            sys.path.append(python_path)
 
-            log.info("Looking for tk-core here: %s" % str(core))
+            # import manifest that handles config and paths
+            from sgtk_plugin_basic import manifest
+            log.info("Running Toolkit build %s" % manifest.BUILD_INFO)
+
+            # import toolkit core
+            tk_core_path = manifest.get_sgtk_pythonpath(sgtk_dist_dir())
+            sys.path.append(tk_core_path)
+            log.info("Looking for tk-core here: %s" % tk_core_path)
 
             # now we can kick off sgtk
-            sys.path.append(core)
             sys.stderr.write("INFO: Toolkit initialization: ready to import sgtk at %g sec.\n" % (rvc.theTime() - startTime))
 
             # import bootstrapper
@@ -250,7 +255,7 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             # allow dev to override log level
             log_level = logging.WARNING
-            if (os.environ.has_key("RV_TK_LOG_DEBUG")) :
+            if os.environ.has_key("RV_TK_LOG_DEBUG"):
                 log_level = logging.DEBUG
 
             # bind toolkit logging to our logger
@@ -270,22 +275,10 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             # In disted code, by default, all TK code is read from the
             # 'bundle_cache' baked during the build process.
-            mgr.bundle_cache_fallback_paths = [ bundle_cache_dir ]
+            bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
+            mgr.bundle_cache_fallback_paths = [bundle_cache_dir]
 
-            dev_config = os.environ.get("RV_TK_DEV_CONFIG")
-
-            if (dev_config):
-                # Use designated developer's tk-config-rv instead of disted one.
-                mgr.base_configuration = dict(
-                    type="dev",
-                    path=dev_config,
-                )
-            else:
-                mgr.base_configuration = dict(
-                    type="manual",
-                    name="tk-config-rv",
-                    version="v1.0.27",
-                )
+            mgr.base_configuration = manifest.base_configuration
 
             # tell the bootstrap API that we don't want to
             # allow for overrides from Shotgun

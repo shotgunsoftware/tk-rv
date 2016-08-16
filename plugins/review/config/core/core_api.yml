@@ -1,6 +1,7 @@
 
 location:
-  type: git
-  path: git@github.com:shotgunsoftware/tk-core.git
-  version: v0.18.5rv
+  type: app_store
+  name: tk-core
+  version: v0.18.20
+
 

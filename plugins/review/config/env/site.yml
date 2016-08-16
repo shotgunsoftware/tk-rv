@@ -28,7 +28,7 @@ engines:
 
       tk-rv-shotgunreview:
         location:
-          name: git@github.com:shotgunsoftware/tk-rv-shotgunreview.git
+          path: git@github.com:shotgunsoftware/tk-rv-shotgunreview.git
           type: git_branch
           branch: master
           version: 6125d6ceebace6ab10cde77ac11ddd781700bd7e
