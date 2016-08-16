@@ -1,0 +1,70 @@
+************************************************** /Users/alan/git/tk-config-rv
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   core/core_api.yml
+	modified:   env/site.yml
+
+no changes added to commit (use "git add" and/or "git commit -a")
+HEAD:  49f210c3d196dfd228d71eff4cec842e1ec02a4c (HEAD -> refs/heads/master, refs/remotes/origin/master, refs/remotes/origin/HEAD) site.yml: add external_sources_hook for tk-multi-pythonconsole
+
+
+************************************************** /Users/alan/git/tk-core
+HEAD detached at v0.18.5rv
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   info.yml
+
+no changes added to commit (use "git add" and/or "git commit -a")
+HEAD:  f08d7e0e5f5bf1402d21a653510c8be77b184f93 (HEAD, tag: refs/tags/v0.18.5rv, refs/remotes/origin/37495_user_login_is_none_in_rv_from_18_5, refs/heads/37495_user_login_is_none_in_rv_from_18_5) fixes the bug
+
+************************************************** /Users/alan/git/tk-framework-editorial
+HEAD detached at v1.2.6
+nothing to commit (use -u to show untracked files)
+HEAD:  ac8213a88754f09e59ac950fb660242efaa5a50e (HEAD, tag: refs/tags/v1.2.6, tag: refs/tags/v1.2.5, refs/remotes/origin/master, refs/remotes/origin/HEAD, refs/heads/master) For #37626 #37627, added blocking error messages for BL and DROP FRAME.
+
+************************************************** /Users/alan/git/tk-framework-qtwidgets
+On branch 37660_activity_stream_filtering
+Your branch is up-to-date with 'origin/37660_activity_stream_filtering'.
+nothing to commit (use -u to show untracked files)
+HEAD:  f897d0fa11f3a5e5ae0604af2d2fdcf9eb391b8d (HEAD -> refs/heads/37660_activity_stream_filtering, refs/remotes/origin/37660_activity_stream_filtering) #37660: Ignores "viewed by current user" activity stream entries.
+
+************************************************** /Users/alan/git/tk-framework-shotgunutils
+HEAD detached at v4.4.1
+nothing to commit (use -u to show untracked files)
+HEAD:  0e04706291d2516d9ace86472a238c6ff13847bd (HEAD, tag: refs/tags/v4.4.1) #37481 Fixed variable reference issue
+
+************************************************** /Users/alan/git/tk-multi-importcut
+HEAD detached at v2.2.0
+nothing to commit (use -u to show untracked files)
+HEAD:  72128f8acbc220139a4e10942d5571555eb35259 (HEAD, tag: refs/tags/v2.2.0, refs/remotes/origin/master, refs/remotes/origin/HEAD) For #37717, closes #54 Merge branch '37717_unicode_support'
+
+************************************************** /Users/alan/git/tk-multi-pythonconsole
+On branch master
+Your branch is up-to-date with 'origin/master'.
+nothing to commit (use -u to show untracked files)
+HEAD:  f9d974c69611d0df22b8b91b2913295de5b0eb7d (HEAD -> refs/heads/master, tag: refs/tags/v0.0.3, refs/remotes/origin/master, refs/remotes/origin/HEAD) #36886 bug fix for info.yml
+
+************************************************** /Users/alan/git/tk-rv
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   plugin/src/sgtk_bootstrap.py
+
+no changes added to commit (use "git add" and/or "git commit -a")
+HEAD:  9fcd02e9439c3be3f57ecc90720423eec370030f (HEAD -> refs/heads/master, refs/remotes/origin/master, refs/remotes/origin/HEAD) menu_generation.py: remove python 2.7-ism, since we still build python 2.6
+
+************************************************** /Users/alan/git/tk-rv-shotgunreview
+On branch master
+Your branch is up-to-date with 'origin/master'.
+nothing to commit (use -u to show untracked files)
+HEAD:  6125d6ceebace6ab10cde77ac11ddd781700bd7e (HEAD -> refs/heads/master, refs/remotes/origin/stewartb_37812_ospath, refs/remotes/origin/master, refs/remotes/origin/HEAD, refs/heads/stewartb_37812_ospath) added undoPathSwapVars into check_media_contents so that RV_OS_PATH will work from GMA.
+

@@ -1,0 +1,86 @@
+# Copyright (c) 2013 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+#
+
+description: Apps and Engines when toolkit is run from outside a project.
+
+#################################################################################################
+# define all the items that should appear in this environment
+# By default make the non-project side of the desktop engine available
+
+engines:
+  tk-rv:
+    apps:
+
+      tk-multi-pythonconsole:
+        external_sources_hook: '{self}/external_sources.py'
+        location:
+          name: tk-multi-pythonconsole
+          type: app_store
+          version: v0.0.3
+
+      tk-rv-shotgunreview:
+        location:
+          name: git@github.com:shotgunsoftware/tk-rv-shotgunreview.git
+          type: git_branch
+          branch: master
+          version: 6125d6ceebace6ab10cde77ac11ddd781700bd7e
+
+      tk-multi-importcut:
+          cut_link_field: sg_entity
+          default_head_in: 1001
+          default_head_in_duration: 8
+          default_tail_out_duration: 8
+          display_name: Import Cut
+          ensure_sg_setup_hook: '{self}/post_install.py'
+          location:
+            name: tk-multi-importcut
+            type: app_store
+            version: v2.2.0
+          omit_statuses: [inac, hld, omt]
+          reinstate_status: ip
+          report_to_group: Editorial
+          sg_cut_item_entity: CutItem
+          use_smart_fields: true
+          timecode_frame_mapping:
+              timecode: "automatic"
+              frame: 1001
+
+    menu_overrides:
+      SG Review:
+        - {app_instance: tk-multi-importcut, name: Import Cut}
+      Tools:
+        - {app_instance: tk-multi-pythonconsole, name: Shotgun Python Console...}
+    debug_logging: false
+    location:
+      path: git@github.com:shotgunsoftware/tk-rv.git
+      type: git_branch
+      branch: master
+      version: 9fcd02e9439c3be3f57ecc90720423eec370030f
+
+frameworks:
+  tk-framework-qtwidgets_v2.x.x:
+    location:
+      path: git@github.com:shotgunsoftware/tk-framework-qtwidgets.git
+      type: git_branch
+      branch: 37660_activity_stream_filtering
+      version: f897d0fa11f3a5e5ae0604af2d2fdcf9eb391b8d
+  tk-framework-shotgunutils_v4.x.x:
+    location:
+      name: tk-framework-shotgunutils
+      type: app_store
+      version: v4.4.1
+  tk-framework-editorial_v1.x.x:
+    location: 
+      path: git@github.com:shotgunsoftware/tk-framework-editorial.git
+      type: git_branch
+      branch: master
+      version: ac8213a88754f09e59ac950fb660242efaa5a50e
+
