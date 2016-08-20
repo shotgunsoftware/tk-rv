@@ -232,7 +232,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             sys.path.append(python_path)
 
             # import manifest that handles config and paths
-            from sgtk_plugin_basic import manifest
+            from sgtk_plugin_review import manifest
             log.info("Running Toolkit build %s" % manifest.BUILD_INFO)
 
             # import toolkit core

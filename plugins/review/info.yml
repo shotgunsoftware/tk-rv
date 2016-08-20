@@ -13,7 +13,7 @@ base_configuration:
   type: baked
   path: ./config
 
-entry_point: "basic"
+entry_point: "review"
 
 # recommended values that all plugins should
 # specify by convention, unless there is good reason not to
@@ -27,4 +27,3 @@ entry_point: "basic"
 
 # plugin specific settings
 debug_logging: true
-log_to_stdout: true
