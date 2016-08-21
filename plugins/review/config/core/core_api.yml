@@ -1,7 +1,22 @@
+# Copyright (c) 2016 Shotgun Software Inc.
+#
+# CONFIDENTIAL AND PROPRIETARY
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# Source Code License included in this distribution package. See LICENSE.
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Shotgun Software Inc.
+
+# This file defined which version of the core should be used with this
+# configuration. If the file is omitted from the config, the latest
+# approved core in the app store will be used.
 
 location:
-  type: app_store
-  name: tk-core
-  version: v0.18.20
+  path: git@github.com:shotgunsoftware/tk-core.git
+  type: git_branch
+  branch: 36020_baked_build
+  version: 4c922ab078111dad1c28db190c2a19ce6648d116
+
 
 
