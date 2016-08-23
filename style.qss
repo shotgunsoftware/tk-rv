@@ -150,6 +150,19 @@ QScrollBar::vertical {
     margin: 0px;
 }
 
+QScrollBar::handle:horizontal {
+    background-color: rgb(75,75,75);
+    border: 0px solid;
+    border-radius: 3px;
+}
+
+QScrollBar::horizontal {
+    background: rgb(50,50,50);
+    padding-right: 2px;
+    padding-left: 0px;
+    margin: 0px;
+}
+
 QFrame#line, QFrame#line_2, QFrame#create_entity_line_1, QFrame#create_entity_line_2 {
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #353535, stop:0.25 #2b2b2b, stop:0.75 #4f4f4f, stop:1 #585858);
 }
