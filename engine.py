@@ -79,6 +79,7 @@ class RVEngine(Engine):
         link_color = QtGui.QColor(255, 255, 255)
         palette.setColor(QtGui.QPalette.Link, link_color)
         palette.setColor(QtGui.QPalette.LinkVisited, link_color)
+        palette.setColor(QtGui.QPalette.Button, QtGui.QColor(37, 38, 41))
         QtGui.QApplication.setPalette(palette)
 
         # We can't use import_framework here because the engine.py
