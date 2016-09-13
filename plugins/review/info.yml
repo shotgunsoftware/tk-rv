@@ -15,15 +15,9 @@ base_configuration:
 
 entry_point: "review"
 
-# recommended values that all plugins should
-# specify by convention, unless there is good reason not to
-#name: Shotgun Integration
-#description: Short description of the plugin
-#author: Shotgun Software
-#organization: Autodesk, Inc
-#contact: support@shotgunsoftware.com
-#url: http://www.shotgunsoftware.com
-#version: "v1.2.3"
+# we don't want the plugin to attempt to connect to
+# shotgun at startup and look for configuration overrides
+do_shotgun_config_lookup: false
 
 # plugin specific settings
 debug_logging: true

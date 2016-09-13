@@ -274,19 +274,11 @@ class ToolkitBootstrap(rvt.MinorMode):
             sys.stderr.write("INFO: Toolkit initialization: ToolkitManager complete at %g sec.\n" % (rvc.theTime() - startTime))
 
             # In disted code, by default, all TK code is read from the
-            # 'bundle_cache' baked during the build process.
-            bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
-            mgr.bundle_cache_fallback_paths = [bundle_cache_dir]
-
-            mgr.base_configuration = manifest.base_configuration
-
-            # tell the bootstrap API that we don't want to
-            # allow for overrides from Shotgun
-            mgr.do_shotgun_config_lookup = False
-
-            # define the entry point for this plugin in
-            # order to sandbox it relative to other plugins
-            mgr.entry_point = "rv_review"
+            # 'bundle_cache' baked during the build process
+            #
+            # init the manager from the plugin build manifest
+            # via this convenience method.
+            manifest.initialize_manager(mgr, sgtk_dist_dir())
 
             # Bootstrap the tk-rv engine into an empty context!
             mgr.bootstrap_engine("tk-rv")
