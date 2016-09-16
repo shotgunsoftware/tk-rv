@@ -13,11 +13,11 @@ base_configuration:
   type: baked
   path: ./config
 
-entry_point: "review"
+plugin_id: "review.rv"
 
 # we don't want the plugin to attempt to connect to
 # shotgun at startup and look for configuration overrides
 do_shotgun_config_lookup: false
 
 # plugin specific settings
-debug_logging: true
+debug_logging: false

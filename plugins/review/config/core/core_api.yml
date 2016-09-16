@@ -13,10 +13,9 @@
 # approved core in the app store will be used.
 
 location:
-  path: git@github.com:shotgunsoftware/tk-core.git
-  type: git_branch
-  branch: 36020_baked_build
-  version: 4c922ab078111dad1c28db190c2a19ce6648d116
+  type: app_store
+  name: tk-core
+  version: v0.18.26
 
 
 
