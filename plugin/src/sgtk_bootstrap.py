@@ -132,10 +132,14 @@ class ToolkitBootstrap(rvt.MinorMode):
 
     def process_queued_events(self):
         if self.event_queue:
+            processed = []
             sys.stderr.write("INFO: Queued events waited %g seconds.\n" % 
                 (rvc.theTime() - self.event_queue_time))
             for e in self.event_queue:
-                self.process_event(e[0], e[1])
+                if (e[0], e[1]) not in processed:
+                    processed.append((e[0], e[1]))
+                    self.process_event(e[0], e[1])
+
             self.event_queue = []
 
     #  This is dead code, but keep around in case we want to do this for
