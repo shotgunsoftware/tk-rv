@@ -132,10 +132,14 @@ class ToolkitBootstrap(rvt.MinorMode):
 
     def process_queued_events(self):
         if self.event_queue:
+            processed = []
             sys.stderr.write("INFO: Queued events waited %g seconds.\n" % 
                 (rvc.theTime() - self.event_queue_time))
             for e in self.event_queue:
-                self.process_event(e[0], e[1])
+                if (e[0], e[1]) not in processed:
+                    processed.append((e[0], e[1]))
+                    self.process_event(e[0], e[1])
+
             self.event_queue = []
 
     #  This is dead code, but keep around in case we want to do this for
@@ -226,7 +230,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             startTime = rvc.theTime()
             bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.27")
+            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.41")
             core = os.environ.get("RV_TK_CORE") or core
 
             # append python path to get to the actual code
@@ -284,7 +288,7 @@ class ToolkitBootstrap(rvt.MinorMode):
                 mgr.base_configuration = dict(
                     type="manual",
                     name="tk-config-rv",
-                    version="v1.0.27",
+                    version="v1.0.41",
                 )
 
             # tell the bootstrap API that we don't want to
