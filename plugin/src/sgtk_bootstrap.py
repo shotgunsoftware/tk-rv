@@ -230,7 +230,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             startTime = rvc.theTime()
             bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.41")
+            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.42")
             core = os.environ.get("RV_TK_CORE") or core
 
             # append python path to get to the actual code
