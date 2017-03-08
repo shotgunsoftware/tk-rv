@@ -239,7 +239,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             log.info("Looking for tk-core here: %s" % str(core))
 
             # now we can kick off sgtk
-            sys.path.append(core)
+            sys.path.insert(0, core)
             sys.stderr.write("INFO: Toolkit initialization: ready to import sgtk at %g sec.\n" % (rvc.theTime() - startTime))
 
             # import bootstrapper
