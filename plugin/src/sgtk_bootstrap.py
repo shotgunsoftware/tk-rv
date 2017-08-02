@@ -15,6 +15,7 @@ import os
 import platform
 import json
 import traceback
+import urlparse
 
 from PySide import QtCore, QtGui
 
@@ -170,7 +171,7 @@ class ToolkitBootstrap(rvt.MinorMode):
         if gma_data.has_key("server"):
             # sys.stderr.write("-------------------------------- event server '%s' vs '%s'\n" % (gma_data["server"], self.server_url))
             # check 
-            if gma_data["server"] == self.server_url:
+            if urlparse.urlparse(gma_data["server"]).netloc == urlparse.urlparse(self.server_url).netloc:
                 return True
             else:
                 sys.stderr.write("ERROR: Server mismatch ('%s' vs '%s') Please authenticate RV with your Shotgun server and restart.\n" %
