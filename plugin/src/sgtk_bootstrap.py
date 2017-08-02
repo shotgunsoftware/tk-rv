@@ -288,7 +288,7 @@ class ToolkitBootstrap(rvt.MinorMode):
                 mgr.base_configuration = dict(
                     type="manual",
                     name="tk-config-rv",
-                    version="v1.0.41",
+                    version="v1.0.42",
                 )
 
             # tell the bootstrap API that we don't want to
