@@ -62,6 +62,7 @@ class ToolkitBootstrap(rvt.MinorMode):
                     ("external-gma-play-entity",      self.pre_process_event, ""),
                     ("external-gma-compare-entities", self.pre_process_event, ""),
                     ("external-sgtk-launch-app",      self.pre_process_event, ""),
+                    ("external-sgtk-initialize",      self.pre_process_event, ""),
                     ("license-state-transition",      self.license_state_transition, "")
                 ],
                 None
@@ -128,6 +129,9 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         elif name == "external-launch-submit-tool":
             rvc.sendInternalEvent("launch-submit-tool", "")
+            rve.displayFeedback2("", 0.1)
+
+        elif name == "external-sgtk-initialize":
             rve.displayFeedback2("", 0.1)
 
     def process_queued_events(self):
