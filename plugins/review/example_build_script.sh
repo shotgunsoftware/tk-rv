@@ -35,7 +35,7 @@ cd ..
 echo "Building plugin"
 cd tk-core/developer
 # using script name/script key for auth
-python build_plugin.py ../../tk-rv/plugins/review ../../rv_build -s https://MYSITE.shotgunstudio.com -n SCRIPTNAME -k SCRIPTKEY
+python build_plugin.py ../../tk-rv/plugins/review ../../rv_build -s $RV_BUILD_SITE -n $RV_BUILD_SCRIPT -k $RV_BUILD_APIKEY
 
 echo "Build complete in $build_folder/rv_build"
 echo ""

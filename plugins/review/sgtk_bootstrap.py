@@ -242,7 +242,6 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             # import manifest that handles config and paths
             from sgtk_plugin_review_rv import manifest
-            log.info("Running Toolkit build %s" % manifest.BUILD_INFO)
 
             # import toolkit core
             tk_core_path = manifest.get_sgtk_pythonpath(sgtk_dist_dir())
