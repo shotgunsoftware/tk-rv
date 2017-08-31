@@ -15,6 +15,7 @@ import os
 import platform
 import json
 import traceback
+import urlparse
 
 from PySide import QtCore, QtGui
 
@@ -62,6 +63,7 @@ class ToolkitBootstrap(rvt.MinorMode):
                     ("external-gma-play-entity",      self.pre_process_event, ""),
                     ("external-gma-compare-entities", self.pre_process_event, ""),
                     ("external-sgtk-launch-app",      self.pre_process_event, ""),
+                    ("external-sgtk-initialize",      self.pre_process_event, ""),
                     ("license-state-transition",      self.license_state_transition, "")
                 ],
                 None
@@ -130,12 +132,19 @@ class ToolkitBootstrap(rvt.MinorMode):
             rvc.sendInternalEvent("launch-submit-tool", "")
             rve.displayFeedback2("", 0.1)
 
+        elif name == "external-sgtk-initialize":
+            rve.displayFeedback2("", 0.1)
+
     def process_queued_events(self):
         if self.event_queue:
-            sys.stderr.write("INFO: Queued events waited %g seconds.\n" % 
+            processed = []
+            sys.stderr.write("INFO: Queued events waited %g seconds.\n" %
                 (rvc.theTime() - self.event_queue_time))
             for e in self.event_queue:
-                self.process_event(e[0], e[1])
+                if (e[0], e[1]) not in processed:
+                    processed.append((e[0], e[1]))
+                    self.process_event(e[0], e[1])
+
             self.event_queue = []
 
     #  This is dead code, but keep around in case we want to do this for
@@ -166,7 +175,7 @@ class ToolkitBootstrap(rvt.MinorMode):
         if gma_data.has_key("server"):
             # sys.stderr.write("-------------------------------- event server '%s' vs '%s'\n" % (gma_data["server"], self.server_url))
             # check 
-            if gma_data["server"] == self.server_url:
+            if urlparse.urlparse(gma_data["server"].lower()).netloc == urlparse.urlparse(self.server_url.lower()).netloc:
                 return True
             else:
                 sys.stderr.write("ERROR: Server mismatch ('%s' vs '%s') Please authenticate RV with your Shotgun server and restart.\n" %
