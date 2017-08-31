@@ -28,7 +28,7 @@ git clone git@github.com:shotgunsoftware/tk-rv.git
 # once the baked build branch has been merged with master
 # this wont be needed
 cd tk-rv
-git checkout 36020_baked_build
+git checkout 36020_baked_build_sept_2017
 cd ..
 ######################################################################
 

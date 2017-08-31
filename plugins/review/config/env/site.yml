@@ -24,14 +24,14 @@ engines:
         location:
           name: tk-multi-pythonconsole
           type: app_store
-          version: v0.0.3
+          version: v1.1.0
 
       tk-rv-shotgunreview:
         location:
           path: git@github.com:shotgunsoftware/tk-rv-shotgunreview.git
           type: git_branch
           branch: master
-          version: 6125d6ceebace6ab10cde77ac11ddd781700bd7e
+          version: 99888b48edd61ded3578799f4a85170b3dff990d
 
       tk-multi-importcut:
           cut_link_field: sg_entity
@@ -63,7 +63,7 @@ engines:
       path: git@github.com:shotgunsoftware/tk-rv.git
       type: git_branch
       branch: master
-      version: 9fcd02e9439c3be3f57ecc90720423eec370030f
+      version: 9cdd7bd52c797fbd51e30f097015d50f2e0af75f
 
 frameworks:
   tk-framework-qtwidgets_v2.x.x:
@@ -76,11 +76,11 @@ frameworks:
     location:
       name: tk-framework-shotgunutils
       type: app_store
-      version: v4.4.1
+      version: v4.4.15
   tk-framework-editorial_v1.x.x:
     location: 
       path: git@github.com:shotgunsoftware/tk-framework-editorial.git
       type: git_branch
       branch: master
-      version: ac8213a88754f09e59ac950fb660242efaa5a50e
+      version: 6bc4155772331d0188da1eff83ad2bec34dc1341
 
