@@ -17,8 +17,6 @@ import json
 import traceback
 import urlparse
 
-from PySide import QtCore, QtGui
-
 from pymu import MuSymbol
 
 import rv
@@ -150,25 +148,27 @@ class ToolkitBootstrap(rvt.MinorMode):
     #  This is dead code, but keep around in case we want to do this for
     #  debugging.
     #
-    def play_entity_dialog_factory (self, entity):
+#     def play_entity_dialog_factory (self, entity):
 
-        def dialog(event):
-            """
-            Opens the text version of the input dialog
-            """
-            idStr, result = QtGui.QInputDialog.getText(rvqt.sessionWindow(), "I'm a text Input Dialog!",
-                                        "What is your favorite " + entity + " ?")
-            if result:
-                try:
-                    contents = '{"type":"' + entity + '","id":' + str(int(idStr)) + '}'
-                    rvc.stop()
-                    rvc.sendInternalEvent("id_from_gma", contents)
-                    rvc.play()
-                except:
-                    rve.displayFeedback2("", 0.1)
-                    log.error("could not convert '%s' to %s ID" % (idStr, entity))
+#         def dialog(event):
+#             """
+#             Opens the text version of the input dialog
+#             """
+#             from PySide import QtGui
 
-        return dialog
+#             idStr, result = QtGui.QInputDialog.getText(rvqt.sessionWindow(), "I'm a text Input Dialog!",
+#                                         "What is your favorite " + entity + " ?")
+#             if result:
+#                 try:
+#                     contents = '{"type":"' + entity + '","id":' + str(int(idStr)) + '}'
+#                     rvc.stop()
+#                     rvc.sendInternalEvent("id_from_gma", contents)
+#                     rvc.play()
+#                 except:
+#                     rve.displayFeedback2("", 0.1)
+#                     log.error("could not convert '%s' to %s ID" % (idStr, entity))
+
+#         return dialog
 
     def server_check (self, contents) :
         gma_data = json.loads(contents)
