@@ -15,7 +15,6 @@ import sgtk
 import rv.qtutils
 
 from sgtk.platform import Engine, constants
-from PySide import QtGui, QtCore
 
 class RVEngine(Engine):
     """
@@ -67,6 +66,10 @@ class RVEngine(Engine):
         """
         Runs before apps have been initialized.
         """
+        
+        # Get Qt module regardless of version
+        from sgtk.platform.qt import QtGui, QtCore
+
         # Here we're going to set the hyperlink text color to white
         # since the default is a dark blue that is pretty much unreadable
         # in a dark color environment like RV. It would be great if we

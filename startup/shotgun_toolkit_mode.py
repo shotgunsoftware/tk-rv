@@ -6,7 +6,6 @@ import traceback
 
 from rv import rvtypes
 from rv import commands
-from PySide import QtGui
 
 # Define the integration mode name we'll be useing.
 TK_RV_MODE_NAME = "tk_rv_mode"
