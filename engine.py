@@ -130,16 +130,6 @@ class RVEngine(Engine):
         utf8 = QtCore.QTextCodec.codecForName("utf-8")
         QtCore.QTextCodec.setCodecForCStrings(utf8)
 
-    def register_command(self, name, callback, properties=None):
-
-        # For now, we disallow context menu items.  Note that
-        # menu_generation.py also does not create a context menu at all (since
-        # it would be empty).  If/when we decide to allow context menu items
-        # below, this code would also have to change:
-        # MenuGenerator.create_menu().
-        if not "type" in properties or properties["type"] != "context_menu":
-            super(RVEngine, self).register_command(name, callback, properties)
-
     def post_app_init(self):
         """
         Runs after all apps have been initialized. If running in a GUI
