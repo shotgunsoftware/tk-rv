@@ -7,7 +7,7 @@
 # By accessing, using, copying or modifying this work you indicate your 
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
-
+import os
 import tank
 import rv.commands
 
@@ -29,6 +29,9 @@ class MenuGenerator(object):
         context menu, plus any app commands that were registered
         with the engine.
         """
+        if "RV_LOAD_SG_REVIEW" not in os.environ:
+            return
+
         # For now we disable all context menu items, and the menu itself, for RV.
         # See register_command() in engine.py.
         # self._context_menu = self._add_context_menu()

@@ -235,7 +235,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             startTime = rvc.theTime()
             bundle_cache_dir = os.path.join(sgtk_dist_dir(), "bundle_cache")
 
-            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.0.43")
+            core = os.path.join(bundle_cache_dir, "manual", "tk-core", "v1.3.0")
             core = os.environ.get("RV_TK_CORE") or core
 
             # append python path to get to the actual code
@@ -293,7 +293,7 @@ class ToolkitBootstrap(rvt.MinorMode):
                 mgr.base_configuration = dict(
                     type="manual",
                     name="tk-config-rv",
-                    version="v1.0.43",
+                    version="v1.3.0",
                 )
 
             # tell the bootstrap API that we don't want to
@@ -305,8 +305,17 @@ class ToolkitBootstrap(rvt.MinorMode):
             mgr.entry_point = "rv_review"
 
             # Bootstrap the tk-rv engine into an empty context!
-            mgr.bootstrap_engine("tk-rv")
-            log.debug("Bootstrapping process complete!")
+            def completed(e):
+                log.debug("tk-rv bootstrapping process completed")
+
+            def failure(p, e):
+                log.debug("tk-rv bootstrapping process failed")
+
+            mgr.bootstrap_engine_async("tk-rv",
+                completed_callback = completed,
+                failed_callback = failure)
+
+            log.debug("Bootstrapping process started")
 
             self.toolkit_initialized = True
             sys.stderr.write("INFO: Toolkit initialization took %g sec.\n" % (rvc.theTime() - startTime))
@@ -417,32 +426,34 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             elif not "RV_SHOTGUN_NO_SG_REVIEW_MENU" in os.environ:
                 # No events queued, so build Stand-in menu (IE don't initialize toolkit until we must)
-                modeMenu = [("SG Review", [
-                    ("_", None), 
-                    ("Get Help ...", self.get_help, None, lambda: rvc.UncheckedMenuState),
+                if "RV_LOAD_SG_REVIEW" in os.environ:
+                    modeMenu = [("SG Review", [
+                        ("_", None),
+                        ("Get Help ...", self.get_help, None, lambda: rvc.UncheckedMenuState),
 
-                    ("_", None), 
-                    ("Launch Media App", self.launch_media_app, None, lambda: rvc.UncheckedMenuState),
+                        ("_", None),
+                        ("Launch Media App", self.launch_media_app, None, lambda: rvc.UncheckedMenuState),
 
-                    ("_", None),
-                    ("Submit Tool", self.queue_launch_submit_tool, None, lambda: rvc.UncheckedMenuState),
+                        ("_", None),
+                        ("Submit Tool", self.queue_launch_submit_tool, None, lambda: rvc.UncheckedMenuState),
 
-                    ("_", None),
-                    ("Import Cut", self.queue_launch_import_cut_app, None, lambda: rvc.UncheckedMenuState),
+                        ("_", None),
+                        ("Import Cut", self.queue_launch_import_cut_app, None, lambda: rvc.UncheckedMenuState),
 
-                    ("_", None),
-                    ("Initialize Shotgun", self.initialize_shotgun, None, lambda: rvc.UncheckedMenuState),
+                        ("_", None),
+                        ("Initialize Shotgun", self.initialize_shotgun, None, lambda: rvc.UncheckedMenuState),
 
-                    ("_", None),
-                    ]
-                )]
-                rvc.defineModeMenu(self._modeName, modeMenu)
+                        ("_", None),
+                        ]
+                    )]
+                    rvc.defineModeMenu(self._modeName, modeMenu)
 
                 # We need url for some of these menu items
                 (url, login, token) = self.get_default_rv_auth_session()
                 self.server_url = url.encode("utf-8")
 
-        
+            self.initialize_shotgun(event)
+
     def deactivate(self):
         """
         Deactivates the mode and tears down the currently-running

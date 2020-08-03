@@ -25,5 +25,5 @@ requires_core_version: "v0.14.28"
 
 # List of frameworks which are needed to run the app (optional)
 frameworks:
-    - {"name": "tk-framework-shotgunutils", "version": "v4.x.x"}
+    - {"name": "tk-framework-shotgunutils", "version": "v5.x.x"}
     - {"name": "tk-framework-qtwidgets", "version": "v2.x.x"}
