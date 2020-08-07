@@ -17,6 +17,8 @@ import json
 import traceback
 import urlparse
 
+from PySide2 import QtCore, QtGui
+
 from pymu import MuSymbol
 
 import rv
@@ -24,6 +26,7 @@ import rv.rvtypes as rvt
 import rv.commands as rvc
 import rv.extra_commands as rve
 import rv.qtutils as rvqt
+
 
 def sgtk_dist_dir():
     executable_dir = os.path.dirname(os.environ["RV_APP_RV"])
@@ -35,6 +38,7 @@ def sgtk_dist_dir():
 
     return os.path.join(content_dir, "src", "python", "sgtk")
 
+
 class ToolkitBootstrap(rvt.MinorMode):
     """
     An RV mode that will handle bootstrapping SGTK and starting
@@ -44,6 +48,7 @@ class ToolkitBootstrap(rvt.MinorMode):
     "TK_CORE" can be set to an alternate installation of tk-core
     to override the default behavior.
     """
+
     def __init__(self):
         """
         Initializes the RV mode. An environment variable "TK_RV_MODE_NAME"
@@ -57,15 +62,15 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         self._mode_name = "sgtk_bootstrap"
         self.init(self._mode_name, None,
-                [
-                    ("external-gma-play-entity",      self.pre_process_event, ""),
-                    ("external-gma-compare-entities", self.pre_process_event, ""),
-                    ("external-sgtk-launch-app",      self.pre_process_event, ""),
-                    ("external-sgtk-initialize",      self.pre_process_event, ""),
-                    ("license-state-transition",      self.license_state_transition, "")
-                ],
-                None
-                )
+                  [
+                      ("external-gma-play-entity", self.pre_process_event, ""),
+                      ("external-gma-compare-entities", self.pre_process_event, ""),
+                      ("external-sgtk-launch-app", self.pre_process_event, ""),
+                      ("external-sgtk-initialize", self.pre_process_event, ""),
+                      ("license-state-transition", self.license_state_transition, "")
+                  ],
+                  None
+                  )
 
         self.server_url = None
         self.toolkit_initialized = False
@@ -83,12 +88,14 @@ class ToolkitBootstrap(rvt.MinorMode):
 
     def init_and_process_events(self):
         self.initialize_toolkit()
-        self.process_queued_events()
 
     def pre_process_event(self, event):
         self.pre_process_event_pair(event.name(), event.contents())
 
     def pre_process_event_pair(self, name, contents):
+
+        if self.licensing_style == "":
+            self.licensing_style = rvc.readSettings("Licensing", "activeLicensingStyle", "")
 
         # sys.stderr.write("pre_process_event: lic style '%s' \n" % self.licensing_style)
         if self.licensing_style != "shotgun":
@@ -110,13 +117,13 @@ class ToolkitBootstrap(rvt.MinorMode):
 
                 if rvc.licensingState() == 2:
                     self.init_and_process_events()
-     
+
     def process_event(self, name, contents):
 
-        sys.stderr.write("INFO: Processing event '%s' %g seconds after startup.\n" % 
-            (name, rvc.theTime() - self.startup_time))
+        sys.stderr.write("INFO: Processing event '%s' %g seconds after startup.\n" %
+                         (name, rvc.theTime() - self.startup_time))
 
-        if   name == "external-gma-play-entity":
+        if name == "external-gma-play-entity":
             self.external_gma_play_entity(name, contents)
 
         elif name == "external-gma-compare-entities":
@@ -136,8 +143,8 @@ class ToolkitBootstrap(rvt.MinorMode):
     def process_queued_events(self):
         if self.event_queue:
             processed = []
-            sys.stderr.write("INFO: Queued events waited %g seconds.\n" % 
-                (rvc.theTime() - self.event_queue_time))
+            sys.stderr.write("INFO: Queued events waited %g seconds.\n" %
+                             (rvc.theTime() - self.event_queue_time))
             for e in self.event_queue:
                 if (e[0], e[1]) not in processed:
                     processed.append((e[0], e[1]))
@@ -148,37 +155,37 @@ class ToolkitBootstrap(rvt.MinorMode):
     #  This is dead code, but keep around in case we want to do this for
     #  debugging.
     #
-#     def play_entity_dialog_factory (self, entity):
+    def play_entity_dialog_factory(self, entity):
 
-#         def dialog(event):
-#             """
-#             Opens the text version of the input dialog
-#             """
-#             from PySide import QtGui
+        def dialog(event):
+            """
+            Opens the text version of the input dialog
+            """
+            idStr, result = QtGui.QInputDialog.getText(rvqt.sessionWindow(), "I'm a text Input Dialog!",
+                                                       "What is your favorite " + entity + " ?")
+            if result:
+                try:
+                    contents = '{"type":"' + entity + '","id":' + str(int(idStr)) + '}'
+                    rvc.stop()
+                    rvc.sendInternalEvent("id_from_gma", contents)
+                    rvc.play()
+                except:
+                    rve.displayFeedback2("", 0.1)
+                    log.error("could not convert '%s' to %s ID" % (idStr, entity))
 
-#             idStr, result = QtGui.QInputDialog.getText(rvqt.sessionWindow(), "I'm a text Input Dialog!",
-#                                         "What is your favorite " + entity + " ?")
-#             if result:
-#                 try:
-#                     contents = '{"type":"' + entity + '","id":' + str(int(idStr)) + '}'
-#                     rvc.stop()
-#                     rvc.sendInternalEvent("id_from_gma", contents)
-#                     rvc.play()
-#                 except:
-#                     rve.displayFeedback2("", 0.1)
-#                     log.error("could not convert '%s' to %s ID" % (idStr, entity))
+        return dialog
 
-#         return dialog
-
-    def server_check (self, contents) :
+    def server_check(self, contents):
         gma_data = json.loads(contents)
         if gma_data.has_key("server"):
             # sys.stderr.write("-------------------------------- event server '%s' vs '%s'\n" % (gma_data["server"], self.server_url))
-            # check 
-            if urlparse.urlparse(gma_data["server"].lower()).netloc == urlparse.urlparse(self.server_url.lower()).netloc:
+            # check
+            if urlparse.urlparse(gma_data["server"].lower()).netloc == urlparse.urlparse(
+                    self.server_url.lower()).netloc:
                 return True
             else:
-                sys.stderr.write("ERROR: Server mismatch ('%s' vs '%s') Please authenticate RV with your Shotgun server and restart.\n" %
+                sys.stderr.write(
+                    "ERROR: Server mismatch ('%s' vs '%s') Please authenticate RV with your Shotgun server and restart.\n" %
                     (gma_data["server"], self.server_url))
                 rve.displayFeedback2("", 0.1)
                 return False
@@ -245,11 +252,13 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             # now we can kick off sgtk
             sys.path.insert(0, core)
-            sys.stderr.write("INFO: Toolkit initialization: ready to import sgtk at %g sec.\n" % (rvc.theTime() - startTime))
+            sys.stderr.write(
+                "INFO: Toolkit initialization: ready to import sgtk at %g sec.\n" % (rvc.theTime() - startTime))
 
             # import bootstrapper
             import sgtk
-            sys.stderr.write("INFO: Toolkit initialization: sgtk import complete at %g sec.\n" % (rvc.theTime() - startTime))
+            sys.stderr.write(
+                "INFO: Toolkit initialization: sgtk import complete at %g sec.\n" % (rvc.theTime() - startTime))
 
             # begin logging the toolkit log tree file
             sgtk.LogManager().initialize_base_file_handler("tk-rv")
@@ -259,7 +268,7 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             # allow dev to override log level
             log_level = logging.WARNING
-            if (os.environ.has_key("RV_TK_LOG_DEBUG")) :
+            if (os.environ.has_key("RV_TK_LOG_DEBUG")):
                 log_level = logging.DEBUG
 
             # bind toolkit logging to our logger
@@ -275,11 +284,12 @@ class ToolkitBootstrap(rvt.MinorMode):
             # Now do the bootstrap!
             log.debug("Ready for bootstrap!")
             mgr = sgtk.bootstrap.ToolkitManager(user)
-            sys.stderr.write("INFO: Toolkit initialization: ToolkitManager complete at %g sec.\n" % (rvc.theTime() - startTime))
+            sys.stderr.write(
+                "INFO: Toolkit initialization: ToolkitManager complete at %g sec.\n" % (rvc.theTime() - startTime))
 
             # In disted code, by default, all TK code is read from the
             # 'bundle_cache' baked during the build process.
-            mgr.bundle_cache_fallback_paths = [ bundle_cache_dir ]
+            mgr.bundle_cache_fallback_paths = [bundle_cache_dir]
 
             dev_config = os.environ.get("RV_TK_DEV_CONFIG")
 
@@ -306,14 +316,18 @@ class ToolkitBootstrap(rvt.MinorMode):
 
             # Bootstrap the tk-rv engine into an empty context!
             def completed(e):
+                self.process_queued_events()
                 log.debug("tk-rv bootstrapping process completed")
 
             def failure(p, e):
-                log.debug("tk-rv bootstrapping process failed")
+                log.error("tk-rv bootstrapping process failed: %s" % (e))
 
-            mgr.bootstrap_engine_async("tk-rv",
-                completed_callback = completed,
-                failed_callback = failure)
+            # mgr.bootstrap_engine("tk-rv")
+            mgr.bootstrap_engine_async(
+                "tk-rv",
+                completed_callback=completed,
+                failed_callback=failure,
+            )
 
             log.debug("Bootstrapping process started")
 
@@ -322,11 +336,11 @@ class ToolkitBootstrap(rvt.MinorMode):
 
         except Exception, e:
             sys.stderr.write(
-            "ERROR: Toolkit initialization failed.  Please authenticate RV with your Shotgun server and restart.\n" +
-            "**********************************\n")
+                "ERROR: Toolkit initialization failed.  Please authenticate RV with your Shotgun server and restart.\n" +
+                "**********************************\n")
             traceback.print_exc(None, sys.stderr)
             sys.stderr.write(
-            "**********************************\n")
+                "**********************************\n")
             rve.displayFeedback2("", 0.1)
             # raise
 
@@ -355,14 +369,16 @@ class ToolkitBootstrap(rvt.MinorMode):
         self.pre_process_event_pair("external-launch-submit-tool", "")
 
     def queue_launch_import_cut_app(self, event):
-        self.pre_process_event_pair('external-sgtk-launch-app', 
-            '{"protocol_version":1,"server":"%s","app":"tk-multi-importcut"}' % self.server_url)
+        (url, login, token) = self.get_default_rv_auth_session()
+        self.server_url = url
+        self.pre_process_event_pair('external-sgtk-launch-app',
+                                    '{"protocol_version":1,"server":"%s","app":"tk-multi-importcut"}' % self.server_url)
 
     def initialize_shotgun(self, event):
         self.init_and_process_events()
 
     def launch_submit_tool(self):
-            
+
         # Flag the session as "sgreview.submitInProgress" so JS submit tool
         # code can tell this is not Screening Room.
         #
@@ -489,6 +505,7 @@ def createMode():
 log = logging.getLogger("sgtk_rv_bootstrap")
 log.setLevel(logging.INFO)
 
+
 # note: the RV console treats log information as html. As a consequence, all
 # <html like tokens> will simply disappear when shown in the RV console. These
 # <tokens> are common in toolkit, often returned by __repr__() as object identifiers.
@@ -503,6 +520,7 @@ class EscapedHtmlFormatter(logging.Formatter):
     def format(self, record):
         result = logging.Formatter.format(self, record)
         return cgi.escape(result)
+
 
 log_handler = logging.StreamHandler()
 log_handler.setFormatter(
