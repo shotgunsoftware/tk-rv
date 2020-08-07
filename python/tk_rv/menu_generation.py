@@ -91,23 +91,18 @@ class MenuGenerator(object):
         for cmd in menu_commands:
             menu_item = cmd.define_menu_item()
 
-            if cmd.get_type() == "context_menu":
-                self._add_item_to_context_menu(menu_item)
-            else:
-                if menu_overrides:
-                    command_added = False
+            command_added = False
+            if menu_overrides:
+                for menu_override, commands in menu_overrides.iteritems():
+                    app_name = cmd.get_app_name()
 
-                    for menu_override, commands in menu_overrides.iteritems():
-                        app_name = cmd.get_app_name()
+                    if app_name in [c.get("app_instance") for c in commands if cmd.name == c.get("name")]:
+                        commands_by_menu[menu_override].append(menu_item)
+                        command_added = True
+                        break
 
-                        if app_name in [c.get("app_instance") for c in commands if cmd.name == c.get("name")]:
-                            commands_by_menu[menu_override].append(menu_item)
-                            command_added = True
-                            break
-
-                    if not command_added:
-                        commands_by_menu[self.engine.default_menu_name].append(menu_item)
-                else:
+            if not command_added:
+                if cmd.get_type() != "context_menu":
                     commands_by_menu[self.engine.default_menu_name].append(menu_item)
 
         mode_menu_definition = []
@@ -135,35 +130,6 @@ class MenuGenerator(object):
         # TODO: Menu destruction. Right now we'll end up with duplicate
         # menu items if the context ever changes.
         pass
-
-    ##########################################################################################
-    # context menu and UI
-
-    def _add_context_menu(self):
-        """
-        Builds the context menu item that can then be added to
-        an RV menu.
-        """
-        ctx = self.engine.context
-        ctx_name = str(ctx)
-        return (ctx_name, [])
-
-    def _add_item_to_context_menu(self, item):
-        """
-        Adds the given menu item to the context menu. If the context
-        menu has not been added to the menu generator, it will be prior
-        to adding the new menu item to it.
-
-        :param item:    The menu item to add to the context menu. This
-                        takes the form of a tuple containing the command
-                        name, its callback, and an optional hotkey to
-                        associate with the action.
-        """
-        if not self._context_menu:
-            self._add_context_menu()
-
-        self._context_menu[1].append(item)
-
 
 class AppCommand(object):
     """
