@@ -34,8 +34,8 @@ class RVEngine(Engine):
         """
 
         properties = super(RVEngine, self).get_metrics_properties()
-        properties["RV Debug Build"] = rv.commands.isDebug()
-        properties["RV Release Variant"] = rv.commands.getReleaseVariant()
+        properties["Host App Build Type"] = "Debug" if rv.commands.isDebug() else "Release"
+        properties["Host App Variant"] = str(rv.commands.getReleaseVariant())
 
         return properties
 
@@ -47,7 +47,7 @@ class RVEngine(Engine):
         """
         Returns information about the application hosting this engine.
         """
-        return {"name": "RV", "version": ".".join(rv.commands.getVersion())}
+        return {"name": "RV", "version": ".".join([str(x) for x in rv.commands.getVersion()])}
 
     @property
     def default_menu_name(self):
