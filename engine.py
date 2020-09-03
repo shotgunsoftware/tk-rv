@@ -34,10 +34,10 @@ class RVEngine(Engine):
         :returns:   str
         """
 
-        # XXX Set "SG Review" as the default top level menu, so that we don't
+        # XXX Set "Shotgun" as the default top level menu, so that we don't
         # create another empty menu.  Eventually we'll want somewhere to store
         # "user apps" but we're not ready for that yet anyway.
-        return "SG Review"
+        return "Shotgun"
 
     @property
     def toolkit_rv_mode_name(self):
