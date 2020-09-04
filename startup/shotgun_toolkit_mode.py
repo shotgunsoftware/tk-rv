@@ -1,4 +1,3 @@
-
 import os
 import re
 import sys
@@ -20,6 +19,7 @@ from tank_vendor.shotgun_api3 import Shotgun
 from tank_vendor.shotgun_authentication.user import ShotgunUser
 from tank_vendor.shotgun_authentication.user_impl import ShotgunUserImpl
 import sgtk
+
 
 class RVUserImpl(ShotgunUserImpl):
     """
@@ -59,8 +59,9 @@ class RVUserImpl(ShotgunUserImpl):
         :returns: A Shotgun instance.
         """
         return Shotgun(
-            self.get_host(), session_token=self._session_token,
-            http_proxy=self.get_http_proxy()
+            self.get_host(),
+            session_token=self._session_token,
+            http_proxy=self.get_http_proxy(),
         )
 
     def __repr__(self):
@@ -79,8 +80,8 @@ class RVUserImpl(ShotgunUserImpl):
         """
         return self._login
 
-class ShotgunToolkit(rvtypes.MinorMode):
 
+class ShotgunToolkit(rvtypes.MinorMode):
     def __init__(self):
 
         super(ShotgunToolkit, self).__init__()
@@ -99,28 +100,28 @@ class ShotgunToolkit(rvtypes.MinorMode):
         return self.__engine
 
     @staticmethod
-    def http_proxy_from_env_vars() :
+    def http_proxy_from_env_vars():
 
         # Note from shotgun api source about expected proxy string
         #
         #   :param http_proxy: Optional, URL for the http proxy server, in the
         #   form [username:pass@]proxy.com[:8080]
 
-        user   = os.getenv("RV_NETWORK_PROXY_USER",     None)
+        user = os.getenv("RV_NETWORK_PROXY_USER", None)
         passwd = os.getenv("RV_NETWORK_PROXY_PASSWORD", None)
-        host   = os.getenv("RV_NETWORK_PROXY_HOST",     None)
-        port   = os.getenv("RV_NETWORK_PROXY_PORT",     None)
+        host = os.getenv("RV_NETWORK_PROXY_HOST", None)
+        port = os.getenv("RV_NETWORK_PROXY_PORT", None)
 
         http_proxy = None
 
-        if (host) :
+        if host:
             http_proxy = host
-            if (user) :
-                if (passwd) :
+            if user:
+                if passwd:
                     http_proxy = user + ":" + passwd + "@" + http_proxy
-                else :
+                else:
                     http_proxy = user + "@" + http_proxy
-            if (port) :
+            if port:
                 http_proxy += ":" + port
 
         return http_proxy
@@ -143,8 +144,10 @@ class ShotgunToolkit(rvtypes.MinorMode):
                 context = tank.context.deserialize(os.environ.get("TANK_CONTEXT"))
             except Exception as e:
                 err = traceback.format_exc()
-                sys.stderr.write("WARNING: Could not create context! "
-                      "Tank will be disabled: {0}".format(traceback.format_exc()))
+                sys.stderr.write(
+                    "WARNING: Could not create context! "
+                    "Tank will be disabled: {0}".format(traceback.format_exc())
+                )
                 return engine
         else:
             import sgtk
@@ -162,8 +165,11 @@ class ShotgunToolkit(rvtypes.MinorMode):
                 # Get default session info from slutils (rv/shotgun licensing) module
                 (url, login, token) = slutils_py.defaultSession()
 
-                user = ShotgunUser(RVUserImpl(url, login, token, 
-                        ShotgunToolkit.http_proxy_from_env_vars()))
+                user = ShotgunUser(
+                    RVUserImpl(
+                        url, login, token, ShotgunToolkit.http_proxy_from_env_vars()
+                    )
+                )
                 sg_conn = user.create_sg_connection()
                 sgtk.set_authenticated_user(user)
 
@@ -173,15 +179,21 @@ class ShotgunToolkit(rvtypes.MinorMode):
 
             except:
                 err = traceback.print_exc()
-                commands.alertPanel (True, commands.ErrorAlert, "Login Session Invalid", 
-                        "Login with RV Shotgun session token failed; please use the File Menu's "
-                        "\"License Manager\" to log in to the Shotgun server and re-start RV.", 
-                        "Continue", None, None);
+                commands.alertPanel(
+                    True,
+                    commands.ErrorAlert,
+                    "Login Session Invalid",
+                    "Login with RV Shotgun session token failed; please use the File Menu's "
+                    '"License Manager" to log in to the Shotgun server and re-start RV.',
+                    "Continue",
+                    None,
+                    None,
+                )
                 return None
 
-            projectName = 'Big Buck Bunny'
-            if os.environ.get('TANK_PROJECT_NAME'):
-                projectName = os.environ.get('TANK_PROJECT_NAME')
+            projectName = "Big Buck Bunny"
+            if os.environ.get("TANK_PROJECT_NAME"):
+                projectName = os.environ.get("TANK_PROJECT_NAME")
 
             sys.stderr.write("DEBUG: find project '%s'.\n" % projectName)
             project = sg_conn.find("Project", [["name", "is", projectName]])
@@ -192,11 +204,12 @@ class ShotgunToolkit(rvtypes.MinorMode):
             context = tk.context_from_entity_dictionary(project[0])
 
         try:
-            sys.stderr.write("INFO: Starting TK-RV Engine") 
+            sys.stderr.write("INFO: Starting TK-RV Engine")
             engine = tank.platform.start_engine(engine_name, context.tank, context)
         except Exception as e:
-            sys.stderr.write("WARNING: Could not start engine: "
-                  "{0}".format(traceback.format_exc()))
+            sys.stderr.write(
+                "WARNING: Could not start engine: " "{0}".format(traceback.format_exc())
+            )
             return engine
 
         # clean up temp env vars
@@ -205,6 +218,7 @@ class ShotgunToolkit(rvtypes.MinorMode):
                 del os.environ[var]
 
         return engine
+
 
 def createMode():
     return ShotgunToolkit()
