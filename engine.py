@@ -8,6 +8,7 @@
 # agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
+from __future__ import print_function
 import os
 import sys
 
@@ -168,19 +169,19 @@ class RVEngine(Engine):
     def log_debug(self, msg):
         if self.get_setting("debug_logging", True):
             msg = "DEBUG: tk-rv - %s" % msg
-            print >> sys.stderr, msg
+            print(msg, file=sys.stderr)
 
     def log_info(self, msg):
         msg = "INFO: tk-rv - %s" % msg
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
 
     def log_warning(self, msg):
         msg = "WARNING: tk-rv - %s" % msg
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
 
     def log_error(self, msg):
         msg = "ERROR: tk-rv - %s" % msg
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
 
     #####################################################################################
     # General Utilities

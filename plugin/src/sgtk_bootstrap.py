@@ -311,7 +311,7 @@ class ToolkitBootstrap(rvt.MinorMode):
             self.toolkit_initialized = True
             sys.stderr.write("INFO: Toolkit initialization took %g sec.\n" % (rvc.theTime() - startTime))
 
-        except Exception, e:
+        except Exception as e:
             sys.stderr.write(
             "ERROR: Toolkit initialization failed.  Please authenticate RV with your Shotgun server and restart.\n" +
             "**********************************\n")

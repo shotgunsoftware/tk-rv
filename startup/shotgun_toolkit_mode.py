@@ -130,7 +130,7 @@ class ShotgunToolkit(rvtypes.MinorMode):
 
         try:
             import tank
-        except Exception, e:
+        except Exception as e:
             sys.stderr.write("ERROR: Failed to import tank.\n")
             return engine
 
@@ -141,7 +141,7 @@ class ShotgunToolkit(rvtypes.MinorMode):
 
             try:
                 context = tank.context.deserialize(os.environ.get("TANK_CONTEXT"))
-            except Exception, e:
+            except Exception as e:
                 err = traceback.format_exc()
                 sys.stderr.write("WARNING: Could not create context! "
                       "Tank will be disabled: {0}".format(traceback.format_exc()))
@@ -194,7 +194,7 @@ class ShotgunToolkit(rvtypes.MinorMode):
         try:
             sys.stderr.write("INFO: Starting TK-RV Engine") 
             engine = tank.platform.start_engine(engine_name, context.tank, context)
-        except Exception, e:
+        except Exception as e:
             sys.stderr.write("WARNING: Could not start engine: "
                   "{0}".format(traceback.format_exc()))
             return engine
