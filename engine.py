@@ -1,13 +1,14 @@
 # Copyright (c) 2016 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
+from __future__ import print_function
 import os
 import sys
 
@@ -15,6 +16,7 @@ import sgtk
 import rv.qtutils
 
 from sgtk.platform import Engine, constants
+
 
 class RVEngine(Engine):
     """
@@ -66,7 +68,7 @@ class RVEngine(Engine):
         """
         Runs before apps have been initialized.
         """
-        
+
         # Get Qt module regardless of version
         from sgtk.platform.qt import QtGui, QtCore
 
@@ -168,19 +170,19 @@ class RVEngine(Engine):
     def log_debug(self, msg):
         if self.get_setting("debug_logging", True):
             msg = "DEBUG: tk-rv - %s" % msg
-            print >> sys.stderr, msg
+            print(msg, file=sys.stderr)
 
     def log_info(self, msg):
         msg = "INFO: tk-rv - %s" % msg
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
 
     def log_warning(self, msg):
         msg = "WARNING: tk-rv - %s" % msg
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
 
     def log_error(self, msg):
         msg = "ERROR: tk-rv - %s" % msg
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
 
     #####################################################################################
     # General Utilities
@@ -240,5 +242,3 @@ class RVEngine(Engine):
         for dialog in self.created_qt_dialogs:
             self._apply_external_styleshet(self, dialog)
             dialog.update()
-
-

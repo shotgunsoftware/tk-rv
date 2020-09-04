@@ -1,3 +1,7 @@
+[![Build Status](https://dev.azure.com/shotgun-ecosystem/Toolkit/_apis/build/status/shotgunsoftware.tk-rv?repoName=shotgunsoftware%2Ftk-rv&branchName=master)](https://dev.azure.com/shotgun-ecosystem/Toolkit/_build/latest?definitionId=99&repoName=shotgunsoftware%2Ftk-rv&branchName=master)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Linting](https://img.shields.io/badge/PEP8%20by-Hound%20CI-a873d1.svg)](https://houndci.com)
+
 # tk-rv
 Tweak implementation of a toolkit engine for RV.
 
@@ -29,4 +33,3 @@ the python dir is for the actual tk-rv classes, in the style of tk-maya.
 the engine stands alone and looks down for its groovy.
 
 /shotgunlocal/config/config/core/shotgun.yml - your server settings....
-

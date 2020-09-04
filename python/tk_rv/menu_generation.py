@@ -1,15 +1,16 @@
 # Copyright (c) 2016 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
 import tank
 import rv.commands
+
 
 class MenuGenerator(object):
     RV_MENU_SPACER = ("_", None)
@@ -51,7 +52,7 @@ class MenuGenerator(object):
         # safe here because all available versions of RV are 2.7 as of this
         # writing.
         # commands_by_menu = {n: [] for n in menu_overrides.keys()}
-        # 
+        #
         # Sadly, that's not the case, we still build python 2.6 versions of all
         # releases, and comprehension is also not available there.
         commands_by_menu = {}
@@ -97,13 +98,19 @@ class MenuGenerator(object):
                     for menu_override, commands in menu_overrides.iteritems():
                         app_name = cmd.get_app_name()
 
-                        if app_name in [c.get("app_instance") for c in commands if cmd.name == c.get("name")]:
+                        if app_name in [
+                            c.get("app_instance")
+                            for c in commands
+                            if cmd.name == c.get("name")
+                        ]:
                             commands_by_menu[menu_override].append(menu_item)
                             command_added = True
                             break
 
                     if not command_added:
-                        commands_by_menu[self.engine.default_menu_name].append(menu_item)
+                        commands_by_menu[self.engine.default_menu_name].append(
+                            menu_item
+                        )
                 else:
                     commands_by_menu[self.engine.default_menu_name].append(menu_item)
 
@@ -117,8 +124,7 @@ class MenuGenerator(object):
             mode_menu_definition.append((menu_name, menu_items))
 
         rv.commands.defineModeMenu(
-            self.engine.toolkit_rv_mode_name,
-            mode_menu_definition,
+            self.engine.toolkit_rv_mode_name, mode_menu_definition,
         )
 
     def destroy_menu(self):
@@ -167,6 +173,7 @@ class AppCommand(object):
     Wraps an engine command and provides convenience methods for
     adding that command to an RV menu.
     """
+
     def __init__(self, name, properties):
         """
         Initializes the AppCommand object.
@@ -226,6 +233,3 @@ class AppCommand(object):
                         necessary in the SGTK menu's situation.
         """
         self.callback()
-
-
-        
