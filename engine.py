@@ -1,13 +1,14 @@
 # Copyright (c) 2016 Shotgun Software Inc.
-# 
+#
 # CONFIDENTIAL AND PROPRIETARY
-# 
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit 
+#
+# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
-# By accessing, using, copying or modifying this work you indicate your 
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights 
+# By accessing, using, copying or modifying this work you indicate your
+# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Shotgun Software Inc.
 
+from __future__ import print_function
 import os
 import sys
 
@@ -16,6 +17,7 @@ import rv.qtutils
 import rv.commands
 
 from sgtk.platform import Engine, constants
+
 
 class RVEngine(Engine):
     """
@@ -34,7 +36,9 @@ class RVEngine(Engine):
         """
 
         properties = super(RVEngine, self).get_metrics_properties()
-        properties["Host App Build Type"] = "Debug" if rv.commands.isDebug() else "Release"
+        properties["Host App Build Type"] = (
+            "Debug" if rv.commands.isDebug() else "Release"
+        )
         properties["Host App Variant"] = str(rv.commands.getReleaseVariant())
 
         return properties
@@ -47,7 +51,10 @@ class RVEngine(Engine):
         """
         Returns information about the application hosting this engine.
         """
-        return {"name": "RV", "version": ".".join([str(x) for x in rv.commands.getVersion()])}
+        return {
+            "name": "RV",
+            "version": ".".join([str(x) for x in rv.commands.getVersion()]),
+        }
 
     @property
     def default_menu_name(self):
@@ -57,10 +64,10 @@ class RVEngine(Engine):
         :returns:   str
         """
 
-        # XXX Set "SG Review" as the default top level menu, so that we don't
+        # XXX Set "Shotgun" as the default top level menu, so that we don't
         # create another empty menu.  Eventually we'll want somewhere to store
         # "user apps" but we're not ready for that yet anyway.
-        return "SG Review"
+        return "Shotgun"
 
     @property
     def toolkit_rv_mode_name(self):
@@ -89,7 +96,7 @@ class RVEngine(Engine):
         """
         Runs before apps have been initialized.
         """
-        
+
         # Get Qt module regardless of version
         from sgtk.platform.qt import QtGui, QtCore
 
@@ -181,19 +188,19 @@ class RVEngine(Engine):
     def log_debug(self, msg):
         if self.get_setting("debug_logging", True):
             msg = "DEBUG: tk-rv - %s" % msg
-            print >> sys.stderr, msg
+            print(msg, file=sys.stderr)
 
     def log_info(self, msg):
         msg = "INFO: tk-rv - %s" % msg
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
 
     def log_warning(self, msg):
         msg = "WARNING: tk-rv - %s" % msg
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
 
     def log_error(self, msg):
         msg = "ERROR: tk-rv - %s" % msg
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
 
     #####################################################################################
     # General Utilities
@@ -253,5 +260,3 @@ class RVEngine(Engine):
         for dialog in self.created_qt_dialogs:
             self._apply_external_styleshet(self, dialog)
             dialog.update()
-
-

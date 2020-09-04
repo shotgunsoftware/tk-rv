@@ -54,7 +54,6 @@ class RVUserImpl(ShotgunUserImpl):
         self._session_token = session_token
         self._http_proxy = http_proxy
 
-
     def get_login(self):
         """
         Return the login name for this user.
@@ -72,11 +71,11 @@ class RVUserImpl(ShotgunUserImpl):
             self.get_host(),
             session_token=self._session_token,
             connect=False,
-            http_proxy=self._http_proxy
+            http_proxy=self._http_proxy,
         )
         # The API must be notified that the session token in this case is the
         # result of an RV licensing request.
-        shotgun_obj.config.extra_auth_params = { "product": "rv" }
+        shotgun_obj.config.extra_auth_params = {"product": "rv"}
         shotgun_obj.server_caps
 
         return shotgun_obj
@@ -123,6 +122,7 @@ def get_toolkit_user():
 
     return (user, url)
 
+
 def _get_default_rv_auth_session():
     """
     Returns a tuple with session details from rv authentication
@@ -136,6 +136,7 @@ def _get_default_rv_auth_session():
     (url, login, token) = last_session.split("|")[:3]
     # return (url, login, token)
     return url, login, token
+
 
 def _http_proxy_from_env_vars():
     """
@@ -155,12 +156,9 @@ def _http_proxy_from_env_vars():
         if user:
             if passwd:
                 http_proxy = user + ":" + passwd + "@" + http_proxy
-            else :
+            else:
                 http_proxy = user + "@" + http_proxy
         if port:
             http_proxy += ":" + port
 
     return http_proxy
-
-
-

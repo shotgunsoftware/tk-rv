@@ -1,4 +1,4 @@
- 
+
                 # self.tray_list.setStyleSheet('QListWidget: { background: #ff0000; border 2px solid #00ff00; }')
 
                 # style = '''
@@ -61,8 +61,8 @@ modified env/includes/common_apps.yml for tk-framework-qtwidgets
 
 
 flipping to another server
-    this wasnt easy. 
-    how do i de-auth from one server? 
+    this wasnt easy.
+    how do i de-auth from one server?
     can i be simultaneously authed to multiple servers? i dont want to re-auth to the first one.
     are their files i have to touch in the config to aim at aonther? or if i authed another way would this auto-fix?
     is this my fault with my dorked config?
@@ -93,7 +93,7 @@ Tabbed interface and version list needed
 
 Tank integration with RV
     Global context - when, how? most things seem to require a project id.
-    project ids in pipeline_configuration.yml and friends 
+    project ids in pipeline_configuration.yml and friends
 Authentication
     Multiple host configs
     Licenses
@@ -110,7 +110,7 @@ try:
 except ImportError:
   ## Trollius >= 0.3 was renamed
   print "Trollius"
-  import trollius as asyncio 
+  import trollius as asyncio
 
 
                # # now try just loading RV Pyside example widget
@@ -164,7 +164,7 @@ except ImportError:
         #     QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
 
 
-        # is this how we want to do things? 
+        # is this how we want to do things?
         # does a toolkit centric way exist better than os.system?
         # should we use subprocess?
         # def _jump_to_fs(self, event):
@@ -235,7 +235,7 @@ except ImportError:
                 # Set up alias
                 # ShotgunModel = shotgun_model.ShotgunModel
                 # parent_widget = self._engine._get_dialog_parent()
-                
+
                 parent_widget = self.rvSessionQObject
                 if not parent_widget:
                          raise Exception("parent parent_widget is none.")
@@ -261,7 +261,7 @@ except ImportError:
                 self.model.load_data(entity_type="Asset")
                 self._sg_tk_test.show()
 
-                # ok this is some zany i was lighting off here. 
+                # ok this is some zany i was lighting off here.
                 # we can move this elsewhere....
                 from autobahn.asyncio.websocket import WebSocketServerProtocol, \
                                                                                                 WebSocketServerFactory
