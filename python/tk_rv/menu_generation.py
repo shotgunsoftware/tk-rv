@@ -91,7 +91,7 @@ class MenuGenerator(object):
 
             command_added = False
             if menu_overrides:
-                for menu_override, commands in menu_overrides.iteritems():
+                for menu_override, commands in menu_overrides.items():
                     app_name = cmd.get_app_name()
                     if not (
                         menu_override == "SG Review"
@@ -115,7 +115,7 @@ class MenuGenerator(object):
 
         mode_menu_definition = []
 
-        for menu_name, menu_items in commands_by_menu.iteritems():
+        for menu_name, menu_items in commands_by_menu.items():
             # If there are no commands to add to a specific menu, then
             # don't bother adding it to the menu definition.
             if not menu_items:
