@@ -14,6 +14,7 @@ import sys
 
 import sgtk
 import rv.qtutils
+import rv.commands
 
 from sgtk.platform import Engine, constants
 
@@ -26,7 +27,34 @@ class RVEngine(Engine):
     MAX_THREADS = 4
 
     #####################################################################################
+    # Metrics
+
+    def get_metrics_properties(self):
+        """
+        Returns a dictionary with properties to use when emitting a metric event for
+        this engine.
+        """
+
+        properties = super(RVEngine, self).get_metrics_properties()
+        properties["Host App Build Type"] = (
+            "Debug" if rv.commands.isDebug() else "Release"
+        )
+        properties["Host App Variant"] = str(rv.commands.getReleaseVariant())
+
+        return properties
+
+    #####################################################################################
     # Properties
+
+    @property
+    def host_info(self):
+        """
+        Returns information about the application hosting this engine.
+        """
+        return {
+            "name": "RV",
+            "version": ".".join([str(x) for x in rv.commands.getVersion()]),
+        }
 
     @property
     def default_menu_name(self):

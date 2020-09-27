@@ -92,7 +92,7 @@ class MenuGenerator(object):
 
             command_added = False
             if menu_overrides:
-                for menu_override, commands in menu_overrides.iteritems():
+                for menu_override, commands in menu_overrides.items():
                     app_name = cmd.get_app_name()
                     if not (
                         menu_override == "SG Review"
