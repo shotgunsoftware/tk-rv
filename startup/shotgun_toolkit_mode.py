@@ -1,9 +1,9 @@
+from __future__ import print_function
+
 import os
 import re
 import sys
 import traceback
-
-from __future__ import print_function
 
 from rv import rvtypes
 from rv import commands
