@@ -3,6 +3,8 @@ import re
 import sys
 import traceback
 
+from __future__ import print_function
+
 from rv import rvtypes
 from rv import commands
 
@@ -132,7 +134,7 @@ class ShotgunToolkit(rvtypes.MinorMode):
         try:
             import tank
         except Exception as e:
-            sys.stderr.write("ERROR: Failed to import tank.\n")
+            print("ERROR: Failed to import tank.\n", file=sys.stderr)
             return engine
 
         # Defaults to tk-rv if no other engine name found in environment.
@@ -144,9 +146,11 @@ class ShotgunToolkit(rvtypes.MinorMode):
                 context = tank.context.deserialize(os.environ.get("TANK_CONTEXT"))
             except Exception as e:
                 err = traceback.format_exc()
-                sys.stderr.write(
-                    "WARNING: Could not create context! "
-                    "Tank will be disabled: {0}".format(traceback.format_exc())
+                print(
+                    "WARNING: Could not create context! Tank will be disabled: {0}".format(
+                        traceback.format_exc()
+                    ),
+                    file=sys.stderr,
                 )
                 return engine
         else:
@@ -195,20 +199,22 @@ class ShotgunToolkit(rvtypes.MinorMode):
             if os.environ.get("TANK_PROJECT_NAME"):
                 projectName = os.environ.get("TANK_PROJECT_NAME")
 
-            sys.stderr.write("DEBUG: find project '%s'.\n" % projectName)
+            print("DEBUG: find project '%s'.\n" % projectName, file=sys.stderr)
             project = sg_conn.find("Project", [["name", "is", projectName]])
-            sys.stderr.write("DEBUG:     find result '%s'.\n" % str(project))
+            print("DEBUG:     find result '%s'.\n" % str(project), file=sys.stderr)
 
             tk = sgtk.sgtk_from_entity(project[0]["type"], project[0]["id"])
 
             context = tk.context_from_entity_dictionary(project[0])
 
         try:
-            sys.stderr.write("INFO: Starting TK-RV Engine")
+            print("INFO: Starting TK-RV Engine", sys.stderr)
             engine = tank.platform.start_engine(engine_name, context.tank, context)
         except Exception as e:
-            sys.stderr.write(
-                "WARNING: Could not start engine: " "{0}".format(traceback.format_exc())
+            print(
+                "WARNING: Could not start engine: "
+                "{0}".format(traceback.format_exc()),
+                file=sys.stderr,
             )
             return engine
 
