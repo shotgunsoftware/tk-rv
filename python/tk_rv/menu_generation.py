@@ -1,12 +1,12 @@
-# Copyright (c) 2016 Shotgun Software Inc.
+# Copyright (c) 2021 ShotGrid Software Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# This work is provided "AS IS" and subject to the ShotGrid Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
 # By accessing, using, copying or modifying this work you indicate your
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
-# not expressly granted therein are reserved by Shotgun Software Inc.
+# agreement to the ShotGrid Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by ShotGrid Software Inc.
 import os
 import tank
 import rv.commands
@@ -61,7 +61,7 @@ class MenuGenerator(object):
             commands_by_menu[n] = []
 
         # We're placing a spacer before and after the context menu because
-        # this is likely going into the existing "Shotgun" menu in RV, which
+        # this is likely going into the existing "ShotGrid" menu in RV, which
         # contains menu actions that will be listed before it.
         commands_by_menu[self.engine.default_menu_name] = [
             MenuGenerator.RV_MENU_SPACER,
@@ -84,7 +84,7 @@ class MenuGenerator(object):
         # Dictionary structure:
         #
         # commands_by_menu = {
-        #     "Shotgun":[menu_item, ...],
+        #     "ShotGrid":[menu_item, ...],
         #     "SG Review":[menu_item, ...],
         # }
         for cmd in menu_commands:

@@ -8,16 +8,16 @@ configuration:
         type: dict
         description: "Controls which RV menu engine commands are placed in. If a
                       command is not defined in the menu_overrides, then it will be
-                      placed within the Shotgun menu."
+                      placed within the ShotGrid menu."
         allows_empty: True
         default_value: {}
 
-# the Shotgun fields that this engine needs in order to operate correctly
+# the ShotGrid fields that this engine needs in order to operate correctly
 requires_shotgun_fields:
 
 
 # More verbose description of this item
-display_name: "Shotgun Engine for RV"
+display_name: "ShotGrid Engine for RV"
 
 # Required minimum versions for this item to run
 requires_shotgun_version:
