@@ -25,14 +25,14 @@ import sgtk
 
 class RVUserImpl(ShotgunUserImpl):
     """
-    A user that authenticates to the Shotgun server using a session token.
+    A user that authenticates to the ShotGrid server using a session token.
     """
 
     def __init__(self, host, login, session_token, http_proxy):
         """
         Constructor.
 
-        :param host: Host for this Shotgun user.
+        :param host: Host for this ShotGrid user.
         :param login: Login name for the user.
         :param session_token: Session token for the user. If session token is None
             the session token will be looked for in the users file.
@@ -187,8 +187,8 @@ class ShotgunToolkit(rvtypes.MinorMode):
                     True,
                     commands.ErrorAlert,
                     "Login Session Invalid",
-                    "Login with RV Shotgun session token failed; please use the File Menu's "
-                    '"License Manager" to log in to the Shotgun server and re-start RV.',
+                    "Login with RV ShotGrid session token failed; please use the File Menu's "
+                    '"License Manager" to log in to the ShotGrid server and re-start RV.',
                     "Continue",
                     None,
                     None,

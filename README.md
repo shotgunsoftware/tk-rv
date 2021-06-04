@@ -5,10 +5,10 @@
 # tk-rv
 Tweak implementation of a toolkit engine for RV.
 
-To starts:
+To start:
 
-Install shotgun desktop to get tank.
-Go where you installed your shotgun root and find tank. Mine was in:
+Install shotgrid desktop to get tank.
+Go where you installed your shotgrid root and find tank. Mine was in:
 {SHOTGUN_INSTALL}/config
 ./tank updates
 

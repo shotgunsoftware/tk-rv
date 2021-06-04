@@ -1,4 +1,4 @@
-package: Shotgun Toolkit for RV
+package: ShotGrid Toolkit for RV
 author: stewartb
 organization: Tweak Software
 version: 1.0
@@ -13,6 +13,6 @@ modes:
 
 description: |
     <p>
-    Loads the Shotgun tk-rv engine.
+    Loads the ShotGrid tk-rv engine.
     The tk-rv engine will create a menu as a starting point for hosted apps.
     </p>

@@ -1,12 +1,12 @@
-# Copyright (c) 2016 Shotgun Software Inc.
+# Copyright (c) 2021 Autodesk, Inc.
 #
 # CONFIDENTIAL AND PROPRIETARY
 #
-# This work is provided "AS IS" and subject to the Shotgun Pipeline Toolkit
+# This work is provided "AS IS" and subject to the ShotGrid Pipeline Toolkit
 # Source Code License included in this distribution package. See LICENSE.
 # By accessing, using, copying or modifying this work you indicate your
-# agreement to the Shotgun Pipeline Toolkit Source Code License. All rights
-# not expressly granted therein are reserved by Shotgun Software Inc.
+# agreement to the ShotGrid Pipeline Toolkit Source Code License. All rights
+# not expressly granted therein are reserved by Autodesk, Inc.
 
 from __future__ import print_function
 import os
@@ -21,7 +21,7 @@ from sgtk.platform import Engine, constants
 
 class RVEngine(Engine):
     """
-    Shotgun Toolkit engine for RV.
+    ShotGrid Toolkit engine for RV.
     """
 
     MAX_THREADS = 4
@@ -64,10 +64,10 @@ class RVEngine(Engine):
         :returns:   str
         """
 
-        # XXX Set "Shotgun" as the default top level menu, so that we don't
+        # XXX Set "ShotGrid" as the default top level menu, so that we don't
         # create another empty menu.  Eventually we'll want somewhere to store
         # "user apps" but we're not ready for that yet anyway.
-        return "Shotgun"
+        return "ShotGrid"
 
     @property
     def toolkit_rv_mode_name(self):
@@ -148,8 +148,8 @@ class RVEngine(Engine):
             self._qss_watcher.fileChanged.connect(self.reload_qss)
 
         # The assumption here is that the default case has us presenting a
-        # Shotgun menu and loading it with at least Cutz Support and maybe
-        # an expected Shotgun browser or two. _ui_enabled turns the menu on.
+        # ShotGrid menu and loading it with at least Cutz Support and maybe
+        # an expected ShotGrid browser or two. _ui_enabled turns the menu on.
         # For shell access, setenv TK_RV_NO_UI NCC-1701 this is basically what
         # tk-maya does so following along.
         self._ui_enabled = os.environ.get("TK_RV_NO_UI") or True
