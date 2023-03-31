@@ -124,7 +124,8 @@ class MenuGenerator(object):
             mode_menu_definition.append((menu_name, menu_items))
 
         rv.commands.defineModeMenu(
-            self.engine.toolkit_rv_mode_name, mode_menu_definition,
+            self.engine.toolkit_rv_mode_name,
+            mode_menu_definition,
         )
 
     def destroy_menu(self):

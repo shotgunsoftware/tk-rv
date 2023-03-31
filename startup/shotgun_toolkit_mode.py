@@ -85,7 +85,6 @@ class RVUserImpl(ShotgunUserImpl):
 
 class ShotgunToolkit(rvtypes.MinorMode):
     def __init__(self):
-
         super(ShotgunToolkit, self).__init__()
 
         # INITIALIZE mode
@@ -103,7 +102,6 @@ class ShotgunToolkit(rvtypes.MinorMode):
 
     @staticmethod
     def http_proxy_from_env_vars():
-
         # Note from shotgun api source about expected proxy string
         #
         #   :param http_proxy: Optional, URL for the http proxy server, in the
@@ -141,7 +139,6 @@ class ShotgunToolkit(rvtypes.MinorMode):
         engine_name = os.environ.get("TANK_ENGINE", "tk-rv")
 
         if os.environ.get("TANK_CONTEXT"):
-
             try:
                 context = tank.context.deserialize(os.environ.get("TANK_CONTEXT"))
             except Exception as e:
