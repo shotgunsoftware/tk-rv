@@ -40,7 +40,7 @@
                 # # Tell the view to pull data from the model
                 # view.setModel(model)
 
-                # # load all assets from ShotGrid
+                # # load all assets from Flow Production Tracking
                 # model.load_data(entity_type="Shot")
 
 
@@ -256,7 +256,7 @@ except ImportError:
                 # Tell the view to pull data from the model
                 self._sg_tk_test.setModel(self.model)
                 self._sg_tk_test.setItemDelegate(self._sg_delegate)
-                # load all assets from ShotGrid
+                # load all assets from Flow Production Tracking
                 # self._sg_tk_test.resize(500,400)
                 self.model.load_data(entity_type="Asset")
                 self._sg_tk_test.show()

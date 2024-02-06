@@ -8,16 +8,16 @@ configuration:
         type: dict
         description: "Controls which RV menu engine commands are placed in. If a
                       command is not defined in the menu_overrides, then it will be
-                      placed within the ShotGrid menu."
+                      placed within the Flow Production Tracking menu."
         allows_empty: True
         default_value: {}
 
-# the ShotGrid fields that this engine needs in order to operate correctly
+# the Flow Production Tracking fields that this engine needs in order to operate correctly
 requires_shotgun_fields:
 
 
 # More verbose description of this item
-display_name: "ShotGrid Engine for RV"
+display_name: "Flow Production Tracking Engine for RV"
 
 # Required minimum versions for this item to run
 requires_shotgun_version:
