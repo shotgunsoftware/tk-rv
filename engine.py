@@ -21,7 +21,7 @@ from sgtk.platform import Engine, constants
 
 class RVEngine(Engine):
     """
-    Flow Production Tracking Toolkit engine for RV.
+    Flow Production Tracking engine for RV.
     """
 
     MAX_THREADS = 4
