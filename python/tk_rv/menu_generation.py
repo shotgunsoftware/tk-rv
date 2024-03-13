@@ -78,14 +78,13 @@ class MenuGenerator(object):
         # Config setting structure:
         #
         # menu_overrides:
-        #   PTR Review:
-        #     - {app_instance: tk-multi-importcut, name: Cut Import}
+        #   Tools:
+        #     - {app_instance: tk-multi-pythonconsole, name: Python Console...}
         #
         # Dictionary structure:
         #
         # commands_by_menu = {
         #     "Flow Production Tracking":[menu_item, ...],
-        #     "PTR Review":[menu_item, ...],
         # }
         for cmd in menu_commands:
             menu_item = cmd.define_menu_item()
@@ -94,21 +93,14 @@ class MenuGenerator(object):
             if menu_overrides:
                 for menu_override, commands in menu_overrides.items():
                     app_name = cmd.get_app_name()
-                    if not (
-                        menu_override == "PTR Review"
-                        and "RV_LOAD_SG_REVIEW" not in os.environ
-                    ):
-                        if app_name in [
-                            c.get("app_instance")
-                            for c in commands
-                            if cmd.name == c.get("name")
-                        ]:
-                            commands_by_menu[menu_override].append(menu_item)
-                            command_added = True
-                            break
-                    else:
-                        # command_added to true inn order to not add the default menu item
+                    if app_name in [
+                        c.get("app_instance")
+                        for c in commands
+                        if cmd.name == c.get("name")
+                    ]:
+                        commands_by_menu[menu_override].append(menu_item)
                         command_added = True
+                        break
 
             if not command_added:
                 if cmd.get_type() != "context_menu":
