@@ -25,14 +25,14 @@ import sgtk
 
 class RVUserImpl(ShotgunUserImpl):
     """
-    A user that authenticates to the ShotGrid server using a session token.
+    A user that authenticates to the server using a session token.
     """
 
     def __init__(self, host, login, session_token, http_proxy):
         """
         Constructor.
 
-        :param host: Host for this ShotGrid user.
+        :param host: Host for this Flow Production Tracking user.
         :param login: Login name for the user.
         :param session_token: Session token for the user. If session token is None
             the session token will be looked for in the users file.
@@ -91,7 +91,7 @@ class ShotgunToolkit(rvtypes.MinorMode):
         self.init(TK_RV_MODE_NAME, [], None, [])
 
         # START rv engine after initializing mode because the engine needs
-        # mode name to create SGTK menu.
+        # mode name to create PTR menu.
         self.__engine = self.start_engine()
 
     @property
@@ -184,8 +184,10 @@ class ShotgunToolkit(rvtypes.MinorMode):
                     True,
                     commands.ErrorAlert,
                     "Login Session Invalid",
-                    "Login with RV ShotGrid session token failed; please use the File Menu's "
-                    '"License Manager" to log in to the ShotGrid server and re-start RV.',
+                    "Login with RV Flow Production Tracking session token failed; "
+                    "please use the File Menu's "
+                    '"License Manager" to log in to '
+                    "the server and re-start RV.",
                     "Continue",
                     None,
                     None,

@@ -21,7 +21,7 @@ from sgtk.platform import Engine, constants
 
 class RVEngine(Engine):
     """
-    ShotGrid Toolkit engine for RV.
+    Flow Production Tracking engine for RV.
     """
 
     MAX_THREADS = 4
@@ -64,15 +64,15 @@ class RVEngine(Engine):
         :returns:   str
         """
 
-        # XXX Set "ShotGrid" as the default top level menu, so that we don't
-        # create another empty menu.  Eventually we'll want somewhere to store
-        # "user apps" but we're not ready for that yet anyway.
-        return "ShotGrid"
+        # XXX Set "Flow Production Tracking" as the default top level menu,
+        # so that we don't create another empty menu.  Eventually we'll want
+        # somewhere to store "user apps" but we're not ready for that yet anyway.
+        return "Flow Production Tracking"
 
     @property
     def toolkit_rv_mode_name(self):
         """
-        The name of the RV Mode that bootstrapped SGTK and started
+        The name of the RV Mode that bootstrapped PTR and started
         the engine.
 
         :returns:   str
@@ -148,10 +148,10 @@ class RVEngine(Engine):
             self._qss_watcher.fileChanged.connect(self.reload_qss)
 
         # The assumption here is that the default case has us presenting a
-        # ShotGrid menu and loading it with at least Cutz Support and maybe
-        # an expected ShotGrid browser or two. _ui_enabled turns the menu on.
-        # For shell access, setenv TK_RV_NO_UI NCC-1701 this is basically what
-        # tk-maya does so following along.
+        # Flow Production Tracking menu and loading it with at least Cutz Support
+        # and maybe an expected Flow Production Tracking browser or two. _ui_
+        # enabled turns the menu on. For shell access, setenv TK_RV_NO_UI NCC-1701
+        # this is basically what tk-maya does so following along.
         self._ui_enabled = os.environ.get("TK_RV_NO_UI") or True
 
         # Unicode characters returned by the shotgun api need to be converted
@@ -163,7 +163,7 @@ class RVEngine(Engine):
     def post_app_init(self):
         """
         Runs after all apps have been initialized. If running in a GUI
-        session of RV, the "SG Review" menu will be created and populated
+        session of RV, the "PTR Review" menu will be created and populated
         with any app commands that have been registered with the engine.
         """
         if self._ui_enabled:

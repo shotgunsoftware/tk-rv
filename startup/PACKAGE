@@ -1,4 +1,4 @@
-package: ShotGrid Toolkit for RV
+package: Flow Production Tracking for RV
 author: stewartb
 organization: Tweak Software
 version: 1.0
@@ -13,6 +13,6 @@ modes:
 
 description: |
     <p>
-    Loads the ShotGrid tk-rv engine.
+    Loads the Flow Production Tracking tk-rv engine.
     The tk-rv engine will create a menu as a starting point for hosted apps.
     </p>
