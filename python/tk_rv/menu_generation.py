@@ -86,21 +86,28 @@ class MenuGenerator(object):
         # commands_by_menu = {
         #     "Flow Production Tracking":[menu_item, ...],
         # }
+
         for cmd in menu_commands:
             menu_item = cmd.define_menu_item()
-
             command_added = False
             if menu_overrides:
+
                 for menu_override, commands in menu_overrides.items():
                     app_name = cmd.get_app_name()
-                    if app_name in [
-                        c.get("app_instance")
-                        for c in commands
-                        if cmd.name == c.get("name")
-                    ]:
-                        commands_by_menu[menu_override].append(menu_item)
+                    if app_name == None:
+                        if app_name in [
+                            c.get("app_instance")
+
+                            for c in commands
+                            if cmd.name == c.get("name")
+                        ]:
+                            commands_by_menu[menu_override].append(menu_item)
+                            command_added = True
+                            break
+                    else:
+                        
+                        # command_added to true inn order to not add the default menu item
                         command_added = True
-                        break
 
             if not command_added:
                 if cmd.get_type() != "context_menu":
