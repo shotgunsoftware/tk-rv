@@ -97,7 +97,6 @@ class MenuGenerator(object):
                     if app_name == None:
                         if app_name in [
                             c.get("app_instance")
-
                             for c in commands
                             if cmd.name == c.get("name")
                         ]:
@@ -105,7 +104,7 @@ class MenuGenerator(object):
                             command_added = True
                             break
                     else:
-                        
+
                         # command_added to true inn order to not add the default menu item
                         command_added = True
 
