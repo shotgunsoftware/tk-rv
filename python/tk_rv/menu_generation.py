@@ -94,9 +94,9 @@ class MenuGenerator(object):
 
                 for menu_override, commands in menu_overrides.items():
                     app_name = cmd.get_app_name()
-                    if not (
-                        menu_override == "SG Review"
-                        and "RV_LOAD_SG_REVIEW" not in os.environ
+                    if (
+                        menu_override != "SG Review"
+                        or "RV_LOAD_SG_REVIEW" in os.environ
                     ):
                         if app_name in [
                             c.get("app_instance")
