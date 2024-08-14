@@ -94,18 +94,19 @@ class MenuGenerator(object):
 
                 for menu_override, commands in menu_overrides.items():
                     app_name = cmd.get_app_name()
-                    if (menu_override != "SG Review" or "RV_LOAD_SG_REVIEW" in os.environ):
-                        if app_name in [
-                            c.get("app_instance")
-                            for c in commands
-                            if cmd.name == c.get("name")
-                        ]:
-                            commands_by_menu[menu_override].append(menu_item)
-                            command_added = True
-                            break
-                    else:
+                    if menu_override == "SG Review" or "RV_LOAD_SG_REVIEW" not in os.environ:
+                      # command_added to true in order to not add the default menu item
+                      command_added = True
+                      continue
 
-                        # command_added to true in order to not add the default menu item
+                    if app_name in [
+                        c.get("app_instance")
+                        for c in commands
+                        if cmd.name == c.get("name")
+                    ]:
+                        commands_by_menu[menu_override].append(menu_item)
+                        command_added = True
+                        break     
                         command_added = True
 
             if not command_added:
