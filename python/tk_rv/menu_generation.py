@@ -107,7 +107,6 @@ class MenuGenerator(object):
                         commands_by_menu[menu_override].append(menu_item)
                         command_added = True
                         break     
-                        command_added = True
 
             if not command_added:
                 if cmd.get_type() != "context_menu":
