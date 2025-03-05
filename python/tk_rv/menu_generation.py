@@ -48,17 +48,7 @@ class MenuGenerator(object):
         # each RV menu listed so that we can then organize the appropriate
         # commands into the requested menu.
         menu_overrides = self.engine.get_setting("menu_overrides", dict())
-
-        # Note: dict comprehension is not available in Python 2.5. We are
-        # safe here because all available versions of RV are 2.7 as of this
-        # writing.
-        # commands_by_menu = {n: [] for n in menu_overrides.keys()}
-        #
-        # Sadly, that's not the case, we still build python 2.6 versions of all
-        # releases, and comprehension is also not available there.
-        commands_by_menu = {}
-        for n in menu_overrides.keys():
-            commands_by_menu[n] = []
+        commands_by_menu = {n: [] for n in menu_overrides.keys()}
 
         # We're placing a spacer before and after the context menu because
         # this is likely going into the existing "Flow Production Tracking"
