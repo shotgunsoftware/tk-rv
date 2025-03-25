@@ -8,7 +8,6 @@
 # agreement to the ShotGrid Pipeline Toolkit Source Code License. All rights
 # not expressly granted therein are reserved by Autodesk, Inc.
 
-from __future__ import print_function
 import os
 import sys
 
@@ -35,7 +34,7 @@ class RVEngine(Engine):
         this engine.
         """
 
-        properties = super(RVEngine, self).get_metrics_properties()
+        properties = super().get_metrics_properties()
         properties["Host App Build Type"] = (
             "Debug" if rv.commands.isDebug() else "Release"
         )
@@ -246,7 +245,7 @@ class RVEngine(Engine):
         and then have the tk-rv engine-specific style.qss file applies to
         them.
         """
-        dialog = super(RVEngine, self)._create_dialog(*args, **kwargs)
+        dialog = super()._create_dialog(*args, **kwargs)
         self._apply_external_styleshet(self, dialog)
         return dialog
 

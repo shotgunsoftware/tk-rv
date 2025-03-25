@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import os
 import re
 import sys
@@ -41,7 +39,7 @@ class RVUserImpl(ShotgunUserImpl):
         :raises IncompleteCredentials: If there is not enough values
             provided to initialize the user, this exception will be thrown.
         """
-        super(RVUserImpl, self).__init__(host, http_proxy)
+        super().__init__(host, http_proxy)
 
         self._login = login
         self._session_token = session_token
@@ -85,7 +83,7 @@ class RVUserImpl(ShotgunUserImpl):
 
 class ShotgunToolkit(rvtypes.MinorMode):
     def __init__(self):
-        super(ShotgunToolkit, self).__init__()
+        super().__init__()
 
         # INITIALIZE mode
         self.init(TK_RV_MODE_NAME, [], None, [])
