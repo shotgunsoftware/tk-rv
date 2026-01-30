@@ -153,12 +153,6 @@ class RVEngine(Engine):
         # this is basically what tk-maya does so following along.
         self._ui_enabled = os.environ.get("TK_RV_NO_UI") or True
 
-        # Unicode characters returned by the shotgun api need to be converted
-        # to display correctly in all of the app windows. Tell Qt to interpret
-        # C strings as utf-8.
-        utf8 = QtCore.QTextCodec.codecForName("utf-8")
-        QtCore.QTextCodec.setCodecForCStrings(utf8)
-
     def post_app_init(self):
         """
         Runs after all apps have been initialized. If running in a GUI
