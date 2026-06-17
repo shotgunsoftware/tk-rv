@@ -22,6 +22,7 @@ display_name: "Flow Production Tracking Engine for RV"
 # Required minimum versions for this item to run
 requires_shotgun_version:
 requires_core_version: "v0.14.28"
+minimum_python_version: "3.9"
 
 # List of frameworks which are needed to run the app (optional)
 frameworks:
