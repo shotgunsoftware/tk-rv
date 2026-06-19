@@ -11,7 +11,7 @@
 # List of super useful formatters.
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.4.0
+    rev: v6.0.0
     hooks:
     # Ensures the code is syntaxically correct
     - id: check-ast
@@ -32,7 +32,7 @@ repos:
     - id: check-yaml
   # Leave black at the bottom so all touchups are done before it is run.
   - repo: https://github.com/ambv/black
-    rev: stable
+    rev: 26.5.1
     hooks:
     - id: black
       language_version: python3

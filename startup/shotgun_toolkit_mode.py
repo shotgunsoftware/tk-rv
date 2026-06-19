@@ -162,7 +162,7 @@ class ShotgunToolkit(rvtypes.MinorMode):
                 import slutils_py
 
                 # Get default session info from slutils (rv/shotgun licensing) module
-                (url, login, token) = slutils_py.defaultSession()
+                url, login, token = slutils_py.defaultSession()
 
                 user = ShotgunUser(
                     RVUserImpl(
